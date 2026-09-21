@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="fa" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>mini_gpt/train.py | از Python تا Mini-GPT</title><meta name="description" content="کتاب فارسیِ ساخت تدریجی یک مدل زبان؛ درس، آزمایش، کد و خودسنجی.">
+<link rel="stylesheet" href="../../assets/book.css?v=78afa5746b9f">
+<link rel="preload" href="../../assets/fonts/Vazirmatn.woff2" as="font" type="font/woff2" crossorigin>
+<script src="../../assets/manifest.js?v=78afa5746b9f" defer></script><script src="../../assets/book.js?v=78afa5746b9f" defer></script><script src="../../assets/experience.js?v=78afa5746b9f" defer></script></head>
+<body data-page-kind="reference" data-theme="model" data-mode="reference" data-unit-id="" data-root="../../index.html"><a class="skip" href="#main">رفتن به متن</a>
+<header class="topbar"><a class="brand" href="../../index.html" data-book-link>از <bdi dir="ltr">Python</bdi> تا <bdi dir="ltr" class="nowrap">Mini-GPT</bdi></a>
+<div class="header-actions"><nav class="atlas" aria-label="اطلس مسیر"><details><summary>فهرست درس‌ها</summary><div class="atlas-content"><label>پیداکردن درس <input type="search" data-lesson-search placeholder="مثلاً بلوک یا mask"></label><div data-search-results aria-live="polite"></div><div class="atlas-grid"><details><summary>بخش 1 · مسئله را با Python لمس کنیم</summary><a href="../../part-01/index.html" data-book-link>صفحهٔ بخش</a><ol><li><a href="../../part-01/chapter-01/index.html" data-book-link>مسئلهٔ یادگیری</a></li><li><a href="../../part-01/chapter-02/index.html" data-book-link>متن به <bdi dir="ltr">Token</bdi></a></li><li><a href="../../part-01/chapter-03/index.html" data-book-link>اولین ادامه‌دهنده</a></li><li><a href="../../part-01/chapter-04/index.html" data-book-link>شواهد یادگیری</a></li><li><a href="../../part-01/checkpoint.html" data-book-link data-unit="checkpoint-01">ایستگاه عملی</a></li></ol></details><details><summary>بخش 2 · عدد، احتمال و تغییر</summary><a href="../../part-02/index.html" data-book-link>صفحهٔ بخش</a><ol><li><a href="../../part-02/chapter-01/index.html" data-book-link>ساختار عددها</a></li><li><a href="../../part-02/chapter-02/index.html" data-book-link>ترکیب عددها</a></li><li><a href="../../part-02/chapter-03/index.html" data-book-link>از شمارش تا اطمینان</a></li><li><a href="../../part-02/chapter-04/index.html" data-book-link>سنجش پیش‌بینی</a></li><li><a href="../../part-02/chapter-05/index.html" data-book-link>تغییر <bdi dir="ltr">Parameter</bdi></a></li><li><a href="../../part-02/chapter-06/index.html" data-book-link>از محاسبه تا شبکه</a></li><li><a href="../../part-02/checkpoint.html" data-book-link data-unit="checkpoint-02">ایستگاه عملی</a></li></ol></details><details><summary>بخش 3 · ابزار محاسبه و اولین شبکه</summary><a href="../../part-03/index.html" data-book-link>صفحهٔ بخش</a><ol><li><a href="../../part-03/chapter-01/index.html" data-book-link>آشنایی با ابزار</a></li><li><a href="../../part-03/chapter-02/index.html" data-book-link>حساب محورها</a></li><li><a href="../../part-03/chapter-03/index.html" data-book-link>اولین یادگیری عصبی</a></li><li><a href="../../part-03/chapter-04/index.html" data-book-link>گردش داده</a></li><li><a href="../../part-03/checkpoint.html" data-book-link data-unit="checkpoint-03">ایستگاه عملی</a></li></ol></details><details><summary>بخش 4 · متن و نمایش یادگرفتنی</summary><a href="../../part-04/index.html" data-book-link>صفحهٔ بخش</a><ol><li><a href="../../part-04/chapter-01/index.html" data-book-link>متن قابل اعتماد</a></li><li><a href="../../part-04/chapter-02/index.html" data-book-link>نمونهٔ آموزش</a></li><li><a href="../../part-04/chapter-03/index.html" data-book-link>نمایش یادگرفتنی</a></li><li><a href="../../part-04/checkpoint.html" data-book-link data-unit="checkpoint-04">ایستگاه عملی</a></li></ol></details><details><summary>بخش 5 · <bdi dir="ltr">Attention</bdi> تک‌سر</summary><a href="../../part-05/index.html" data-book-link>صفحهٔ بخش</a><ol><li><a href="../../part-05/chapter-01/index.html" data-book-link>پرسش و اطلاعات</a></li><li><a href="../../part-05/chapter-02/index.html" data-book-link><bdi dir="ltr">Attention</bdi> با عدد</a></li><li><a href="../../part-05/chapter-03/index.html" data-book-link>محدودیت اطلاعات</a></li><li><a href="../../part-05/checkpoint.html" data-book-link data-unit="checkpoint-05">ایستگاه عملی</a></li></ol></details><details><summary>بخش 6 · از چند سر تا بلوک</summary><a href="../../part-06/index.html" data-book-link>صفحهٔ بخش</a><ol><li><a href="../../part-06/chapter-01/index.html" data-book-link>چند نگاه هم‌زمان</a></li><li><a href="../../part-06/chapter-02/index.html" data-book-link>پردازش هر موقعیت</a></li><li><a href="../../part-06/chapter-03/index.html" data-book-link>پایداری بلوک</a></li><li><a href="../../part-06/chapter-04/index.html" data-book-link>مونتاژ معماری</a></li><li><a href="../../part-06/checkpoint.html" data-book-link data-unit="checkpoint-06">ایستگاه عملی</a></li></ol></details><details><summary>بخش 7 · مدل زبانی کامل</summary><a href="../../part-07/index.html" data-book-link>صفحهٔ بخش</a><ol><li><a href="../../part-07/chapter-01/index.html" data-book-link>از نمایش به پیش‌بینی</a></li><li><a href="../../part-07/chapter-02/index.html" data-book-link>ردیابی کل مدل</a></li><li><a href="../../part-07/checkpoint.html" data-book-link data-unit="checkpoint-07">ایستگاه عملی</a></li></ol></details><details><summary>بخش 8 · زندگی روزمرهٔ آموزش</summary><a href="../../part-08/index.html" data-book-link>صفحهٔ بخش</a><ol><li><a href="../../part-08/chapter-01/index.html" data-book-link>آموزش روزمره</a></li><li><a href="../../part-08/chapter-02/index.html" data-book-link>ذخیره و ادامه</a></li><li><a href="../../part-08/chapter-03/index.html" data-book-link>خواندن نتیجه</a></li><li><a href="../../part-08/checkpoint.html" data-book-link data-unit="checkpoint-08">ایستگاه عملی</a></li></ol></details><details><summary>بخش 9 · تولید، خرابی و آزمایش</summary><a href="../../part-09/index.html" data-book-link>صفحهٔ بخش</a><ol><li><a href="../../part-09/chapter-01/index.html" data-book-link>یک <bdi dir="ltr">Token</bdi> در هر گام</a></li><li><a href="../../part-09/chapter-02/index.html" data-book-link>کنترل انتخاب</a></li><li><a href="../../part-09/chapter-03/index.html" data-book-link>حدود تولید</a></li><li><a href="../../part-09/chapter-04/index.html" data-book-link>آزمایش علّی و موقعیتی</a></li><li><a href="../../part-09/chapter-05/index.html" data-book-link>کارگاه خطا</a></li><li><a href="../../part-09/checkpoint.html" data-book-link data-unit="checkpoint-09">ایستگاه عملی</a></li></ol></details><details><summary>بخش 10 · ارتباط با مدل‌های بزرگ</summary><a href="../../part-10/index.html" data-book-link>صفحهٔ بخش</a><ol><li><a href="../../part-10/chapter-01/index.html" data-book-link>فراتر از رایانهٔ شخصی</a></li><li><a href="../../part-10/chapter-02/index.html" data-book-link>از ادامه‌دهنده به دستیار</a></li><li><a href="../../part-10/checkpoint.html" data-book-link data-unit="checkpoint-10">ایستگاه عملی</a></li></ol></details></div></div></details></nav><details class="book-tools"><summary>میز کار</summary><nav class="toplinks" aria-label="فضاهای کتاب"><a href="../../guide.html" data-book-link>راهنمای آغاز</a><a href="../../lab.html" data-book-link>آزمایشگاه</a><a href="../../journal.html" data-book-link>دفتر آزمایش</a><a href="../../project.html" data-book-link>پروژه</a><a href="../../glossary.html" data-book-link>واژه‌ها</a><a href="../../api.html" data-book-link>مرجع کد</a></nav></details></div></header>
+<div class="layout"><main id="main"><nav class="breadcrumbs" aria-label="مسیر صفحه"><a href="../../index.html" data-book-link>خانه</a> <span aria-hidden="true">/</span> <span aria-current="page">mini_gpt/train.py</span></nav>
+<header class="page-masthead"><p class="eyebrow">از Python تا Mini-GPT</p><h1>mini_gpt/train.py</h1></header><div class="page-content"><p>این فایل مرجع است. متن فارسی درون کد ممکن است به‌علت چیدمان چپ‌به‌راست جدا دیده شود؛ نسخهٔ دانلودی <a class="term-link" id="term-ref-utf-8-1" data-term="utf-8" href="../../glossary/utf-8.html?return=..%2Fcode%2Fmini_gpt%2Ftrain.py.html%23term-ref-utf-8-1" title="توضیح UTF-8"><bdi dir="ltr">UTF-8</bdi></a> است.</p><p><a href="../../api.html" data-book-link>توضیح نام‌ها و دستورها</a> · <a href="../../project.html" data-book-link>دریافت همهٔ فایل‌ها</a></p><p>درس‌های مرتبط: <a href="../../part-08/chapter-01/47-loop.html" data-book-link data-unit="47-loop">حلقهٔ آموزش را خودمان بنویسیم</a> · <a href="../../part-08/chapter-01/49-rate.html" data-book-link data-unit="49-rate">وقتی گام‌ها خیلی بزرگ یا کوچک‌اند</a> · <a href="../../part-08/chapter-01/49b-schedule.html" data-book-link data-unit="49b-schedule">آیا اندازهٔ گام باید تا آخر ثابت بماند؟</a> · <a href="../../part-08/chapter-02/51-resume.html" data-book-link data-unit="51-resume">چطور ادامهٔ اجرا را با اجرای پیوسته مقایسه کنیم؟</a></p><pre data-code-language="python"><code><span class="syntax-string">&quot;&quot;&quot;آموزش گام‌محور: پنجرهٔ تصادفی، ارزیابی، ذخیره و ادامهٔ قابل تکرار.&quot;&quot;&quot;</span>
+
+<span class="syntax-keyword">import</span> argparse
+<span class="syntax-keyword">import</span> csv
+<span class="syntax-keyword">import</span> math
+<span class="syntax-keyword">from</span> dataclasses <span class="syntax-keyword">import</span> asdict
+<span class="syntax-keyword">from</span> pathlib <span class="syntax-keyword">import</span> Path
+
+<span class="syntax-keyword">import</span> torch
+<span class="syntax-keyword">from</span> torch.utils.data <span class="syntax-keyword">import</span> DataLoader
+
+<span class="syntax-keyword">from</span> .checkpoint <span class="syntax-keyword">import</span> load_checkpoint, save_checkpoint
+<span class="syntax-keyword">from</span> .config <span class="syntax-keyword">import</span> ModelConfig
+<span class="syntax-keyword">from</span> .data <span class="syntax-keyword">import</span> prepare_corpus
+<span class="syntax-keyword">from</span> .dataset <span class="syntax-keyword">import</span> NextTokenDataset
+<span class="syntax-keyword">from</span> .evaluate <span class="syntax-keyword">import</span> evaluate
+<span class="syntax-keyword">from</span> .model <span class="syntax-keyword">import</span> MiniGPT
+<span class="syntax-keyword">from</span> .runtime <span class="syntax-keyword">import</span> resolve_device, seed_everything
+<span class="syntax-keyword">from</span> .schedule <span class="syntax-keyword">import</span> ScheduleConfig
+
+
+<span class="syntax-keyword">def</span> random_batch(dataset, batch_size, generator):
+    indices = torch.randint(len(dataset), (batch_size,), generator=generator).tolist()
+    pairs = [dataset[i] <span class="syntax-keyword">for</span> i <span class="syntax-keyword">in</span> indices]
+    <span class="syntax-keyword">return</span> torch.stack([x <span class="syntax-keyword">for</span> x, _ <span class="syntax-keyword">in</span> pairs]), torch.stack([y <span class="syntax-keyword">for</span> _, y <span class="syntax-keyword">in</span> pairs])
+
+
+<span class="syntax-keyword">def</span> train(args):
+    <span class="syntax-keyword">if</span> args.steps &lt; <span class="syntax-number">1</span> <span class="syntax-keyword">or</span> args.eval_every &lt; <span class="syntax-number">1</span> <span class="syntax-keyword">or</span> args.threads &lt; <span class="syntax-number">1</span>:
+        <span class="syntax-keyword">raise</span> ValueError(<span class="syntax-string">&quot;steps, eval_every and threads must be positive&quot;</span>)
+    torch.set_num_threads(args.threads)
+    device = resolve_device(args.device)
+    output = Path(args.output)
+    <span class="syntax-keyword">if</span> <span class="syntax-keyword">not</span> args.resume <span class="syntax-keyword">and</span> output.exists() <span class="syntax-keyword">and</span> any(output.iterdir()):
+        <span class="syntax-keyword">raise</span> ValueError(<span class="syntax-string">&quot;output directory is not empty; choose a new --output or use --resume&quot;</span>)
+    <span class="syntax-keyword">if</span> args.resume <span class="syntax-keyword">and</span> Path(args.resume).resolve() != (output / <span class="syntax-string">&quot;last.pt&quot;</span>).resolve():
+        <span class="syntax-keyword">raise</span> ValueError(<span class="syntax-string">&quot;resume must use last.pt in the same --output directory; copy the full run to relocate it&quot;</span>)
+
+    seed_everything(args.seed)
+    batch_generator = torch.Generator().manual_seed(args.seed + <span class="syntax-number">1</span>)
+    start_step, best_loss = <span class="syntax-number">0</span>, float(<span class="syntax-string">&quot;inf&quot;</span>)
+    <span class="syntax-keyword">if</span> args.resume:
+        model, tokenizer, saved = load_checkpoint(args.resume, device)
+        config = model.config
+        meta = saved[<span class="syntax-string">&quot;metadata&quot;</span>]
+        <span class="syntax-keyword">for</span> name <span class="syntax-keyword">in</span> (<span class="syntax-string">&quot;context_length&quot;</span>, <span class="syntax-string">&quot;embedding_dim&quot;</span>, <span class="syntax-string">&quot;num_heads&quot;</span>, <span class="syntax-string">&quot;num_layers&quot;</span>, <span class="syntax-string">&quot;dropout&quot;</span>,
+                     <span class="syntax-string">&quot;batch_size&quot;</span>, <span class="syntax-string">&quot;learning_rate&quot;</span>, <span class="syntax-string">&quot;train_fraction&quot;</span>, <span class="syntax-string">&quot;schedule&quot;</span>,
+                     <span class="syntax-string">&quot;warmup_steps&quot;</span>, <span class="syntax-string">&quot;decay_steps&quot;</span>, <span class="syntax-string">&quot;min_lr_ratio&quot;</span>):
+            <span class="syntax-keyword">if</span> getattr(args, name) <span class="syntax-keyword">is</span> <span class="syntax-keyword">not</span> <span class="syntax-keyword">None</span>:
+                <span class="syntax-keyword">raise</span> ValueError(<span class="syntax-string">f&quot;--resume restores {name}; omit its override&quot;</span>)
+        batch_size, learning_rate = meta[<span class="syntax-string">&quot;batch_size&quot;</span>], meta[<span class="syntax-string">&quot;learning_rate&quot;</span>]
+        schedule = ScheduleConfig(**meta.get(<span class="syntax-string">&quot;schedule&quot;</span>, {}))
+        train_ids, valid_ids, _, current = prepare_corpus(args.text, meta[<span class="syntax-string">&quot;train_fraction&quot;</span>], tokenizer)
+        <span class="syntax-keyword">if</span> current[<span class="syntax-string">&quot;corpus_sha256&quot;</span>] != meta[<span class="syntax-string">&quot;corpus_sha256&quot;</span>]:
+            <span class="syntax-keyword">raise</span> ValueError(<span class="syntax-string">&quot;resume corpus differs from the saved corpus&quot;</span>)
+        optimizer = torch.optim.AdamW(model.parameters(), lr=learning_rate, weight_decay=<span class="syntax-number">0.01</span>)
+        optimizer.load_state_dict(saved[<span class="syntax-string">&quot;optimizer&quot;</span>])
+        <span class="syntax-comment"># ساخت مدل عدد تصادفی مصرف کرده است؛ وضعیت ذخیره‌شده را پس از آن بازیابی می‌کنیم.</span>
+        torch.set_rng_state(saved[<span class="syntax-string">&quot;rng_cpu&quot;</span>])
+        <span class="syntax-keyword">if</span> device.type == <span class="syntax-string">&quot;cuda&quot;</span> <span class="syntax-keyword">and</span> saved[<span class="syntax-string">&quot;rng_cuda&quot;</span>]:
+            torch.cuda.set_rng_state_all(saved[<span class="syntax-string">&quot;rng_cuda&quot;</span>])
+        batch_generator.set_state(saved[<span class="syntax-string">&quot;rng_batches&quot;</span>])
+        start_step, best_loss = saved[<span class="syntax-string">&quot;step&quot;</span>], saved[<span class="syntax-string">&quot;best_loss&quot;</span>]
+        <span class="syntax-keyword">if</span> args.steps &lt;= start_step:
+            <span class="syntax-keyword">raise</span> ValueError(<span class="syntax-string">&quot;--steps is the total target step count and must exceed saved step&quot;</span>)
+        metrics = output / <span class="syntax-string">&quot;metrics.csv&quot;</span>
+        <span class="syntax-keyword">if</span> <span class="syntax-keyword">not</span> metrics.is_file() <span class="syntax-keyword">or</span> <span class="syntax-keyword">not</span> (output / <span class="syntax-string">&quot;best.pt&quot;</span>).is_file():
+            <span class="syntax-keyword">raise</span> ValueError(<span class="syntax-string">&quot;resume requires metrics.csv and best.pt alongside last.pt&quot;</span>)
+        <span class="syntax-keyword">with</span> metrics.open(newline=<span class="syntax-string">&quot;&quot;</span>, encoding=<span class="syntax-string">&quot;utf-8&quot;</span>) <span class="syntax-keyword">as</span> stream:
+            rows = list(csv.DictReader(stream))
+        <span class="syntax-keyword">if</span> <span class="syntax-keyword">not</span> rows <span class="syntax-keyword">or</span> int(rows[-<span class="syntax-number">1</span>][<span class="syntax-string">&quot;step&quot;</span>]) != start_step:
+            <span class="syntax-keyword">raise</span> ValueError(<span class="syntax-string">&quot;metrics and last.pt steps differ; restore a consistent run before resuming&quot;</span>)
+    <span class="syntax-keyword">else</span>:
+        fraction = args.train_fraction <span class="syntax-keyword">if</span> args.train_fraction <span class="syntax-keyword">is</span> <span class="syntax-keyword">not</span> <span class="syntax-keyword">None</span> <span class="syntax-keyword">else</span> <span class="syntax-number">0.9</span>
+        train_ids, valid_ids, tokenizer, meta = prepare_corpus(args.text, fraction)
+        defaults = ModelConfig(tokenizer.vocab_size)
+        config = ModelConfig(
+            vocab_size=tokenizer.vocab_size,
+            **{name: getattr(args, name) <span class="syntax-keyword">if</span> getattr(args, name) <span class="syntax-keyword">is</span> <span class="syntax-keyword">not</span> <span class="syntax-keyword">None</span> <span class="syntax-keyword">else</span> getattr(defaults, name)
+               <span class="syntax-keyword">for</span> name <span class="syntax-keyword">in</span> (<span class="syntax-string">&quot;context_length&quot;</span>, <span class="syntax-string">&quot;embedding_dim&quot;</span>, <span class="syntax-string">&quot;num_heads&quot;</span>, <span class="syntax-string">&quot;num_layers&quot;</span>, <span class="syntax-string">&quot;dropout&quot;</span>)},
+        )
+        batch_size = args.batch_size <span class="syntax-keyword">if</span> args.batch_size <span class="syntax-keyword">is</span> <span class="syntax-keyword">not</span> <span class="syntax-keyword">None</span> <span class="syntax-keyword">else</span> <span class="syntax-number">16</span>
+        learning_rate = args.learning_rate <span class="syntax-keyword">if</span> args.learning_rate <span class="syntax-keyword">is</span> <span class="syntax-keyword">not</span> <span class="syntax-keyword">None</span> <span class="syntax-keyword">else</span> <span class="syntax-number">3e-4</span>
+        schedule = ScheduleConfig(
+            mode=args.schedule <span class="syntax-keyword">if</span> args.schedule <span class="syntax-keyword">is</span> <span class="syntax-keyword">not</span> <span class="syntax-keyword">None</span> <span class="syntax-keyword">else</span> <span class="syntax-string">&quot;constant&quot;</span>,
+            warmup_steps=args.warmup_steps <span class="syntax-keyword">if</span> args.warmup_steps <span class="syntax-keyword">is</span> <span class="syntax-keyword">not</span> <span class="syntax-keyword">None</span> <span class="syntax-keyword">else</span> <span class="syntax-number">0</span>,
+            decay_steps=args.decay_steps <span class="syntax-keyword">if</span> args.decay_steps <span class="syntax-keyword">is</span> <span class="syntax-keyword">not</span> <span class="syntax-keyword">None</span> <span class="syntax-keyword">else</span> <span class="syntax-number">0</span>,
+            min_lr_ratio=args.min_lr_ratio <span class="syntax-keyword">if</span> args.min_lr_ratio <span class="syntax-keyword">is</span> <span class="syntax-keyword">not</span> <span class="syntax-keyword">None</span> <span class="syntax-keyword">else</span> <span class="syntax-number">0.1</span>,
+        )
+        <span class="syntax-keyword">if</span> batch_size &lt; <span class="syntax-number">1</span> <span class="syntax-keyword">or</span> <span class="syntax-keyword">not</span> math.isfinite(learning_rate) <span class="syntax-keyword">or</span> learning_rate &lt;= <span class="syntax-number">0</span>:
+            <span class="syntax-keyword">raise</span> ValueError(<span class="syntax-string">&quot;batch_size and learning_rate must be positive&quot;</span>)
+        model = MiniGPT(config).to(device)
+        optimizer = torch.optim.AdamW(model.parameters(), lr=learning_rate, weight_decay=<span class="syntax-number">0.01</span>)
+        meta.update(batch_size=batch_size, learning_rate=learning_rate, seed=args.seed,
+                    torch_version=str(torch.__version__), threads=args.threads, device=str(device),
+                    schedule=asdict(schedule))
+
+    meta.setdefault(<span class="syntax-string">&quot;schedule&quot;</span>, asdict(schedule))
+    train_data = NextTokenDataset(train_ids, config.context_length)
+    valid_data = NextTokenDataset(valid_ids, config.context_length)
+    <span class="syntax-comment"># DataLoader حتی بدون shuffle از مولد بذر می‌گیرد؛ مولد جدا، مسیر آموزش را ثابت نگه می‌دارد.</span>
+    validation = DataLoader(valid_data, batch_size=batch_size, shuffle=<span class="syntax-keyword">False</span>,
+                            generator=torch.Generator().manual_seed(<span class="syntax-number">0</span>))
+    output.mkdir(parents=<span class="syntax-keyword">True</span>, exist_ok=<span class="syntax-keyword">True</span>)
+    tokenizer.save(output / <span class="syntax-string">&quot;tokenizer.json&quot;</span>)
+    print(<span class="syntax-string">f&quot;device={device} parameters={sum(p.numel() for p in model.parameters())} &quot;</span>
+          <span class="syntax-string">f&quot;vocab={tokenizer.vocab_size} validation_unknown={meta[&#x27;validation_unknown_rate&#x27;]:.3%}&quot;</span>)
+    metrics_path = output / <span class="syntax-string">&quot;metrics.csv&quot;</span>
+    write_header = <span class="syntax-keyword">not</span> metrics_path.exists()
+    columns = [<span class="syntax-string">&quot;step&quot;</span>, <span class="syntax-string">&quot;train_batch_loss&quot;</span>, <span class="syntax-string">&quot;validation_loss&quot;</span>, <span class="syntax-string">&quot;gradient_norm&quot;</span>, <span class="syntax-string">&quot;learning_rate&quot;</span>]
+    <span class="syntax-keyword">if</span> <span class="syntax-keyword">not</span> write_header:
+        <span class="syntax-keyword">with</span> metrics_path.open(newline=<span class="syntax-string">&quot;&quot;</span>, encoding=<span class="syntax-string">&quot;utf-8&quot;</span>) <span class="syntax-keyword">as</span> existing:
+            columns = next(csv.reader(existing))
+        <span class="syntax-keyword">if</span> columns <span class="syntax-keyword">not</span> <span class="syntax-keyword">in</span> ([<span class="syntax-string">&quot;step&quot;</span>, <span class="syntax-string">&quot;train_batch_loss&quot;</span>, <span class="syntax-string">&quot;validation_loss&quot;</span>, <span class="syntax-string">&quot;gradient_norm&quot;</span>],
+                           [<span class="syntax-string">&quot;step&quot;</span>, <span class="syntax-string">&quot;train_batch_loss&quot;</span>, <span class="syntax-string">&quot;validation_loss&quot;</span>, <span class="syntax-string">&quot;gradient_norm&quot;</span>, <span class="syntax-string">&quot;learning_rate&quot;</span>]):
+            <span class="syntax-keyword">raise</span> ValueError(<span class="syntax-string">&quot;unrecognized metrics columns&quot;</span>)
+    <span class="syntax-keyword">with</span> metrics_path.open(<span class="syntax-string">&quot;a&quot;</span>, newline=<span class="syntax-string">&quot;&quot;</span>, encoding=<span class="syntax-string">&quot;utf-8&quot;</span>) <span class="syntax-keyword">as</span> stream:
+        writer = csv.DictWriter(stream, fieldnames=columns, extrasaction=<span class="syntax-string">&quot;ignore&quot;</span>)
+        <span class="syntax-keyword">if</span> write_header:
+            writer.writeheader()
+        <span class="syntax-keyword">for</span> step <span class="syntax-keyword">in</span> range(start_step + <span class="syntax-number">1</span>, args.steps + <span class="syntax-number">1</span>):
+            current_rate = schedule.learning_rate(learning_rate, step)
+            <span class="syntax-keyword">for</span> group <span class="syntax-keyword">in</span> optimizer.param_groups:
+                group[<span class="syntax-string">&quot;lr&quot;</span>] = current_rate
+            inputs, targets = random_batch(train_data, batch_size, batch_generator)
+            model.train()
+            _, loss = model(inputs.to(device), targets.to(device))
+            <span class="syntax-keyword">if</span> <span class="syntax-keyword">not</span> torch.isfinite(loss):
+                <span class="syntax-keyword">raise</span> RuntimeError(<span class="syntax-string">f&quot;nonfinite loss at step {step}&quot;</span>)
+            optimizer.zero_grad(set_to_none=<span class="syntax-keyword">True</span>)
+            loss.backward()
+            norm = torch.nn.utils.clip_grad_norm_(model.parameters(), <span class="syntax-number">1.0</span>, error_if_nonfinite=<span class="syntax-keyword">True</span>)
+            optimizer.step()
+            <span class="syntax-keyword">if</span> step == <span class="syntax-number">1</span> <span class="syntax-keyword">or</span> step % args.eval_every == <span class="syntax-number">0</span> <span class="syntax-keyword">or</span> step == args.steps:
+                validation_loss = evaluate(model, validation, device)
+                is_best = validation_loss &lt; best_loss
+                best_loss = min(best_loss, validation_loss)
+                writer.writerow(dict(step=step, train_batch_loss=loss.item(), validation_loss=validation_loss,
+                                     gradient_norm=float(norm), learning_rate=current_rate))
+                stream.flush()
+                print(<span class="syntax-string">f&quot;step={step:5d} train_batch={loss.item():.4f} val={validation_loss:.4f} grad={norm:.3f} lr={current_rate:.6g}&quot;</span>)
+                save_checkpoint(output / <span class="syntax-string">&quot;last.pt&quot;</span>, model, tokenizer, optimizer, step, meta, batch_generator, best_loss)
+                <span class="syntax-keyword">if</span> is_best:
+                    save_checkpoint(output / <span class="syntax-string">&quot;best.pt&quot;</span>, model, tokenizer, optimizer, step, meta, batch_generator, best_loss)
+    <span class="syntax-keyword">return</span> output / <span class="syntax-string">&quot;last.pt&quot;</span>
+
+
+<span class="syntax-keyword">def</span> build_parser():
+    parser = argparse.ArgumentParser(description=<span class="syntax-string">&quot;Train MiniGPT, or resume to a total number of steps&quot;</span>)
+    parser.add_argument(<span class="syntax-string">&quot;--text&quot;</span>, default=<span class="syntax-string">&quot;data/sample.txt&quot;</span>)
+    parser.add_argument(<span class="syntax-string">&quot;--output&quot;</span>, default=<span class="syntax-string">&quot;checkpoints&quot;</span>)
+    parser.add_argument(<span class="syntax-string">&quot;--resume&quot;</span>, default=<span class="syntax-keyword">None</span>)
+    parser.add_argument(<span class="syntax-string">&quot;--steps&quot;</span>, type=int, default=<span class="syntax-number">300</span>)
+    parser.add_argument(<span class="syntax-string">&quot;--eval-every&quot;</span>, type=int, default=<span class="syntax-number">50</span>)
+    <span class="syntax-keyword">for</span> name <span class="syntax-keyword">in</span> (<span class="syntax-string">&quot;batch-size&quot;</span>, <span class="syntax-string">&quot;context-length&quot;</span>, <span class="syntax-string">&quot;embedding-dim&quot;</span>, <span class="syntax-string">&quot;num-heads&quot;</span>, <span class="syntax-string">&quot;num-layers&quot;</span>):
+        parser.add_argument(<span class="syntax-string">&quot;--&quot;</span> + name, type=int, default=<span class="syntax-keyword">None</span>)
+    <span class="syntax-keyword">for</span> name <span class="syntax-keyword">in</span> (<span class="syntax-string">&quot;dropout&quot;</span>, <span class="syntax-string">&quot;learning-rate&quot;</span>, <span class="syntax-string">&quot;train-fraction&quot;</span>):
+        parser.add_argument(<span class="syntax-string">&quot;--&quot;</span> + name, type=float, default=<span class="syntax-keyword">None</span>)
+    parser.add_argument(<span class="syntax-string">&quot;--device&quot;</span>, choices=(<span class="syntax-string">&quot;auto&quot;</span>, <span class="syntax-string">&quot;cpu&quot;</span>, <span class="syntax-string">&quot;cuda&quot;</span>), default=<span class="syntax-string">&quot;cpu&quot;</span>)
+    parser.add_argument(<span class="syntax-string">&quot;--seed&quot;</span>, type=int, default=<span class="syntax-number">1337</span>)
+    parser.add_argument(<span class="syntax-string">&quot;--threads&quot;</span>, type=int, default=<span class="syntax-number">2</span>)
+    parser.add_argument(<span class="syntax-string">&quot;--schedule&quot;</span>, choices=(<span class="syntax-string">&quot;constant&quot;</span>, <span class="syntax-string">&quot;cosine&quot;</span>), default=<span class="syntax-keyword">None</span>)
+    parser.add_argument(<span class="syntax-string">&quot;--warmup-steps&quot;</span>, type=int, default=<span class="syntax-keyword">None</span>)
+    parser.add_argument(<span class="syntax-string">&quot;--decay-steps&quot;</span>, type=int, default=<span class="syntax-keyword">None</span>)
+    parser.add_argument(<span class="syntax-string">&quot;--min-lr-ratio&quot;</span>, type=float, default=<span class="syntax-keyword">None</span>)
+    <span class="syntax-keyword">return</span> parser
+
+
+<span class="syntax-keyword">if</span> __name__ == <span class="syntax-string">&quot;__main__&quot;</span>:
+    <span class="syntax-keyword">from</span> .console <span class="syntax-keyword">import</span> configure_console
+    configure_console()
+    train(build_parser().parse_args())</code></pre><nav class="pager learning-continuation" aria-label="ادامهٔ مسیر یادگیری"><div class="next-step"><p class="eyebrow">گام بعد <span></span></p><p class="next-context">از مدل عدد می‌گیریم، خطا را پس می‌فرستیم و شاهد واقعی تغییر وزن را ثبت می‌کنیم.</p><a rel="next" data-next-step href="../../part-08/chapter-01/47-loop.html" data-book-link data-unit="47-loop">کد را در یک مسئله دنبال کنید: حلقهٔ آموزش را خودمان بنویسیم</a></div><div class="nearby-steps"><a data-return-section href="../index.html" data-book-link>همهٔ فایل‌های مرجع</a></div></nav></div><div class="reading-finish"><a href="../../journal.html" data-book-link>ثبت در دفتر آزمایش</a></div><details class="progress-panel"><summary>پیشرفت مسیر <span data-progress-count>0 / 86</span></summary><div class="progress-tools"><progress value="0" max="86" aria-label="درس‌ها و ایستگاه‌های انجام‌شده"></progress><button type="button" data-export>خروجی پیشرفت</button><label class="import-label">ورود پیشرفت <input type="file" accept=".json,application/json" data-import></label></div><details data-export-preview hidden><summary>نسخهٔ متنی پیشرفت؛ اگر دانلود انجام نشد، این JSON را کپی و در فایل نگه دارید</summary><pre><code data-export-code></code></pre></details><p class="progress-note">علامت انجام فقط با انتخاب شما ثبت می‌شود. برای نگهداری مطمئن یا انتقال به مرورگر دیگر، خروجی پیشرفت بگیرید. دفتر آزمایش جداست.</p><p class="status" role="status" aria-live="polite" data-status></p></details><footer class="footer"><span>از یک <a class="term-link" id="term-ref-token-1" data-term="token" href="../../glossary/token.html?return=..%2Fcode%2Fmini_gpt%2Ftrain.py.html%23term-ref-token-1" title="توضیح Token"><bdi dir="ltr">Token</bdi></a>، تا یک مدل.</span><a href="../../guide.html" data-book-link>راهنما</a> · <a href="../../api.html" data-book-link>کد و منابع</a></footer></main></div>
+<noscript><p>خواندن و ناوبری بدون JavaScript هم کار می‌کند؛ کپی خودکار و ثبت پیشرفت به آن نیاز دارند.</p></noscript></body></html>

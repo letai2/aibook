@@ -1,0 +1,280 @@
+<!doctype html>
+<html lang="fa" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>mini_gpt/README.md | از Python تا Mini-GPT</title><meta name="description" content="کتاب فارسیِ ساخت تدریجی یک مدل زبان؛ درس، آزمایش، کد و خودسنجی.">
+<link rel="stylesheet" href="../../assets/book.css?v=78afa5746b9f">
+<link rel="preload" href="../../assets/fonts/Vazirmatn.woff2" as="font" type="font/woff2" crossorigin>
+<script src="../../assets/manifest.js?v=78afa5746b9f" defer></script><script src="../../assets/book.js?v=78afa5746b9f" defer></script><script src="../../assets/experience.js?v=78afa5746b9f" defer></script></head>
+<body data-page-kind="reference" data-theme="model" data-mode="reference" data-unit-id="" data-root="../../index.html"><a class="skip" href="#main">رفتن به متن</a>
+<header class="topbar"><a class="brand" href="../../index.html" data-book-link>از <bdi dir="ltr">Python</bdi> تا <bdi dir="ltr" class="nowrap">Mini-GPT</bdi></a>
+<div class="header-actions"><nav class="atlas" aria-label="اطلس مسیر"><details><summary>فهرست درس‌ها</summary><div class="atlas-content"><label>پیداکردن درس <input type="search" data-lesson-search placeholder="مثلاً بلوک یا mask"></label><div data-search-results aria-live="polite"></div><div class="atlas-grid"><details><summary>بخش 1 · مسئله را با Python لمس کنیم</summary><a href="../../part-01/index.html" data-book-link>صفحهٔ بخش</a><ol><li><a href="../../part-01/chapter-01/index.html" data-book-link>مسئلهٔ یادگیری</a></li><li><a href="../../part-01/chapter-02/index.html" data-book-link>متن به <bdi dir="ltr">Token</bdi></a></li><li><a href="../../part-01/chapter-03/index.html" data-book-link>اولین ادامه‌دهنده</a></li><li><a href="../../part-01/chapter-04/index.html" data-book-link>شواهد یادگیری</a></li><li><a href="../../part-01/checkpoint.html" data-book-link data-unit="checkpoint-01">ایستگاه عملی</a></li></ol></details><details><summary>بخش 2 · عدد، احتمال و تغییر</summary><a href="../../part-02/index.html" data-book-link>صفحهٔ بخش</a><ol><li><a href="../../part-02/chapter-01/index.html" data-book-link>ساختار عددها</a></li><li><a href="../../part-02/chapter-02/index.html" data-book-link>ترکیب عددها</a></li><li><a href="../../part-02/chapter-03/index.html" data-book-link>از شمارش تا اطمینان</a></li><li><a href="../../part-02/chapter-04/index.html" data-book-link>سنجش پیش‌بینی</a></li><li><a href="../../part-02/chapter-05/index.html" data-book-link>تغییر <bdi dir="ltr">Parameter</bdi></a></li><li><a href="../../part-02/chapter-06/index.html" data-book-link>از محاسبه تا شبکه</a></li><li><a href="../../part-02/checkpoint.html" data-book-link data-unit="checkpoint-02">ایستگاه عملی</a></li></ol></details><details><summary>بخش 3 · ابزار محاسبه و اولین شبکه</summary><a href="../../part-03/index.html" data-book-link>صفحهٔ بخش</a><ol><li><a href="../../part-03/chapter-01/index.html" data-book-link>آشنایی با ابزار</a></li><li><a href="../../part-03/chapter-02/index.html" data-book-link>حساب محورها</a></li><li><a href="../../part-03/chapter-03/index.html" data-book-link>اولین یادگیری عصبی</a></li><li><a href="../../part-03/chapter-04/index.html" data-book-link>گردش داده</a></li><li><a href="../../part-03/checkpoint.html" data-book-link data-unit="checkpoint-03">ایستگاه عملی</a></li></ol></details><details><summary>بخش 4 · متن و نمایش یادگرفتنی</summary><a href="../../part-04/index.html" data-book-link>صفحهٔ بخش</a><ol><li><a href="../../part-04/chapter-01/index.html" data-book-link>متن قابل اعتماد</a></li><li><a href="../../part-04/chapter-02/index.html" data-book-link>نمونهٔ آموزش</a></li><li><a href="../../part-04/chapter-03/index.html" data-book-link>نمایش یادگرفتنی</a></li><li><a href="../../part-04/checkpoint.html" data-book-link data-unit="checkpoint-04">ایستگاه عملی</a></li></ol></details><details><summary>بخش 5 · <bdi dir="ltr">Attention</bdi> تک‌سر</summary><a href="../../part-05/index.html" data-book-link>صفحهٔ بخش</a><ol><li><a href="../../part-05/chapter-01/index.html" data-book-link>پرسش و اطلاعات</a></li><li><a href="../../part-05/chapter-02/index.html" data-book-link><bdi dir="ltr">Attention</bdi> با عدد</a></li><li><a href="../../part-05/chapter-03/index.html" data-book-link>محدودیت اطلاعات</a></li><li><a href="../../part-05/checkpoint.html" data-book-link data-unit="checkpoint-05">ایستگاه عملی</a></li></ol></details><details><summary>بخش 6 · از چند سر تا بلوک</summary><a href="../../part-06/index.html" data-book-link>صفحهٔ بخش</a><ol><li><a href="../../part-06/chapter-01/index.html" data-book-link>چند نگاه هم‌زمان</a></li><li><a href="../../part-06/chapter-02/index.html" data-book-link>پردازش هر موقعیت</a></li><li><a href="../../part-06/chapter-03/index.html" data-book-link>پایداری بلوک</a></li><li><a href="../../part-06/chapter-04/index.html" data-book-link>مونتاژ معماری</a></li><li><a href="../../part-06/checkpoint.html" data-book-link data-unit="checkpoint-06">ایستگاه عملی</a></li></ol></details><details><summary>بخش 7 · مدل زبانی کامل</summary><a href="../../part-07/index.html" data-book-link>صفحهٔ بخش</a><ol><li><a href="../../part-07/chapter-01/index.html" data-book-link>از نمایش به پیش‌بینی</a></li><li><a href="../../part-07/chapter-02/index.html" data-book-link>ردیابی کل مدل</a></li><li><a href="../../part-07/checkpoint.html" data-book-link data-unit="checkpoint-07">ایستگاه عملی</a></li></ol></details><details><summary>بخش 8 · زندگی روزمرهٔ آموزش</summary><a href="../../part-08/index.html" data-book-link>صفحهٔ بخش</a><ol><li><a href="../../part-08/chapter-01/index.html" data-book-link>آموزش روزمره</a></li><li><a href="../../part-08/chapter-02/index.html" data-book-link>ذخیره و ادامه</a></li><li><a href="../../part-08/chapter-03/index.html" data-book-link>خواندن نتیجه</a></li><li><a href="../../part-08/checkpoint.html" data-book-link data-unit="checkpoint-08">ایستگاه عملی</a></li></ol></details><details><summary>بخش 9 · تولید، خرابی و آزمایش</summary><a href="../../part-09/index.html" data-book-link>صفحهٔ بخش</a><ol><li><a href="../../part-09/chapter-01/index.html" data-book-link>یک <bdi dir="ltr">Token</bdi> در هر گام</a></li><li><a href="../../part-09/chapter-02/index.html" data-book-link>کنترل انتخاب</a></li><li><a href="../../part-09/chapter-03/index.html" data-book-link>حدود تولید</a></li><li><a href="../../part-09/chapter-04/index.html" data-book-link>آزمایش علّی و موقعیتی</a></li><li><a href="../../part-09/chapter-05/index.html" data-book-link>کارگاه خطا</a></li><li><a href="../../part-09/checkpoint.html" data-book-link data-unit="checkpoint-09">ایستگاه عملی</a></li></ol></details><details><summary>بخش 10 · ارتباط با مدل‌های بزرگ</summary><a href="../../part-10/index.html" data-book-link>صفحهٔ بخش</a><ol><li><a href="../../part-10/chapter-01/index.html" data-book-link>فراتر از رایانهٔ شخصی</a></li><li><a href="../../part-10/chapter-02/index.html" data-book-link>از ادامه‌دهنده به دستیار</a></li><li><a href="../../part-10/checkpoint.html" data-book-link data-unit="checkpoint-10">ایستگاه عملی</a></li></ol></details></div></div></details></nav><details class="book-tools"><summary>میز کار</summary><nav class="toplinks" aria-label="فضاهای کتاب"><a href="../../guide.html" data-book-link>راهنمای آغاز</a><a href="../../lab.html" data-book-link>آزمایشگاه</a><a href="../../journal.html" data-book-link>دفتر آزمایش</a><a href="../../project.html" data-book-link>پروژه</a><a href="../../glossary.html" data-book-link>واژه‌ها</a><a href="../../api.html" data-book-link>مرجع کد</a></nav></details></div></header>
+<div class="layout"><main id="main"><nav class="breadcrumbs" aria-label="مسیر صفحه"><a href="../../index.html" data-book-link>خانه</a> <span aria-hidden="true">/</span> <span aria-current="page">mini_gpt/README.md</span></nav>
+<header class="page-masthead"><p class="eyebrow">از Python تا Mini-GPT</p><h1>mini_gpt/README.md</h1></header><div class="page-content"><p>این فایل مرجع است. متن فارسی درون کد ممکن است به‌علت چیدمان چپ‌به‌راست جدا دیده شود؛ نسخهٔ دانلودی <a class="term-link" id="term-ref-utf-8-1" data-term="utf-8" href="../../glossary/utf-8.html?return=..%2Fcode%2Fmini_gpt%2FREADME.md.html%23term-ref-utf-8-1" title="توضیح UTF-8"><bdi dir="ltr">UTF-8</bdi></a> است.</p><p><a href="../../api.html" data-book-link>توضیح نام‌ها و دستورها</a> · <a href="../../project.html" data-book-link>دریافت همهٔ فایل‌ها</a></p><pre data-code-language="text"><code># Mini-GPT؛ پروژه‌ای برای فهمیدن و تغییر دادن
+
+این برنامه یک مدل زبانی **نویسه‌ای** است: هر نویسه، حتی فاصله، یک نشانه است و برنامه با دیدن گذشته، نشانهٔ بعدی را پیش‌بینی می‌کند. مدل زبانی یعنی تابعی که برای ادامه‌های ممکن امتیاز می‌سازد؛ آموزش یعنی تغییر عددهای درون آن با متن نمونه. هدف، یادگیری سازوکار است، نه ساخت دستیار دانا یا تولید متن قابل اعتماد.
+
+کتاب از `dist/index.html` در مخزن اصلی آغاز می‌شود. نسخه‌های تدریجی در [stages/README.md](stages/README.md) و دفتر شخصی در [learning-log.md](learning-log.md) هستند. اگر فقط ZIP پروژه را دارید، کد و داده کامل است؛ خود کتاب در آن بسته نیست.
+
+راهنمای نصب کامل Windows: [WINDOWS_SETUP.md](../docs/WINDOWS_SETUP.md). نسخهٔ مرورگری همین راهنما در کتاب با نام «نصب و اجرای کتاب در Windows» است.
+
+## پیش از نصب
+
+Python در حد تابع، کلاس، فهرست و فایل کافی است. بخش‌های مقدماتی کتاب و نسخهٔ صفر به PyTorch احتیاج ندارند. PyTorch کتابخانهٔ محاسبه روی آرایه‌های عددی و مشتق‌گیری خودکار است؛ کتاب آن را از ابتدا آموزش می‌دهد. CPU پردازندهٔ مرکزی رایانه است؛ اجرای کوچک روی آن کافی است. GPU پردازندهٔ گرافیکی و CUDA محیط محاسبهٔ کارت‌های سازگار NVIDIA است؛ اختیاری‌اند.
+
+فرمان‌ها را از **ریشهٔ پروژه** بزنید: پوشه‌ای که `requirements.txt`، `data/` و `mini_gpt/` کنار هم‌اند، نه از داخل `mini_gpt/`.
+
+```powershell
+python -m venv .venv
+.venv\Scripts\python.exe -m pip install --upgrade pip
+.venv\Scripts\python.exe -m pip install torch==2.14.0 --index-url https://download.pytorch.org/whl/cpu
+.venv\Scripts\python.exe -c &quot;import torch; print(torch.__version__)&quot;
+.venv\Scripts\python.exe -m mini_gpt.smoke_test
+```
+
+`venv` محیط جدا برای بسته‌های پروژه می‌سازد؛ `pip` نصب‌کننده است؛ `-m` ماژول را اجرا می‌کند. نیاز به فعال‌سازی محیط نیست. در Linux/macOS مسیر مفسر `.venv/bin/python` است. پیش از فرمان‌های کوتاه بعدی، محیط را طبق راهنمای Windows فعال کنید؛ در PowerShell با `.\\.venv\\Scripts\\Activate.ps1` و در CMD با `.venv\\Scripts\\activate.bat`. اگر فعال‌سازی مسدود بود، هر `python` را با `.venv\\Scripts\\python.exe` جایگزین کنید؛ نیازی به تغییر سیاست امنیتی نیست.
+
+محیط آزموده‌شدهٔ این ویرایش: Python 3.11 و PyTorch 2.14.0+cpu روی Windows. دامنهٔ requirements نسخه‌های ۲٫۶ تا پیش از ۳ است؛ همهٔ ترکیب‌ها آزموده نشده‌اند. نسخهٔ ۲٫۵٫۱ فقط محیط آزمون ویرایش قبلی بود و دیگر برای نصب پیشنهاد نمی‌شود. طبق [هشدار امنیتی رسمی PyTorch](https://github.com/pytorch/pytorch/security/advisories/GHSA-53q9-r3pm-6pq6)، در نسخه‌های تا ۲٫۵٫۱ حتی بارگذاری محدود با `weights_only=True` آسیب‌پذیری شناخته‌شده داشت؛ اصلاح آن از ۲٫۶ آمده است. این به معنی امن‌بودن فایل ناشناس نیست. نصب دقیق نسخهٔ CPU آزموده‌شده:
+
+```powershell
+.venv\Scripts\python.exe -m pip install torch==2.14.0 --index-url https://download.pytorch.org/whl/cpu
+```
+
+نصب به اینترنت نیاز دارد، اجرای محلی بعد از نصب نه. برای نسخهٔ مناسب CUDA به راهنمای رسمی نصب PyTorch رجوع کنید؛ درخواست صریح `--device cuda` روی دستگاه فاقد آن با خطای روشن رد می‌شود. `auto` اگر CUDA موجود باشد از آن استفاده می‌کند؛ پیش‌فرض عمداً `cpu` است.
+
+## فایل‌ها چه می‌کنند؟
+
+| فایل | مسئولیت |
+|---|---|
+| config.py | تنظیمات معماری و بررسی سازگاری اندازه‌ها |
+| tokenizer.py | نگاشت نویسه↔شناسه، ناشناخته، ذخیرهٔ واژگان |
+| data.py | خواندن UTF-8، جداکردن متن و ثبت اثر انگشت محتوا |
+| dataset.py | ساخت پنجرهٔ ورودی و هدف یک‌خانه جلوتر |
+| attention.py | محاسبهٔ پرسش/کلید/محتوا، پوشش آینده و چند سر |
+| transformer.py | شبکهٔ پیش‌خور و یک بلوک با دو مسیر جمع |
+| model.py | اتصال جدول‌های نمایش، بلوک‌ها، خروجی و تولید مرحله‌ای |
+| sampling.py | انتخاب نشانه با بیشینه، دما، k گزینه یا جرم احتمال p |
+| console.py | خروجی UTF-8 در مرز اجرای CLI، بدون وابستگی به PyTorch |
+| runtime.py | انتخاب دستگاه و بذرهای تصادفی |
+| checkpoint.py | ذخیره و بارگذاری مستقل مدل و وضعیت آموزش |
+| train.py | آموزش گام‌محور، ارزیابی، گزارش و ادامه |
+| evaluate.py | سنجش خطا بدون تغییر وزن |
+| generate.py | تولید متن از فایل ذخیره‌شده |
+| experiments.py | آزمایش‌های کوتاهِ حذف جزء، خطا و حفظ یک دسته |
+| inspect.py | خروجی خوانای محاسبات واقعی checkpoint برای کاوش محلی |
+| schedule.py | محاسبهٔ نرخ یادگیری هر گام با افق ثابت |
+| milestones.py | ۲۳ ایستگاه اجرایی؛ از شمارش تا مدل یکپارچه |
+| stages/ | نسخه‌های قابل اجرای v0 تا v8 |
+| ../tests/ | آزمون‌های رفتاری و بازگشتی |
+
+## قرارداد عددها و معماری
+
+تنسور (Tensor) آرایهٔ چندمحوری عددهاست. Shape شکل آن، یعنی اندازهٔ هر محور است. قرارداد کتاب:
+
+| نماد | معنی |
+|---|---|
+| B | تعداد متن‌ها در یک دسته (Batch) |
+| T | تعداد نشانهٔ در دسترس در هر متن؛ طول زمینه (Context) |
+| C | تعداد ویژگی‌های نمایش هر نشانه |
+| H | تعداد سرهای توجه؛ نگاه‌های آموختنی موازی |
+| D | ویژگی هر سر؛ برابر C/H |
+| V | اندازهٔ واژگان شامل نشانهٔ ناشناخته |
+| L | تعداد بلوک‌های پشت سر هم |
+
+```text
+text → tokenizer → IDs (B,T)
+   → token embedding + position embedding (B,T,C)
+   → L Transformer blocks (B,T,C)
+   → final LayerNorm → head → logits (B,T,V)
+                       ↙                    ↘
+              shifted targets          last position
+                    ↓                        ↓
+             cross entropy       probabilities → next ID
+```
+
+نشانه‌بند (Tokenizer) نویسه را به شناسهٔ یک سطر تبدیل می‌کند. Embedding نمایش عددی یادگرفتنی آن سطر است؛ نمایش موقعیت، شمارهٔ جایگاه را اضافه می‌کند. Transformer block بلوک مبتنی بر توجه است. Attention توجه محاسباتی یعنی ترکیب وزن‌دار اطلاعات موقعیت‌های مجاز، نه توجه انسانی. Logits امتیازهای خام‌اند، نه احتمال. Head لایهٔ خروجی است که C ویژگی را به V امتیاز تبدیل می‌کند. Softmax این امتیازها را به احتمال‌های نامنفی با جمع یک تبدیل می‌کند؛ در آموزش به‌صورت جدا پیش از تابع خطا استفاده نمی‌شود.
+
+یک بلوک:
+
+```text
+a = x + Attention(LayerNorm(x))
+output = a + FeedForward(LayerNorm(a))
+```
+
+LayerNorm میانگین و واریانس ویژگی‌های همان موقعیت را تنظیم می‌کند؛ محور زمان را مخلوط نمی‌کند. Residual connection مسیر جمع مستقیم ورودی است. FeedForward شبکهٔ پیش‌خور مستقل در هر موقعیت، با تبدیل C→4C، فعال‌سازی غیرخطی GELU و تبدیل 4C→C است. GELU مقدار ورودی را به‌صورت نرم وزن می‌دهد تا ترکیب صرفاً خطی نباشد. ترتیب نرمال‌سازی پیش از زیرلایه، Pre-Norm نام دارد. Dropout حذف تصادفی بعضی مؤلفه‌ها در آموزش است؛ در ارزیابی خاموش می‌شود.
+
+در توجه، Query پرسش، Key کلید تطبیق و Value محتوای قابل انتقال‌اند؛ همه از نمایش ورودی با وزن‌های یادگرفتنی ساخته می‌شوند. شکل هرکدام `(B,H,T,D)`، امتیاز `(B,H,T,T)` و خروجی اتصال سرها `(B,T,C)` است:
+
+```text
+scores = Q @ K.transpose(-2,-1) / sqrt(D)
+weights = softmax(scores with forbidden future positions set to -inf)
+output = weights @ V
+```
+
+پوشش علّی (Causal mask) فقط خود موقعیت و گذشته را مجاز می‌کند. تقسیم بر ریشهٔ D رشد مقیاس ضرب داخلی را تحت فرض‌های مشخص مهار می‌کند؛ قضیه‌ای دربارهٔ هر توزیع آموزش‌دیده نیست. وزن توجهِ قابل مشاهده پیش از dropout بازگردانده می‌شود و جمع سطرش یک است؛ پس از dropout دیگر لزوماً چنین نیست.
+
+## داده و شیفت هدف
+
+متن UTF-8 را در `data/my_text.txt` بگذارید. UTF-8 قرارداد ذخیرهٔ نویسه‌ها در بایت است. داده را با اجازه و بدون اطلاعات حساس گردآوری کنید. ۹۰٪ آغاز برای آموزش و ۱۰٪ پایان برای ارزیابی میانی است. واژگان **فقط از بخش آموزش** ساخته می‌شود. پنجره‌ها از مرز دو بخش عبور نمی‌کنند. هر بخش باید بیش از T نویسه داشته باشد.
+
+```text
+متن شناسه‌ای: [1,2,3,4,5]
+T=3
+x=[1,2,3]  y=[2,3,4]
+x=[2,3,4]  y=[3,4,5]
+```
+
+هدف (Target) یک خانه جلوتر است؛ اگر `y=x` بگذارید مسئله را عوض کرده‌اید. شناسهٔ صفر برای ناشناخته است؛ رمزگشایی آن `�` نشان می‌دهد. حرف ندیده را نمی‌توان به‌طور دقیق بازسازی کرد. نرخ ناشناخته در ارزیابی گزارش می‌شود. تغییر خودکار «ي/ی»، «ك/ک» یا نیم‌فاصله انجام نمی‌دهیم؛ پاک‌سازی آگاهانه را **پیش از شروع اجرا** انجام دهید و بعد پیکره را تغییر ندهید.
+
+این تقسیم ساده آزمون نهایی مستقل و جداسازی سندی ندارد. تکرار متن در دو بخش می‌تواند ارزیابی را خوش‌بینانه کند. `data/sample.txt` فقط برای آموزش روش و آزمون اجراست، نه سنجش کیفیت عمومی زبان.
+
+## آموزش نخست
+
+Loss یا زیان، عدد سنجش بدی پیش‌بینی است. اینجا Cross entropy یا آنتروپی متقاطع، میانگین منفی لگاریتم احتمال نشانهٔ درست است. Gradient بردار مشتق‌های این عدد نسبت به وزن‌هاست. Backpropagation محاسبهٔ همین مشتق با قاعدهٔ زنجیره‌ای است. Optimizer روش تغییر وزن با مشتق است؛ AdamW از میانگین مشتق‌ها و کاهش تدریجی وزن استفاده می‌کند. Learning rate اندازهٔ پایهٔ گام است.
+
+```sh
+python -m mini_gpt.train --text data/sample.txt --output runs/first --steps 100 --context-length 16 --embedding-dim 32 --num-heads 4 --num-layers 2 --batch-size 8 --eval-every 20 --device cpu
+```
+
+Step یک به‌روزرسانی وزن است. هر گام یک دسته از پنجره‌ها را تصادفی با امکان تکرار می‌گیرد. این آموزش گام‌محور است؛ Epoch یعنی یک دور کامل داده، اما این حلقه دورهای کامل را تعریف نمی‌کند. انتظار نداشته باشید در ۱۰۰ گام متن خوب تولید شود. با دادهٔ کوچک، حفظ‌کردن یا تکرار خروجی طبیعی است.
+
+پوشهٔ خروجی آموزش تازه باید خالی یا ناموجود باشد. برنامه فایل‌های شما را خاموش بازنویسی نمی‌کند. خروجی:
+
+- `last.pt`: وضعیت آخرین ارزیابی، نه آخرین گام پیش از قطع ناگهانی.
+- `best.pt`: بهترین خطای ارزیابی بین دفعات واقعاً سنجیده‌شده.
+- `tokenizer.json`: واژگان خوانا برای بررسی؛ مرجع تولید، واژگان **داخل** checkpoint است.
+- `metrics.csv`: جدول متنی گام، خطای دستهٔ آموزش، خطای کل ارزیابی، اندازهٔ مشتق پیش از محدودسازی و نرخ یادگیریِ همان به‌روزرسانی.
+
+Checkpoint عکس قابل بازیابی از آموزش است. فرمت نسخهٔ ۲ شامل معماری، واژگان، وزن‌ها، وضعیت بهینه‌ساز، گام، مشخصات داده و حالت مولدهای تصادفی است. ابتدا فایل موقت نوشته و سپس جایگزین می‌شود. checkpoint نسخهٔ نخست بدون واژگان داخلی رد می‌شود؛ به‌طور خاموش با نگاشت متفاوت بارگذاری نمی‌شود.
+
+## گزینه‌های آموزش
+
+| گزینه | پیش‌فرض | معنی و محدودیت |
+|---|---:|---|
+| `--text` | data/sample.txt | مسیر پیکرهٔ UTF-8 |
+| `--output` | checkpoints | پوشهٔ خروجی |
+| `--steps` | 300 | تعداد کل گام هدف، حتی هنگام ادامه |
+| `--context-length` | 64 | T؛ حداکثر طول ورودی هر بار |
+| `--embedding-dim` | 96 | C؛ ویژگی هر نمایش |
+| `--num-heads` | 4 | H؛ باید مقسوم‌علیه C باشد |
+| `--num-layers` | 3 | L؛ تعداد بلوک‌ها |
+| `--dropout` | 0.1 | احتمال حذف در آموزش، از صفر تا کمتر از یک |
+| `--batch-size` | 16 | B؛ تعداد پنجره‌های هر گام |
+| `--learning-rate` | 0.0003 | نرخ مثبت و متناهی AdamW |
+| `--train-fraction` | 0.9 | سهم آغازین آموزش، بین صفر و یک |
+| `--eval-every` | 50 | فاصلهٔ ارزیابی؛ گام اول و آخر هم سنجیده می‌شوند |
+| `--seed` | 1337 | بذر شروع آزمایش؛ در ادامه حالت ذخیره‌شده مرجع است |
+| `--threads` | 2 | تعداد رشته‌های محاسبات CPU؛ بیشتر همیشه سریع‌تر نیست |
+| `--device` | cpu | cpu، cuda یا انتخاب auto |
+| `--resume` | ندارد | مسیر last.pt برای ادامهٔ همان پوشه |
+| `--schedule` | constant | نرخ ثابت یا cosine با کاهش کسینوسی |
+| `--warmup-steps` | 0 | گام‌های افزایش تدریجی نرخ تا نرخ پایه |
+| `--decay-steps` | 0 | برای cosine الزامی؛ پایان کاهش، بزرگ‌تر از warmup |
+| `--min-lr-ratio` | 0.1 | نسبت نرخ نهایی به نرخ پایه؛ بین صفر و یک |
+
+V گزینهٔ عددی مستقل نیست: از متن آموزش ساخته می‌شود تا مدل و نگاشت واژگان هماهنگ بمانند. در استفادهٔ مستقیم از کلاس ModelConfig می‌توان V را مشخص کرد، اما باید با tokenizer منطبق باشد. کاهش وزن ۰٫۰۱ روی همهٔ پارامترها و سقف اندازهٔ مشتق ۱ در کد ثابت‌اند؛ تغییرشان آزمایش آگاهانه در کد است.
+
+## نرخ یادگیری در طول مسیر
+
+زمان‌بندی نرخ (Learning-rate schedule) دستور تغییر اندازهٔ گام در طول آموزش است. بهینه‌ساز می‌گوید «با مشتق چه کنیم»؛ زمان‌بندی می‌گوید «امروز قدم چقدر بلند باشد». Warmup یا گرم‌کردن، نرخ را طی W گام نخست از `base/W` تا نرخ پایه افزایش می‌دهد. پس از آن، برنامهٔ cosine با منحنی کسینوسی تا گام D به نسبت نهایی می‌رسد و از آن به بعد ثابت می‌ماند.
+
+```sh
+python -m mini_gpt.train --text data/sample.txt --output runs/scheduled --steps 100 --context-length 16 --embedding-dim 32 --num-heads 4 --num-layers 2 --batch-size 8 --learning-rate 0.001 --schedule cosine --warmup-steps 10 --decay-steps 100 --min-lr-ratio 0.1 --eval-every 20
+python -m mini_gpt.train --text data/sample.txt --output runs/scheduled --resume runs/scheduled/last.pt --steps 120 --eval-every 20
+```
+
+در این مثال گام ۱ نرخ ۰٫۰۰۰۱، گام ۱۰ نرخ ۰٫۰۰۱ و گام ۱۰۰ نرخ ۰٫۰۰۰۱ دارد. گام‌های ۱۰۱ تا ۱۲۰ همان نرخ نهایی را دارند. **افق D از تعداد گام هدف مستقل است**؛ ادامه‌دادن آموزش به گذشته دست نمی‌زند و منحنی را کش نمی‌دهد. برای شروع اجرای کوتاهِ بخشی از یک برنامهٔ بلند، همان ابتدا افق بلند را صریح بدهید. هنگام ادامه، هر چهار گزینهٔ زمان‌بندی را حذف کنید؛ مقدار ذخیره‌شده بازیابی می‌شود.
+
+در فرمول، s شمارهٔ گامِ به‌روزرسانی از ۱ است. برای `s≤W` نرخ `base*s/W` است؛ در برنامهٔ کسینوسی پس از W، با `u=min(1,(s-W)/(D-W))` نسبت نرخ برابر `r+(1-r)*(1+cos(pi*u))/2` می‌شود. اگر W صفر باشد گرم‌کردن نداریم و از اولین گام وارد منحنی می‌شویم. برای برنامهٔ ثابت، گرم‌کردن اختیاری است و بعد از آن نرخ پایه ثابت می‌ماند. برنامهٔ ثابت مقدار decay را قبول نمی‌کند؛ گزینهٔ بی‌اثر را پنهان نمی‌کنیم.
+
+وضعیت زمان‌بندی فقط شمارهٔ گام و تنظیمات ثابت است؛ متغیر مخفی دیگری ندارد. این‌ها داخل checkpoint هستند و نرخ واقعی هر گامِ گزارش در CSV ثبت می‌شود. اجرای قدیمی با چهار ستون همچنان قابل ادامه است و همان قالب قبلی را نگه می‌دارد. برابری دقیق CPU برای اجرای کسینوسی ۳+۵ گام و ۸ گام پیوسته، با حذف تصادفی فعال و افق کاهش ۶، آزموده شده است.
+
+## ارزیابی و ادامه
+
+```sh
+python -m mini_gpt.evaluate --checkpoint runs/first/best.pt --text data/sample.txt --device cpu
+python -m mini_gpt.train --text data/sample.txt --output runs/first --resume runs/first/last.pt --steps 150 --eval-every 20 --device cpu
+```
+
+دستور دوم **۵۰ گام دیگر** بعد از ۱۰۰ گام اجرا می‌کند، نه ۱۵۰ گام اضافه. ادامه فقط از `last.pt` همان پوشه انجام می‌شود تا گزارش‌ها و بهترین وضعیت با هم ناسازگار نشوند. برای انتقال دستگاه، پوشهٔ اجرا را کامل انتقال دهید. از checkpoint قدیمی‌تر در گزارش جدیدتر ادامه ندهید؛ برنامه این حالت را رد می‌کند. هنگام resume تنظیمات معماری، دسته، نرخ و سهم آموزش را دوباره ندهید؛ از فایل بازیابی می‌شوند. تغییر پیکره با اثر انگشت محتوا تشخیص داده و رد می‌شود.
+
+برای بازتولید دقیق، نسخهٔ PyTorch، دستگاه و threads را هم یکسان نگه دارید. آزمون CPU همسانِ پروژه اجرای ۴+۲ و ۶ گام را با dropout مقایسه می‌کند. روی GPU یا محیط متفاوت برابری بیت‌به‌بیت تضمین نیست؛ امکان ادامه با وعدهٔ بازتولید دقیق متفاوت است.
+
+ارزیابی حالت eval و no_grad را به کار می‌گیرد: اولی رفتار لایه‌ها را تنظیم می‌کند و دومی ثبت مشتق را خاموش می‌کند. وزن‌ها تغییر نمی‌کنند. میانگین با تعداد هدف هر دسته وزن‌دهی می‌شود؛ دستهٔ آخر کوچک، وزن یک دستهٔ کامل را نمی‌گیرد. Perplexity نمایی از همین میانگین خطاست؛ به نشانه‌بند وابسته است و میان پیکره‌ها یا نوع‌های نشانه‌بندی مستقیماً قابل مقایسه نیست.
+
+ارزیابی همهٔ پنجره‌های هم‌پوشان بخش کنارگذاشته‌شده است؛ بعضی نشانه‌ها در زمینه‌های مختلف تکرار می‌شوند. این معیار با یک عبورِ بدون هم‌پوشانی یکی نیست. حالت `--text` عمداً اثر انگشت پیکرهٔ اصلی را بررسی می‌کند. برای Test مستقل از `--test-text data/test.txt` استفاده کنید؛ این حالت کل فایل UTF-8 را با همان Vocabulary ذخیره‌شده می‌خواند و نرخ ناشناخته را گزارش می‌دهد. فایل باید از context_length بلندتر باشد. فایل نمونهٔ Test همراه پروژه نیست؛ سندهای مستقل خودتان را پیش از انتخاب تنظیمات کنار بگذارید. تفاوت نام یا اثر انگشت فایل استقلال محتوا را تضمین نمی‌کند.
+
+## تولید متن
+
+Prompt متن آغازین است. Sampling نمونه‌گیری، یعنی انتخاب تصادفی از احتمال‌های ادامه است. Greedy انتخاب حریصانه، یعنی همیشه بیشترین امتیاز. Temperature دمای نمونه‌گیری است: امتیازها بر عدد مثبت دما تقسیم می‌شوند؛ دمای کمتر معمولاً توزیع را متمرکزتر می‌کند، اما دانش تازه‌ای به مدل نمی‌دهد.
+
+```sh
+python -m mini_gpt.generate --checkpoint runs/first/best.pt --prompt &quot;مدل &quot; --tokens 80 --greedy
+python -m mini_gpt.generate --checkpoint runs/first/best.pt --prompt &quot;مدل &quot; --tokens 80 --temperature 0.8 --top-k 10 --seed 12
+python -m mini_gpt.generate --checkpoint runs/first/best.pt --prompt &quot;مدل &quot; --tokens 80 --temperature 1.1 --top-p 0.9 --seed 12
+```
+
+`--tokens` تعداد نویسهٔ تازه است. Top-k فقط k نامزد با بیشترین امتیاز را نگه می‌دارد (اگر k&gt;V، همه). در تساوی، روش فیلتر دقیقاً k خانه نگه می‌دارد؛ هویت گزینه‌های مرزی به ترتیب topk وابسته است. `top-k=1` و greedy به‌طور قراردادی از argmax با انتخاب اولین اندیس مساوی استفاده می‌کنند.
+
+Top-p کوچک‌ترین پیشوند مرتب احتمال را نگه می‌دارد که مجموعش به p برسد یا عبور کند؛ گزینهٔ عبورکننده حذف نمی‌شود. p در `(0,1]` است. اگر k و p هر دو داده شوند، ابتدا k و سپس p روی توزیع محدودشده اعمال می‌شود. هیچ‌کدام وزن شبکه را تغییر نمی‌دهد.
+
+متن آغازین نباید خالی باشد. حرف ندیده هشدار می‌گیرد و به ناشناخته تبدیل می‌شود. اگر ورودی از زمینه بلندتر باشد، برای هر پیش‌بینی فقط T نویسهٔ آخر دیده می‌شود، اما خروجی کل متن اولیه را نگه می‌دارد. شمارهٔ موقعیت هر پنجره از صفر شروع می‌شود؛ حافظهٔ دائمی یا حافظهٔ موقت K/V نداریم. مدل برای هر نشانه پنجره را دوباره محاسبه می‌کند.
+
+فایل checkpoint را فقط از منبع مورد اعتماد بخوانید. `weights_only=True` ساخت اشیای دلخواه Python را محدود می‌کند، ولی مجوز اعتماد به فایل ناشناس نیست.
+
+## داخل مدل واقعی را ببینید
+
+Inspection یعنی بازرسی عددهای میانی؛ مانند گذاشتن پنجره‌ای روی مسیر محاسبه. ابزار زیر همان checkpoint خودتان را می‌خواند و فایل JSON می‌سازد. JSON قالب متنی داده است؛ می‌توانید آن را در کاوشگر کتاب وارد کنید یا با ویرایشگر بخوانید. هیچ وزن یا متن به سرویس بیرونی فرستاده نمی‌شود.
+
+```sh
+python -m mini_gpt.inspect --checkpoint runs/first/best.pt --prompt &quot;مدل &quot; --output runs/first/inspection.json --layer 0 --head 0 --max-tokens 16 --generate-tokens 4 --metrics runs/first/metrics.csv --device cpu
+```
+
+خروجی شامل نویسه‌ها و شناسه‌ها، بردار نشانه و موقعیت و جمعشان، Q/K/V یک سر انتخابی، ضرب داخلی خام و تقسیم‌شده، پوشش آینده، وزن‌های توجه، جمع وزن‌دار محتوا، همهٔ امتیازها و احتمال‌های خروجی و چهار گام تولید است. شمارهٔ لایه و سر از صفر آغاز می‌شود. خلاصهٔ شکل همهٔ بلوک‌ها نیز همراه آن است. این‌ها از همان مسیر `forward` استخراج می‌شوند؛ فرمول جداگانه‌ای برای نمایش، جای مدل اصلی ننشسته است. واژهٔ انگلیسی forward یعنی محاسبهٔ رو‌به‌جلو از ورودی تا خروجی.
+
+`--max-tokens` بین ۱ و ۶۴ است؛ ابزار کوچک‌ترِ این مقدار و زمینهٔ مدل را می‌گیرد. اگر متن بلندتر باشد فقط انتهای آن در محاسبه دیده می‌شود و این بریدن در فایل ثبت می‌شود. تولیدِ بازرسی نیز همین زمینهٔ محدود را دارد؛ اگر آن را کمتر از زمینهٔ اصلی بگذارید، الزاماً با فرمان generate نتیجهٔ یکسان نمی‌دهد. `--generate-tokens` از صفر تا چهار است. گزینه‌های دما، k، p، انتخاب حریصانه و بذر همان معنای فرمان تولید را دارند. `--metrics` اختیاری است؛ اگر گزارش اجرا را بدهید منحنی‌های آن هم همراه دادهٔ بازرسی خواهند بود.
+
+حالت مدل هنگام بازرسی `eval` است، پس حذف تصادفی خاموش است. خانهٔ امتیازِ ممنوع در JSON مقدار `null` دارد، یعنی در فایل عدد عادی برایش ثبت نشده؛ پوشش بولی می‌گوید ممنوع است و در محاسبه مقدار منفی بی‌نهایت داشته است. وزن آن خانه صفر است. این با «امتیاز صفر» فرق دارد. احتمال خام softmax با احتمال روش نمونه‌گیری یکی نیست؛ دما یا حذف نامزدها دومی را تغییر می‌دهد و هر دو در فایل ثبت می‌شوند.
+
+ابزار از بازنویسی فایل موجود جلوگیری می‌کند؛ تنها با `--force` آن خروجی را جایگزین کنید. نام فایل checkpoint، اثر انگشت SHA-256 آن، شمارهٔ گام آموزش، نسخهٔ PyTorch، تنظیمات و اطلاعات پیکره در خروجی ثبت می‌شوند. فایل خروجی می‌تواند متن prompt شما را داشته باشد؛ پیش از اشتراک‌گذاری محتوا را بررسی کنید. یک نقشهٔ توجه جذاب، به‌تنهایی اثبات نمی‌کند «چرا» مدل آن پاسخ را داده است؛ تنها ضرایب یکی از محاسبات را نشان می‌دهد.
+
+## آزمایش و خطایابی
+
+پیش از هر آزمایش، حدس را در دفتر ثبت کنید. فقط یک عامل را تغییر دهید.
+
+```sh
+python -m mini_gpt.experiments attention
+python -m mini_gpt.experiments future
+python -m mini_gpt.experiments positions
+python -m mini_gpt.experiments residual
+python -m mini_gpt.experiments normalization
+python -m mini_gpt.experiments gradients
+python -m mini_gpt.experiments shapes
+python -m mini_gpt.experiments overfit
+python -m mini_gpt.experiments sampling
+python -m mini_gpt.experiments network
+python -m unittest discover -s tests -v
+```
+
+| نشانه | تشخیص | اصلاح و شاهد |
+|---|---|---|
+| بسته پیدا نمی‌شود | `sys.executable` و مسیر نصب را مقایسه کنید | pip را با همان مفسر اجرا کنید |
+| ضرب شکل ناسازگار | دو محور آخر Q/K را چاپ کنید | K را ترانهاده کنید؛ D محور جمع داخلی است |
+| شکل درست، مقدار غلط | دادهٔ ترتیبی در reshape/transpose دنبال کنید | جابه‌جایی T/H را قبل از ادغام انجام دهید |
+| دستگاه متفاوت | device شناسه، هدف و وزن را چاپ کنید | همه به یک دستگاه؛ دوباره forward را بسنجید |
+| NaN یا عدد نامعتبر | سطر پوشش کاملاً ممنوع، نرخ زیاد یا loss نامتناهی؟ | قطر پوشش را نگه دارید؛ هر اصلاح را جدا بسنجید |
+| خطای کم، تولید نامنسجم | y=x، دسترسی به آینده، تکرار داده؟ | shift و آزمون future؛ معیار آموزش کافی نیست |
+| خطا کم نمی‌شود | grad موجود؟ وزن پس از step عوض شد؟ | اول overfit یک دسته را امتحان کنید |
+| مشتق بزرگ یا بسیار کوچک | norm چند لایه را در چند گام ثبت کنید | نرخ، مسیر جمع و داده را جدا بررسی کنید |
+| تولید تکراری | greedy، دادهٔ تکراری یا مدل ناآموخته؟ | نمونه‌گیری و داده را مقایسه کنید؛ دما درمان کمبود دانش نیست |
+| متن بعد از بارگذاری بی‌معنی | نگاشت واژگان و وزن جفت‌اند؟ | نگاشت داخل checkpoint مرجع است؛ json کناری را جابه‌جا نکنید |
+
+حذف موقعیت لزوماً تمام حساسیت به ترتیب را حذف نمی‌کند؛ پوشش علّی خودش ساختار نامتقارن دارد. آزمایش روی وزن تصادفی دربارهٔ دسترسی اطلاعات شاهد می‌دهد، نه برتری کیفیتِ مدل آموزش‌دیده.
+
+آزمایش normalization دو نسخه با وزن‌های یکسان می‌سازد و در یکی همهٔ LayerNormها را با Identity، یعنی عبور بدون تغییر، جایگزین می‌کند. خطا، پراکندگی امتیاز و اندازهٔ مشتق نمایش را چاپ می‌کند. قبل از اجرا حدس بزنید: «مقیاس عوض می‌شود یا حتماً یادگیری شکست می‌خورد؟» این آزمایشِ یک دسته فقط فرض اول را مستقیماً بررسی می‌کند؛ برای حکم دربارهٔ یادگیری باید هر دو نسخه را چند بذر و چند گام آموزش دهید.
+
+## محدودیت‌های عمدی و کار بعدی
+
+نشانه‌بند زیرواژه‌ای، توجه بهینهٔ سخت‌افزاری، آموزش چنددستگاهی، حافظهٔ موقت K/V، تنظیم با دستور و پاسخ و پایان خودکار متن پیاده نشده‌اند. کتاب مفهوم آن‌ها را پس از هسته معرفی می‌کند. زمان‌بندی ساده و بازرسی واقعی در این ویرایش اجرایی‌اند. ساده‌بودن پروژه اجازه می‌دهد هر ضرب را ببینید. در هر گسترش، اول سؤال و آزمون بنویسید، سپس کد؛ یک تغییر کوچکِ فهمیده‌شده بهتر از چند قابلیتِ توضیح‌ناپذیر است.
+
+
+دفترهای آزمایش تعاملی از همین کد استفاده می‌کنند: [راهنمای Jupyter](../docs/NOTEBOOKS.md). هیچ Checkpoint مشترک پنهانی میان دفترها لازم نیست.</code></pre><nav class="pager learning-continuation" aria-label="ادامهٔ مسیر یادگیری"><div class="next-step"><p class="eyebrow">گام بعد <span></span></p><p class="next-context">جدول‌های عددی و <bdi dir="ltr">Derivative</bdi>‌ها را به یک ابزار بسپاریم، بی‌آنکه معنای آن‌ها را فراموش کنیم.</p><a rel="next" data-next-step href="../../part-03/chapter-01/13-torch.html" data-book-link data-unit="13-torch">کد را در یک مسئله دنبال کنید: <bdi dir="ltr">PyTorch</bdi> چرا به کارمان می‌آید؟</a></div><div class="nearby-steps"><a data-return-section href="../index.html" data-book-link>همهٔ فایل‌های مرجع</a></div></nav></div><div class="reading-finish"><a href="../../journal.html" data-book-link>ثبت در دفتر آزمایش</a></div><details class="progress-panel"><summary>پیشرفت مسیر <span data-progress-count>0 / 86</span></summary><div class="progress-tools"><progress value="0" max="86" aria-label="درس‌ها و ایستگاه‌های انجام‌شده"></progress><button type="button" data-export>خروجی پیشرفت</button><label class="import-label">ورود پیشرفت <input type="file" accept=".json,application/json" data-import></label></div><details data-export-preview hidden><summary>نسخهٔ متنی پیشرفت؛ اگر دانلود انجام نشد، این JSON را کپی و در فایل نگه دارید</summary><pre><code data-export-code></code></pre></details><p class="progress-note">علامت انجام فقط با انتخاب شما ثبت می‌شود. برای نگهداری مطمئن یا انتقال به مرورگر دیگر، خروجی پیشرفت بگیرید. دفتر آزمایش جداست.</p><p class="status" role="status" aria-live="polite" data-status></p></details><footer class="footer"><span>از یک <a class="term-link" id="term-ref-token-1" data-term="token" href="../../glossary/token.html?return=..%2Fcode%2Fmini_gpt%2FREADME.md.html%23term-ref-token-1" title="توضیح Token"><bdi dir="ltr">Token</bdi></a>، تا یک مدل.</span><a href="../../guide.html" data-book-link>راهنما</a> · <a href="../../api.html" data-book-link>کد و منابع</a></footer></main></div>
+<noscript><p>خواندن و ناوبری بدون JavaScript هم کار می‌کند؛ کپی خودکار و ثبت پیشرفت به آن نیاز دارند.</p></noscript></body></html>

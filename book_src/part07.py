@@ -1,0 +1,119 @@
+from .schema import Lesson
+
+LESSONS = [
+Lesson("43-lm-head",7,"از نمایش به پیش‌بینی","نمایش Cتایی چگونه V امتیاز می‌سازد؟",
+"نمایش درونی هنوز پاسخ نیست؛ آن را به یک امتیاز برای هر نشانهٔ ممکن تبدیل می‌کنیم.",
+"""<p>بردار شانزده‌ویژگیِ آخرین بلوک را نمی‌توان مستقیماً به حرف تبدیل کرد؛ هر مؤلفه‌اش الزاماً نام یک حرف نیست. <dfn>Language-model head (لایهٔ خروجی مدل زبان)</dfn> این نمایش را به امتیاز همهٔ نشانه‌های واژگان می‌برد. با C ویژگی و V نشانه، وزن این لایه شکل (V,C) دارد. پروژه bias خروجی را حذف کرده است؛ این انتخاب اختیاری V پارامتر کم می‌کند.</p>
+<div class="math">hidden(B,T,C) @ W_headᵀ(C,V) → logits(B,T,V)</div>
+<p>hidden نام نمایش خروجی بلوک‌ها پس از نرمال‌سازی نهایی است. logits[b,t,v] امتیاز نشانهٔ v برای موقعیت هدف t در نمونهٔ b است. با قرارداد شیفت، هدف واقعی همان token بعد از ورودی t است. هر سه محور را با معنا بخوانید.</p>
+<p>برای محاسبهٔ cross entropy، محور B و T را به N=B×T ادغام می‌کنیم: امتیازها (N,V) و هدف‌ها (N,). API حالت‌های چندبعدی با محور کلاس دوم نیز دارد؛ صاف‌کردن تنها روش مجاز نیست، اما در کتاب خواناتر است. reshape ترتیب یکسان برای logits و target نگه می‌دارد.</p>
+<p>برای هدف تک‌کلاسهٔ ما، آنتروپی متقاطع همان میانگین منفی لگاریتم احتمال هدف است که قبلاً ساختیم. پیش از cross_entropy، softmax نزنید؛ تابع امتیاز خام را می‌گیرد و لگاریتم احتمال را پایدار محاسبه می‌کند. برای نمایش احتمال یا انتخاب نشانه هنگام تولید، softmax مناسب است. در مرجع، <code>torch.stack</code> شش خطای تکی را روی یک محور تازه کنار هم می‌گذارد تا میانگینشان را با محاسبهٔ یک‌جای دسته مقایسه کنیم.</p>
+<p>برای B=2,T=3، زوج‌های (b,t) به ترتیب (0,0)،(0,1)،(0,2)،(1,0)،(1,1)،(1,2) به سطرهای ۰ تا ۵ می‌روند: شمارهٔ سطر <code>b*T+t</code> است. Logits و Target باید هر دو همین ترتیب را داشته باشند. مثلاً هدف موقعیت (1,0) در سطر ۳ صاف‌شده قرار می‌گیرد؛ تعداد عنصر درست به‌تنهایی تطابق معنایی را ثابت نمی‌کند.</p>""",
+"logits شکل (2,3,5) و هدف شکل (2,3) بسازید. میانگین شش loss جداگانه را با حالت صاف‌شده مقایسه کنید.",
+"دو مقدار باید تقریباً برابر باشند. اگر هدف را با ترتیب دیگری تخت کنید، shape هنوز درست است ولی کلاس‌ها با سطرهای غلط مقایسه می‌شوند.",
+"چرا دیدن عدد منفی در logits نشانهٔ خطا نیست ولی احتمال منفی نامعتبر است؟",
+"این همان چند خط پایانی forward در model.py است؛ دیگر جزء ناشناخته‌ای در مسیر پیش‌بینی نداریم.",
+code="""import torch
+from torch.nn import functional as F
+torch.manual_seed(5)
+logits = torch.randn(2,3,5)
+targets = torch.tensor([[1,2,3],[4,0,1]])
+combined = F.cross_entropy(logits.reshape(6,5),targets.reshape(6))
+separate = torch.stack([F.cross_entropy(logits[b,t][None],targets[b,t][None])
+                        for b in range(2) for t in range(3)]).mean()
+assert torch.allclose(combined,separate)
+print(combined.item())
+""",source="mini_gpt/model.py"),
+Lesson("44-parameters",7,"از نمایش به پیش‌بینی","چند عدد می‌آموزیم و چرا آغاز تصادفی است؟",
+"عدد پارامترها را از ساختمان مدل استخراج می‌کنیم؛ سپس می‌پرسیم این عددها پیش از اولین گام از کجا می‌آیند.",
+"""<p>مدل هنوز آموزش ندیده، اما از قبل هزاران عدد دارد. <dfn>Initialization (مقداردهی اولیه)</dfn> انتخاب همین عددهای آغازین است. اگر واحدهای مشابه با وزن‌های کاملاً یکسان و مسیرهای یکسان شروع کنند، مشتق مشابه می‌گیرند. وزن تصادفی کوچک این تقارن را می‌شکند، نه اینکه از ابتدا «معنای زبان» بداند.</p>
+<p>در پروژه weightهای Linear و Embedding با توزیع نرمال میانگین صفر و انحراف معیار 0.02 آغاز می‌شوند؛ biasها صفرند. LayerNorm با γ=1 و β=0 شروع می‌کند. این یک انتخاب آموزشی قابل اجراست، نه نسخهٔ بهینه برای هر عمق و اندازه.</p>
+<p>جدول نشانه V×C، جدول موقعیت T_max×C و Language-model head بدون bias برابر V×C پارامتر دارند. یک بلوک با QKV ادغام‌شده و bias، FFN و دو LayerNorm در مجموع <code>12C²+13C</code> پارامتر دارد. جمع: <code>2VC+T_max C+L(12C²+13C)+2C</code> که جملهٔ آخر نرمال‌سازی نهایی است.</p>
+<p><dfn>Buffer (تنسور ثبت‌شدهٔ غیرپارامتری)</dfn> مانند causal_mask همراه مدل جابه‌جا می‌شود و در تنظیم پیش‌فرض ذخیره هم می‌شود، ولی بهینه‌ساز آن را آموزش نمی‌دهد. <code>register_buffer</code> چنین داده‌ای را ثبت می‌کند. برای شمارش عددهای قابل آموزش، <code>model.parameters()</code> را جمع بزنید، نه همهٔ state_dict را. یک جدول بزرگ در فایل مدل لزوماً «وزن آموخته» نیست.</p>
+<table><tr><th>جزء یک بلوک</th><th>تعداد Parameter</th></tr><tr><td>QKV: Linear(C,3C)</td><td>3C²+3C</td></tr><tr><td>Output projection: Linear(C,C)</td><td>C²+C</td></tr><tr><td>دو Linear در FFN</td><td>8C²+5C</td></tr><tr><td>دو LayerNorm، هرکدام γ و β</td><td>4C</td></tr><tr><td>جمع</td><td>12C²+13C</td></tr></table><p>Dropout و Causal Mask چیزی به این شمارش نمی‌افزایند. تغییر H با C ثابت، تقسیم ویژگی‌ها را عوض می‌کند نه اندازهٔ Matrixهای QKV و Output projection را.</p>""",
+"تعداد پارامتر برای V=12,T=8,C=16,L=2 را با فرمول و سپس numel مقایسه کنید. سهم جدول‌ها و بلوک‌ها را جدا بنویسید.",
+"فرمول مقدار 7104 می‌دهد: 384 جدول Token Embedding و Language-model head، 128 موقعیت، 6560 دو بلوک و 32 نرمال‌سازی نهایی. پوشش علّی جزو این شمارش نیست.",
+"چرا شمار پارامتر به H وابسته نیست وقتی C ثابت و تقسیم‌پذیر است؟",
+"این شمارش به تصمیم اندازهٔ مدل و تفسیر اثر C/L در آزمایش‌ها کمک می‌کند.",
+code="""from mini_gpt.config import ModelConfig
+from mini_gpt.model import MiniGPT
+V,T,C,L = 12,8,16,2
+model = MiniGPT(ModelConfig(V,T,C,2,L,0))
+formula = 2*V*C + T*C + L*(12*C*C+13*C) + 2*C
+actual = sum(p.numel() for p in model.parameters())
+assert actual == formula
+print(actual)
+"""),
+Lesson("45-trace",7,"ردیابی کل مدل","یک جمله را تا امتیاز بعدی دنبال کنیم",
+"درِ مدل را باز می‌کنیم: هر عدد دیده‌شده باید نام، شکل و نقطهٔ مشخصی در محاسبه داشته باشد.",
+"""<p>وقتی می‌گوییم «مدل چه فکری می‌کند؟»، تعبیر دقیق‌تر این است: از این ورودی چه نمایش‌هایی می‌سازد و به کدام نشانه‌ها چه احتمالی می‌دهد؟ قرار نیست تجربهٔ ذهنی انسان را در چند ماتریس پیدا کنیم. می‌خواهیم مسیر محاسبه را قابل بررسی کنیم.</p>
+<div class="flow">متن → نشانه‌بندی → شناسه‌ها → بردار نشانه + بردار موقعیت → بلوک‌های تبدیل‌گر → نرمال‌سازی نهایی → امتیازها → احتمال‌ها → شناسهٔ انتخاب‌شده → متن ادامه‌یافته</div>
+<p>پیکان متن به شناسه، نگاشت قراردادی است و مشتق ندارد. پیکان شناسه به نمایش، سطرهای جدول قابل آموزش را می‌خواند. جمع موقعیت نشانی ترتیب را اضافه می‌کند. بلوک‌ها اطلاعات گذشته را با توجه ترکیب و ویژگی‌ها را با FFN تبدیل می‌کنند. نرمال‌سازی نهایی مقیاس ویژگی‌ها را آمادهٔ Language-model head می‌کند.</p>
+<p>Language-model head برای هر موقعیت V امتیاز می‌دهد. در آموزش این امتیازها همراه هدف به یک loss تبدیل می‌شوند؛ در تولید فقط امتیاز آخرین موقعیت را به احتمال تبدیل و نشانه انتخاب می‌کنیم. بنابراین مسیر آموزش و مسیر استفاده پس از logits از هم جدا می‌شوند.</p>
+<table><tr><th>ایستگاه</th><th>مثال شکل</th></tr><tr><td>شناسه</td><td>(2,5)</td></tr><tr><td>نمایش</td><td>(2,5,16)</td></tr><tr><td>هر سر با H=2</td><td>(2,2,5,8)</td></tr><tr><td>وزن‌های توجه</td><td>(2,2,5,5)</td></tr><tr><td>ادغام/بلوک</td><td>(2,5,16)</td></tr><tr><td>امتیاز با V=12</td><td>(2,5,12)</td></tr><tr><td>خطا</td><td>یک عدد تکی</td></tr></table>
+<p>محل برداشت عددها مهم است. ورودی توجهِ بلوک اول، جدول نشانهٔ خام نیست: نشانه و موقعیت جمع شده‌اند و از نرمال‌سازی اول گذشته‌اند. اگر این دو مرحله را حذف و فقط <code>attention(embedding)</code> اجرا کنیم، آزمایش جداگانه‌ای ساخته‌ایم؛ دیگر تصویر توجه همان forward مدل نیست.</p>
+<p>مرجع این درس مسیر واقعی را مرحله‌به‌مرحله تکرار و logits نهایی را با model(ids) تطبیق می‌دهد. هنوز وزن‌ها تصادفی‌اند؛ این آزمایش ساختار را نشان می‌دهد، نه فهم زبان. در [[lab.html|آزمایشگاه مدل]] محاسبهٔ کوچکِ قابل‌دست‌کاری را ببینید؛ پس از آموزش نیز با ابزار بازرسی پروژه می‌توانید عددهای مدل ذخیره‌شدهٔ خودتان را به همان محیط بیاورید. دفتر را باز نگه دارید و برای یک نشانه مسیر کامل را ثبت کنید.</p>""",
+"پیش از اجرا، شکل تمام مراحل برای B=3,T=7,C=20,H=4,V=30 را بنویسید. سپس در مرجع ورودی توجه بلوک اول را پیدا کنید؛ یک بار Layer Normalization را فقط در نسخهٔ دستی حذف و بررسی کنید چرا دیگر با forward اصلی برابر نیست.",
+"D=5؛ وزن توجه (3,4,7,7) و logits (3,7,30) است. در مرجع سالم، مدل دستی و forward اصلی خروجی نزدیک به هم می‌دهند. مدل در eval است تا تفاوت تصادف dropout با تفاوت مسیر محاسبه اشتباه نشود.",
+"کدام پیکان‌ها وزن قابل آموزش دارند و کدام‌ها صرفاً تغییر شکل یا نگاشت هستند؟",
+"فایل model.py نقشهٔ اصلی و attention.py و transformer.py جزئیات پیکان‌های داخلی‌اند.",
+code="""import torch
+from mini_gpt.stages.v6 import build
+torch.manual_seed(6)
+model = build(12).eval()
+ids = torch.tensor([[1,2,3,4]])
+with torch.no_grad():
+    token = model.token_embedding(ids)
+    position = model.position_embedding(torch.arange(ids.shape[1]))
+    x = model.dropout(token + position)
+    print("ids", ids.tolist(), "token", tuple(token.shape))
+    for index, block in enumerate(model.blocks):
+        attention_input = block.norm_1(x)
+        attended, weights = block.attention(attention_input, return_weights=True)
+        print("layer", index, "weights", tuple(weights.shape), weights[0,0].tolist())
+        x = x + attended
+        x = x + block.feed_forward(block.norm_2(x))
+    logits = model.language_model_head(model.final_norm(x))
+    expected, _ = model(ids)
+    assert torch.allclose(logits, expected)
+    probabilities = logits[:,-1].softmax(-1)
+    print("last probabilities", probabilities.tolist())
+    print("chosen ID", probabilities.argmax(-1).item())
+""",source="mini_gpt/model.py"),
+Lesson("46-gradient-path",7,"ردیابی کل مدل","خطا چگونه تا جدول نشانه‌ها برمی‌گردد؟",
+"یک خروجی درست‌شکل کافی نیست؛ باید نشان دهیم خطا واقعاً راهی برای تغییر وزن‌های قبلی دارد.",
+"""<p>ممکن است برنامه logits بسازد، loss هم عدد معقولی باشد، اما نیمی از مدل اصلاً چیزی یاد نگیرد. برای یافتن چنین خطایی از loss به عقب بروید: امتیازها به نمایش نهایی، نمایش به بلوک‌ها و بلوک‌ها به جدول نشانه وابسته‌اند. قاعدهٔ زنجیره‌ای سهم این مسیرها را به وزن‌ها می‌رساند. در جدول ورودی، فقط سطرهای خوانده‌شده در این گام از مسیر انتخاب سطر مشتق می‌گیرند؛ لایهٔ خروجی مستقل می‌تواند برای همهٔ کلاس‌ها مشتق داشته باشد.</p>
+<p><code>named_parameters()</code> نام و تنسور هر پارامتر را می‌دهد. grad=None با بردار مشتق صفر متفاوت است: اولی اغلب یعنی محاسبهٔ مشتق برای آن انجام نشده یا پاک شده؛ دومی یعنی مسیر وجود داشته اما مشتق فعلی صفر است. هیچ‌کدام بدون زمینه به‌تنهایی تشخیص نهایی نیست.</p>
+<p><dfn>Norm (اندازهٔ یک بردار)</dfn> در اینجا ریشهٔ مجموع مربع مؤلفه‌هاست؛ برای [3,4] برابر 5 می‌شود. با کنار هم تصورکردن تمام مؤلفه‌های مشتق یک پارامتر، norm خلاصه‌ای از اندازهٔ آن‌ها می‌دهد. <dfn>Vanishing gradient (کوچک‌شدن شدید گرادیان)</dfn> می‌تواند اصلاح لایه‌های دورتر را ناچیز کند و <dfn>Exploding gradient (بزرگ‌شدن شدید گرادیان)</dfn> می‌تواند به‌روزرسانی ناپایدار بسازد. این اندازه را در طول زمان ببینید، نه فقط یک بار؛ مسیر جمع و نرمال‌سازی کمک‌اند، نه تضمین مطلق.</p>
+<p>تبدیل hidden به list، ساخت tensor تازه از مقدارهایش یا detach بی‌جا می‌تواند مسیر را قطع کند. گزارش loss.item مجاز است، اما برای backward باید خود تنسور loss را نگه دارید. <code>torch.isfinite</code> برای هر خانه می‌سنجد که نه NaN باشد و نه بی‌نهایت؛ <code>all()</code> درست‌بودن همهٔ خانه‌ها را یک‌جا بررسی می‌کند. در مرجع، پیش از اندازه‌گیری مشتق این دو قرارداد را می‌آزماییم.</p>""",
+"یک batch کوچک بسازید، backward بزنید و نام/شکل/norm مشتق را چاپ کنید. سپس در نسخهٔ تمرینی خودتان hidden.detach را پیش از Language-model head بگذارید و تفاوت را ببینید.",
+"در نسخهٔ سالم grad همهٔ پارامترهای مورد استفاده موجود است. با detach پیش از Language-model head، Language-model head مشتق دارد ولی قطعه‌های پیش از محل قطع ندارند؛ شکل logits ممکن است همچنان درست بماند.",
+"چرا یک forward موفق و loss عددی برای اثبات قابلیت یادگیری کافی نیست؟",
+"این بررسی مکمل آزمون shape است و در آزمون‌های مدل نهایی وجود دارد.",
+code="""import torch
+from mini_gpt.stages.v6 import build
+model = build(12)
+x = torch.tensor([[1,2,3,4]])
+y = torch.tensor([[2,3,4,5]])
+loss = model(x,y)[1]
+loss.backward()
+for name,p in model.named_parameters():
+    assert p.grad is not None, name
+    assert torch.isfinite(p.grad).all(), name
+    print(name, tuple(p.shape), p.grad.norm().item())
+
+# Deliberately cut the graph before the output projection.
+model.zero_grad(set_to_none=True)
+positions = torch.arange(x.shape[1])
+hidden = model.dropout(model.token_embedding(x)+model.position_embedding(positions))
+for block in model.blocks:
+    hidden = block(hidden)
+hidden = model.final_norm(hidden)
+broken_logits = model.language_model_head(hidden.detach())
+broken_loss = torch.nn.functional.cross_entropy(broken_logits.reshape(-1, 12), y.reshape(-1))
+broken_loss.backward()
+assert model.language_model_head.weight.grad is not None
+assert model.token_embedding.weight.grad is None
+print("correct shape does not prove an intact gradient path")
+"""),
+]

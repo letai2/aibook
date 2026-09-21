@@ -1,0 +1,967 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="کتاب خودآموز فارسی از مبانی یادگیری ماشین تا ساخت یک مدل زبانی GPT کوچک با PyTorch">
+  <title>از پایتون تا GPT — ساخت مدل زبانی از اصول نخستین</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%2315263b'/%3E%3Cpath d='M18 18h28v7H34v21h-7V25h-9z' fill='%23f4f1ea'/%3E%3Ccircle cx='46' cy='46' r='6' fill='%23a33a3a'/%3E%3C/svg%3E">
+  <style>
+    :root { --ink:#17212b; --muted:#5d6874; --paper:#f8f7f3; --surface:#fff; --navy:#15263b; --accent:#9b3638; --line:#d8d9d6; --soft:#eef1f3; --code:#101821; --code-ink:#e7edf2; --max:76ch; }
+    * { box-sizing:border-box; }
+    html { scroll-behavior:smooth; }
+    body { margin:0; background:var(--paper); color:var(--ink); font-family:Tahoma,"Segoe UI",sans-serif; font-size:17px; line-height:2; }
+    a { color:#2a577f; text-underline-offset:3px; }
+    a:hover { color:var(--accent); }
+    .layout { display:grid; grid-template-columns:minmax(250px,310px) minmax(0,1fr); min-height:100vh; }
+    aside { position:sticky; top:0; height:100vh; overflow:auto; background:var(--navy); color:#edf1f5; padding:1.4rem 1.2rem; }
+    aside h1 { font-size:1.1rem; margin:0 0 .15rem; color:#fff; }
+    aside p { color:#b9c4ce; font-size:.82rem; line-height:1.7; margin:.2rem 0 1rem; }
+    aside nav ol { list-style:none; padding:0; margin:0; }
+    aside nav > ol > li { margin:.65rem 0; }
+    aside nav strong { color:#fff; font-size:.84rem; }
+    aside nav ol ol { padding-right:.7rem; border-right:1px solid #3b4b5e; margin-top:.25rem; }
+    aside nav a { display:block; color:#c9d2da; text-decoration:none; font-size:.77rem; line-height:1.55; padding:.16rem .35rem; border-radius:4px; }
+    aside nav a:hover { color:#fff; background:#223850; }
+    main { min-width:0; }
+    .cover { min-height:88vh; display:flex; align-items:center; padding:5rem clamp(1.5rem,7vw,7rem); background:linear-gradient(135deg,#13253a,#1e344d); color:#fff; border-bottom:8px solid var(--accent); }
+    .cover-inner { max-width:880px; }
+    .kicker { color:#e8b8b8; font-size:.9rem; letter-spacing:.05em; }
+    .cover h1 { font-size:clamp(2.5rem,7vw,5.5rem); line-height:1.25; margin:.4rem 0 1.2rem; }
+    .cover .lead { max-width:62ch; font-size:1.15rem; color:#dbe3ea; }
+    .cover .route { margin-top:2rem; padding-top:1rem; border-top:1px solid #506176; color:#c7d1da; font-size:.93rem; }
+    article { max-width:1080px; margin:auto; padding:3rem clamp(1.25rem,6vw,5rem) 6rem; }
+    .part { margin:5.5rem 0 2rem; padding-bottom:1rem; border-bottom:3px solid var(--navy); }
+    .part small { color:var(--accent); font-weight:700; }
+    .part h2 { font-size:clamp(1.8rem,4vw,2.7rem); margin:.1rem 0; color:var(--navy); }
+    .chapter { scroll-margin-top:1rem; margin:3.8rem 0; }
+    .chapter > h2 { font-size:clamp(1.55rem,3.5vw,2.15rem); line-height:1.45; color:var(--navy); margin-bottom:.4rem; }
+    h3 { margin:2.1rem 0 .45rem; font-size:1.25rem; color:#233f5c; }
+    h4 { margin:1.6rem 0 .35rem; }
+    p { max-width:var(--max); }
+    .objectives { color:var(--muted); border-right:4px solid var(--accent); padding:.2rem 1rem; margin:1rem 0 1.7rem; }
+    .note,.example,.lab,.warning,.summary,.exercise { max-width:var(--max); margin:1.4rem 0; padding:1rem 1.2rem; background:var(--surface); border:1px solid var(--line); border-radius:6px; }
+    .example { border-right:4px solid #47769d; }
+    .lab { border-right:4px solid #2d7a62; }
+    .warning { border-right:4px solid #b17a24; }
+    .summary { background:var(--soft); border-right:4px solid var(--navy); }
+    .exercise { border-right:4px solid var(--accent); }
+    .note h3,.example h3,.lab h3,.warning h3,.summary h3,.exercise h3 { margin-top:0; font-size:1.02rem; }
+    code { direction:ltr; unicode-bidi:embed; font-family:Consolas,"Courier New",monospace; font-size:.9em; background:#e9ecee; border-radius:3px; padding:.08em .3em; }
+    pre { direction:ltr; text-align:left; unicode-bidi:embed; max-width:100%; overflow:auto; background:var(--code); color:var(--code-ink); padding:1.1rem; border-radius:6px; line-height:1.65; tab-size:4; border:1px solid #283746; }
+    pre code { background:none; padding:0; color:inherit; font-size:.84rem; }
+    .math { direction:ltr; text-align:center; unicode-bidi:embed; overflow:auto; font-family:Georgia,"Times New Roman",serif; background:#fff; padding:.75rem; border-top:1px solid var(--line); border-bottom:1px solid var(--line); margin:1rem 0; }
+    table { border-collapse:collapse; width:100%; max-width:var(--max); margin:1.2rem 0; background:#fff; font-size:.92rem; }
+    th,td { border:1px solid var(--line); padding:.55rem .7rem; text-align:right; vertical-align:top; }
+    th { background:#e9edf0; color:var(--navy); }
+    .ltr { direction:ltr; text-align:left; unicode-bidi:embed; }
+    .shape-flow { direction:ltr; text-align:center; font-family:Consolas,monospace; padding:1rem; background:#fff; border:1px solid var(--line); overflow:auto; }
+    .chapter-nav { display:flex; justify-content:space-between; gap:1rem; border-top:1px solid var(--line); padding-top:1rem; margin-top:2rem; font-size:.9rem; }
+    .toc-main { columns:2; column-gap:3rem; max-width:var(--max); }
+    .toc-main li { break-inside:avoid; margin:.25rem 0; }
+    .legend { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:.6rem; max-width:var(--max); }
+    .legend div { background:#fff; border:1px solid var(--line); padding:.6rem .8rem; }
+    .checklist li { margin:.35rem 0; }
+    details.solution { max-width:var(--max); margin:.8rem 0; background:#fff; border:1px solid var(--line); border-radius:5px; padding:.4rem .8rem; }
+    details.solution summary { cursor:pointer; font-weight:700; color:#2a577f; }
+    footer { background:var(--navy); color:#cbd5de; padding:2rem; text-align:center; font-size:.85rem; }
+    @media (max-width:900px) { .layout{display:block} aside{position:relative;height:auto} aside nav{columns:2} .cover{min-height:auto;padding:4rem 1.5rem} article{padding:2rem 1.1rem 4rem} }
+    @media (max-width:580px) { body{font-size:16px} aside nav{columns:1} .toc-main{columns:1} th,td{padding:.42rem;font-size:.82rem} .chapter-nav{display:block} }
+    @media print { aside{display:none}.layout{display:block}.cover{min-height:auto;background:#fff;color:#000;border-bottom:3px solid #000}.cover .lead,.cover .route,.kicker{color:#333}article{max-width:none;padding:1cm}.chapter{break-before:page}.part{break-before:page}pre{white-space:pre-wrap}.chapter-nav{display:none}a{color:#000;text-decoration:none}.note,.example,.lab,.warning,.summary,.exercise{break-inside:avoid} }
+  </style>
+</head>
+<body>
+<div class="layout">
+  <aside aria-label="فهرست کتاب">
+    <h1>از پایتون تا GPT</h1>
+    <p>ساخت یک مدل زبانی، قدم‌به‌قدم و بدون جعبهٔ سیاه</p>
+    <nav>
+      <ol>
+        <li><a href="#guide">راهنمای مطالعه و فهرست</a></li>
+        <li><strong>۱. شروع از صفر</strong><ol><li><a href="#ch1">۱ — مدل چگونه یاد می‌گیرد؟</a></li><li><a href="#ch2">۲ — مدل زبانی چیست؟</a></li></ol></li>
+        <li><strong>۲. ریاضی لازم</strong><ol><li><a href="#ch3">۳ — بردار، ماتریس، تنسور</a></li><li><a href="#ch4">۴ — ضرب و اندازه</a></li><li><a href="#ch5">۵ — احتمال و Softmax</a></li><li><a href="#ch6">۶ — مشتق و Gradient</a></li></ol></li>
+        <li><strong>۳. شبکهٔ عصبی</strong><ol><li><a href="#ch7">۷ — لایهٔ عصبی</a></li><li><a href="#ch8">۸ — یادگیری قدم‌به‌قدم</a></li><li><a href="#ch9">۹ — Logits و Cross Entropy</a></li></ol></li>
+        <li><strong>۴. PyTorch</strong><ol><li><a href="#ch10">۱۰ — Tensor از صفر</a></li><li><a href="#ch11">۱۱ — Shape و جابه‌جایی محورها</a></li><li><a href="#ch12">۱۲ — Autograd و nn.Module</a></li><li><a href="#ch13">۱۳ — Dataset و عیب‌یابی Shape</a></li></ol></li>
+        <li><strong>۵. متن به عدد</strong><ol><li><a href="#ch14">۱۴ — Tokenization</a></li><li><a href="#ch15">۱۵ — Subword و BPE</a></li><li><a href="#ch16">۱۶ — مثال‌های آموزشی</a></li></ol></li>
+        <li><strong>۶. نمایش متن</strong><ol><li><a href="#ch17">۱۷ — Embedding و موقعیت</a></li></ol></li>
+        <li><strong>۷. Attention</strong><ol><li><a href="#ch18">۱۸ — چرا Attention؟</a></li><li><a href="#ch19">۱۹ — محاسبهٔ کامل Q/K/V</a></li><li><a href="#ch20">۲۰ — Self-Attention و Mask</a></li><li><a href="#ch21">۲۱ — Multi-Head Attention</a></li></ol></li>
+        <li><strong>۸. Transformer و GPT</strong><ol><li><a href="#ch22">۲۲ — FFN، Residual و Norm</a></li><li><a href="#ch23">۲۳ — بلوک Transformer</a></li><li><a href="#ch24">۲۴ — Language Model Head</a></li></ol></li>
+        <li><strong>۹. آموزش و تولید</strong><ol><li><a href="#ch25">۲۵ — آموزش و Checkpoint</a></li><li><a href="#ch26">۲۶ — تولید و Sampling</a></li><li><a href="#ch27">۲۷ — عیب‌یابی</a></li></ol></li>
+        <li><strong>۱۰. پروژه و ادامهٔ راه</strong><ol><li><a href="#ch28">۲۸ — مونتاژ Mini-GPT</a></li><li><a href="#ch29">۲۹ — LLMهای واقعی</a></li><li><a href="#ch30">۳۰ — پس‌آموزش و RAG</a></li></ol></li>
+        <li><a href="#solutions">پاسخ تمرین‌ها</a></li><li><a href="#cheatsheet">برگهٔ تقلب Shapeها</a></li><li><a href="#glossary">واژه‌نامه</a></li>
+      </ol>
+    </nav>
+  </aside>
+  <main>
+    <header class="cover">
+      <div class="cover-inner">
+        <div class="kicker">کتاب خودآموز برای برنامه‌نویس Python</div>
+        <h1>از پایتون تا GPT</h1>
+        <p class="lead">چگونه یک مدل زبانی Transformer از عدد، خطا و ضرب ماتریسی ساخته می‌شود — همراه با ریاضی ضروری، PyTorch از صفر، آزمایش‌های کوچک و یک Mini‑GPT واقعی.</p>
+        <p class="route">مسیر: داده ← Tensor ← Gradient ← شبکهٔ عصبی ← Token ← Embedding ← Attention ← Transformer ← آموزش ← تولید متن</p>
+      </div>
+    </header>
+    <article>
+      <section id="guide" class="chapter">
+        <h2>راهنمای مطالعه</h2>
+        <p>این کتاب فرض می‌کند Python را خوب می‌شناسید، اما از یادگیری ماشین چیزی نمی‌دانید. اصطلاح تازه پیش از استفاده تعریف می‌شود. قرار نیست یک پیاده‌سازی GPT را کپی کنید؛ قرار است وقتی به هر خط از آن رسیدید، بدانید داده با چه شکلی وارد می‌شود، چه تبدیل ریاضی رخ می‌دهد و خروجی چه معنایی دارد.</p>
+        <div class="legend">
+          <div><strong>مثال</strong><br>یک نمونهٔ کوچک و قابل محاسبه</div>
+          <div><strong>آزمایش</strong><br>کاری که واقعاً اجرا می‌کنید</div>
+          <div><strong>هشدار</strong><br>خطای رایج یا مرز تشبیه</div>
+          <div><strong>تمرین</strong><br>چهار سطح، از فهم تا چالش</div>
+        </div>
+        <h3>روش پیشنهادی</h3>
+        <ol class="checklist">
+          <li>فصل‌ها را به‌ترتیب بخوانید؛ فصل‌های Attention به ریاضی و shapeهای قبل وابسته‌اند.</li>
+          <li>هر بلوک کد را خودتان اجرا و اعداد را تغییر دهید. خواندن کد جای آزمایش را نمی‌گیرد.</li>
+          <li>پیش از بازکردن پاسخ‌ها، تمرین را حل کنید. پاسخ‌ها عمداً در انتهای کتاب جدا شده‌اند.</li>
+          <li>هم‌زمان فایل‌های پوشهٔ <code>mini_gpt</code> را باز کنید. کد نهایی از همان قطعه‌هایی ساخته شده که در متن می‌آموزید.</li>
+        </ol>
+        <h3>فهرست فشرده</h3>
+        <ol class="toc-main">
+          <li><a href="#ch1">مدل چگونه یاد می‌گیرد؟</a></li><li><a href="#ch2">مدل زبانی چیست؟</a></li><li><a href="#ch3">بردار، ماتریس، تنسور</a></li><li><a href="#ch4">ضرب داخلی و ماتریسی</a></li><li><a href="#ch5">احتمال و Softmax</a></li><li><a href="#ch6">مشتق و Gradient</a></li><li><a href="#ch7">لایهٔ عصبی</a></li><li><a href="#ch8">Backpropagation و Optimizer</a></li><li><a href="#ch9">Cross Entropy</a></li><li><a href="#ch10">Tensorهای PyTorch</a></li><li><a href="#ch11">عملیات Shape</a></li><li><a href="#ch12">Autograd و Module</a></li><li><a href="#ch13">Dataset و DataLoader</a></li><li><a href="#ch14">Tokenization</a></li><li><a href="#ch15">BPE</a></li><li><a href="#ch16">دادهٔ next-token</a></li><li><a href="#ch17">Embedding</a></li><li><a href="#ch18">شهود Attention</a></li><li><a href="#ch19">Q/K/V عددی</a></li><li><a href="#ch20">Causal Mask</a></li><li><a href="#ch21">چندسر</a></li><li><a href="#ch22">FFN و Residual</a></li><li><a href="#ch23">Transformer</a></li><li><a href="#ch24">Logits مدل زبان</a></li><li><a href="#ch25">آموزش</a></li><li><a href="#ch26">Sampling</a></li><li><a href="#ch27">عیب‌یابی</a></li><li><a href="#ch28">پروژهٔ کامل</a></li><li><a href="#ch29">مقیاس صنعتی</a></li><li><a href="#ch30">SFT و RAG</a></li>
+        </ol>
+      </section>
+
+      <header class="part"><small>بخش یک</small><h2>از برنامه‌نویسی تا یادگیری</h2></header>
+      <section id="ch1" class="chapter">
+        <h2>فصل ۱ — مدل چگونه یاد می‌گیرد؟</h2>
+        <p class="objectives"><strong>یاد می‌گیرید:</strong> مدل، پارامتر، داده، آموزش، inference و تعمیم دقیقاً چه هستند و چرا یادگیری با برنامه‌نویسی معمولی فرق دارد.</p>
+        <h3>از قانون صریح تا قانون آموخته‌شده</h3>
+        <p>در برنامهٔ معمولی، شما قانون را می‌نویسید: اگر رمز درست بود، ورود را مجاز کن. در یادگیری ماشین، برای مسئله‌ای مانند تشخیص هرزنامه نوشتن همهٔ قانون‌ها دشوار است. به‌جای قانون کامل، نمونه‌های ایمیل و برچسبشان را می‌دهیم. یک <strong>مدل</strong> تابعی قابل تنظیم است و عددهای قابل تنظیم آن <strong>پارامتر</strong> نام دارند. آموزش یعنی پیدا کردن پارامترهایی که پاسخ مدل روی داده بهتر شود.</p>
+        <div class="math">prediction = model(input; parameters)</div>
+        <p>نقطه‌ویرگول یادآوری می‌کند ورودی در هر نمونه عوض می‌شود، اما پارامترها همان چیزهایی‌اند که طی آموزش تنظیم می‌شوند. «مدل یاد گرفت» جمله‌ای جادویی نیست: پیش‌بینی کرد، خطا با یک تابع هزینه سنجیده شد، جهت تغییر پارامترها محاسبه شد و پارامترها اندکی حرکت کردند.</p>
+        <div class="shape-flow">input → prediction → loss → gradients → parameter update → next prediction</div>
+        <h3>Train، validation و test</h3>
+        <table><thead><tr><th>بخش داده</th><th>کاربرد</th><th>نباید چه کنیم؟</th></tr></thead><tbody><tr><td>Train</td><td>محاسبهٔ gradient و تغییر پارامترها</td><td>کیفیت نهایی را فقط از آن نتیجه نگیریم</td></tr><tr><td>Validation</td><td>انتخاب تنظیمات و تشخیص overfitting</td><td>پارامتر مدل را مستقیم با آن به‌روزرسانی نکنیم</td></tr><tr><td>Test</td><td>برآورد نهایی روی دادهٔ ندیده</td><td>بارها نگاه نکنیم و تصمیم نگیریم</td></tr></tbody></table>
+        <p><strong>تعمیم</strong> یعنی مدل روی نمونه‌هایی بیرون از train هم خوب عمل کند. اگر پاسخ‌های train را حفظ کند ولی روی validation بد باشد، <strong>overfitting</strong> رخ داده است.</p>
+        <div class="warning"><h3>بدفهمی رایج</h3><p>پارامتر مساوی نورون نیست. یک لایه می‌تواند هزاران یا میلیون‌ها عدد پارامتر داشته باشد. همچنین دادهٔ بیشتر خودبه‌خود بهتر نیست؛ دادهٔ تکراری، آلوده یا نامتناسب می‌تواند مدل را بدتر کند.</p></div>
+        <div class="lab"><h3>آزمایش کوچک</h3><p>یک تابع <code>y = w*x</code> بسازید. با <code>w=1</code> برای جفت‌های <code>(1,2)، (2,4)، (3,6)</code> خطای مربعی را حساب کنید؛ سپس <code>w=1.5</code> و <code>w=2</code> را امتحان کنید. مشاهده: داده تغییر نکرد، فقط یک پارامتر تغییر کرد و خطا در <code>w=2</code> صفر شد.</p></div>
+        <div class="exercise"><h3>تمرین‌ها</h3><ol><li><strong>سطح ۱:</strong> آموزش و inference را با یک جمله از هم جدا کنید.</li><li><strong>سطح ۲:</strong> میانگین خطای مربعی تابع بالا را در Python بنویسید.</li><li><strong>سطح ۳:</strong> چرا خطای train به‌تنهایی معیار کافی نیست؟</li><li><strong>سطح ۴:</strong> مثالی بسازید که مدل قانون train را حفظ کند اما تعمیم ندهد.</li></ol></div>
+        <div class="summary"><h3>خلاصه</h3><p>یادگیری یعنی تنظیم عددهای یک تابع با کمک داده و loss. این چرخه بعداً بدون تغییر مفهومی برای میلیاردها پارامتر هم برقرار است.</p></div>
+        <nav class="chapter-nav"><a href="#guide">راهنما</a><a href="#ch2">فصل بعد: مدل زبانی ←</a></nav>
+      </section>
+
+      <section id="ch2" class="chapter">
+        <h2>فصل ۲ — مدل زبانی واقعاً چه می‌آموزد؟</h2>
+        <p class="objectives"><strong>یاد می‌گیرید:</strong> context، next-token prediction، توزیع احتمال و تفاوت Transformer با GPT.</p>
+        <p>یک مدل زبانی autoregressive مسئله‌ای روشن دارد: با دیدن نشانه‌های قبلی، برای نشانهٔ بعدی احتمال بسازد. اگر context برابر «گربه روی» باشد، مدل شاید به «فرش» احتمال بیشتری از «هواپیما» بدهد. مدل یک پاسخ متنی آماده در حافظه پیدا نمی‌کند؛ برداری از امتیازها برای همهٔ tokenهای vocabulary تولید می‌کند.</p>
+        <div class="example"><h3>مثال</h3><table><thead><tr><th>Token بعدی</th><th>احتمال فرضی</th></tr></thead><tbody><tr><td>فرش</td><td class="ltr">0.55</td></tr><tr><td>صندلی</td><td class="ltr">0.25</td></tr><tr><td>دیوار</td><td class="ltr">0.15</td></tr><tr><td>گزینه‌های دیگر</td><td class="ltr">0.05</td></tr></tbody></table><p>هنگام آموزش، اگر پاسخ واقعی «فرش» باشد، loss مدل را بابت احتمال ناکافی آن جریمه می‌کند. در تولید، یکی از گزینه‌ها انتخاب و به context افزوده می‌شود؛ سپس چرخه تکرار می‌شود.</p></div>
+        <p><strong>Token الزاماً کلمه نیست.</strong> می‌تواند کاراکتر، تکه‌ای از کلمه، فاصله یا علامت باشد. <strong>Context length</strong> نیز حافظهٔ انسانی نیست؛ فقط بیشترین تعداد tokenهایی است که مدل در یک forward pass می‌بیند.</p>
+        <h3>نام‌ها را مخلوط نکنیم</h3>
+        <ul><li><strong>Transformer</strong> خانواده‌ای از معماری‌ها بر پایهٔ attention است.</li><li><strong>GPT-style</strong> یک Transformer فقط-decoder و علّی برای پیش‌بینی token بعدی است.</li><li><strong>LLM</strong> معمولاً مدل زبانی بسیار بزرگ همراه با فرایند داده، آموزش و اغلب پس‌آموزش است.</li></ul>
+        <p>پس هر GPT یک Transformer است، اما هر Transformer یک GPT نیست. Transformer می‌تواند encoder-only یا encoder-decoder هم باشد.</p>
+        <div class="lab"><h3>فعالیت</h3><p>جملهٔ «امروز هوا بسیار ...» را به ده نفر بدهید. فهرست پاسخ‌ها یک توزیع تجربی می‌سازد. اختلاف پاسخ‌ها نشان می‌دهد پیش‌بینی زبان ذاتاً چندگزینه‌ای است، نه یک جدول قانون قطعی.</p></div>
+        <div class="exercise"><h3>تمرین‌ها</h3><ol><li><strong>سطح ۱:</strong> token را با کلمه مقایسه کنید.</li><li><strong>سطح ۲:</strong> برای سه context، پنج ادامه و احتمال فرضی بنویسید؛ مجموع احتمال‌ها باید یک باشد.</li><li><strong>سطح ۳:</strong> چرا پیش‌بینی بعدی برای یادگیری ساختارهای دوربرد کافی به نظر می‌رسد؟</li><li><strong>سطح ۴:</strong> محدودیت مدل character-level را پیش‌بینی کنید.</li></ol></div>
+        <nav class="chapter-nav"><a href="#ch1">→ فصل قبل</a><a href="#ch3">فصل بعد: تنسورها ←</a></nav>
+      </section>
+
+      <header class="part"><small>بخش دو</small><h2>ریاضیات ضروری، به زبان کد</h2></header>
+      <section id="ch3" class="chapter">
+        <h2>فصل ۳ — Scalar، Vector، Matrix و Tensor</h2>
+        <p class="objectives"><strong>یاد می‌گیرید:</strong> محور، dimension و shape را بخوانید و دادهٔ چندبعدی را مثل ساختارهای تو‌در‌توی Python تصور کنید.</p>
+        <p><strong>Scalar</strong> یک عدد مانند loss برابر <code>2.3</code> است. <strong>Vector</strong> فهرستی یک‌بعدی، <strong>matrix</strong> جدولی دوبعدی و <strong>tensor</strong> نام عمومی آرایهٔ چندبعدی است. در PyTorch حتی scalar نیز tensor با shape خالی است.</p>
+        <table><thead><tr><th>شیء</th><th>نمونه</th><th>Shape</th><th>معنا</th></tr></thead><tbody><tr><td>Scalar</td><td class="ltr">7</td><td class="ltr">()</td><td>یک مقدار</td></tr><tr><td>Vector</td><td class="ltr">[2, 5, 1]</td><td class="ltr">(3,)</td><td>سه ویژگی</td></tr><tr><td>Matrix</td><td class="ltr">[[1,2],[3,4]]</td><td class="ltr">(2,2)</td><td>دو سطر، دو ستون</td></tr><tr><td>Tensor سه‌بعدی</td><td>دو جدول ۳×۴</td><td class="ltr">(2,3,4)</td><td>مثلاً batch، زمان، ویژگی</td></tr></tbody></table>
+        <p>رتبه یا تعداد dimensionها با اندازهٔ هر dimension فرق دارد. Tensor با shape <code>(2,3,4)</code> سه محور و <code>2×3×4=24</code> عنصر دارد. شماره‌گذاری محور از صفر شروع می‌شود.</p>
+        <pre><code># Python lists only — no NumPy prerequisite
+matrix = [[1, 2, 3],
+          [4, 5, 6]]
+rows = len(matrix)           # 2
+columns = len(matrix[0])     # 3
+value = matrix[1][2]         # 6</code></pre>
+        <div class="example"><h3>خواندن shape مدل زبان</h3><p><code>(B,T,C)=(2,4,3)</code> یعنی دو دنباله در batch، چهار موقعیت در هر دنباله و سه ویژگی برای هر موقعیت. سؤال طلایی همیشه این است: «هر محور نمایندهٔ چه چیزی است؟»</p></div>
+        <div class="warning"><h3>بعد در دو معنا</h3><p>«Tensor سه‌بعدی» یعنی سه محور دارد. «embedding با بُعد 768» یعنی اندازهٔ محور ویژگی 768 است. این دو کاربرد را از context تشخیص دهید.</p></div>
+        <div class="lab"><h3>آزمایش</h3><p>یک list با ساختار <code>[batch][time][feature]</code> و shape برابر <code>(2,3,4)</code> بسازید. مقدار batch دوم، زمان سوم، ویژگی اول را بخوانید. سپس تعداد کل عنصرها را بدون حلقه حساب کنید.</p></div>
+        <div class="exercise"><h3>تمرین‌ها</h3><ol><li><strong>سطح ۱:</strong> تعداد محور و عنصرهای <code>(5,7,12)</code> را بگویید.</li><li><strong>سطح ۲:</strong> تابعی بنویسید که shape یک list دوبعدی منظم را برگرداند.</li><li><strong>سطح ۳:</strong> برای batch متن، معنای <code>(B,T)</code> را توضیح دهید.</li><li><strong>سطح ۴:</strong> چرا ذخیرهٔ مستقیم کلمه‌ها در tensor ممکن نیست؟</li></ol></div>
+        <nav class="chapter-nav"><a href="#ch2">→ فصل قبل</a><a href="#ch4">فصل بعد: ضرب‌ها ←</a></nav>
+      </section>
+
+      <section id="ch4" class="chapter">
+        <h2>فصل ۴ — Dot Product، Matrix Multiplication و Norm</h2>
+        <p class="objectives"><strong>یاد می‌گیرید:</strong> چرا ضرب داخلی یک امتیاز شباهت مفید می‌سازد، شرط ضرب ماتریسی چیست و transpose چه می‌کند.</p>
+        <h3>ضرب داخلی</h3>
+        <p>برای دو vector هم‌اندازه، عضوهای متناظر را ضرب و جمع می‌کنیم:</p>
+        <div class="math">a · b = Σᵢ aᵢbᵢ</div>
+        <p>اگر <code>a=[1,2,3]</code> و <code>b=[4,0,-1]</code> باشد، نتیجه <code>1×4 + 2×0 + 3×(-1) = 1</code> است. در Attention، dot product بین query و key امتیاز سازگاری می‌دهد. این فقط وقتی معنای مفیدی پیدا می‌کند که بردارها آموخته شده باشند.</p>
+        <pre><code>def dot(a, b):
+    assert len(a) == len(b)
+    return sum(x * y for x, y in zip(a, b))
+
+print(dot([1, 2, 3], [4, 0, -1]))  # 1</code></pre>
+        <h3>ضرب ماتریسی</h3>
+        <p>اگر <code>A</code> شکل <code>(m,n)</code> و <code>B</code> شکل <code>(n,p)</code> داشته باشد، <code>A@B</code> شکل <code>(m,p)</code> دارد. محورهای وسط باید برابر باشند و در جمع داخلی حذف می‌شوند.</p>
+        <div class="math">(m, n) @ (n, p) → (m, p)</div>
+        <p>هر خانهٔ خروجی dot product یک سطر از A با یک ستون از B است. برای <code>A=[[1,2],[3,4]]</code> و <code>B=[[5],[6]]</code> خروجی <code>[[17],[39]]</code> است.</p>
+        <p><strong>Transpose</strong> سطر و ستون را جابه‌جا می‌کند: shape از <code>(m,n)</code> به <code>(n,m)</code> می‌رود. بعداً <code>Q @ Kᵀ</code> همهٔ queryها را با همهٔ keyها مقایسه می‌کند.</p>
+        <h3>Norm و اندازه</h3>
+        <div class="math">||x||₂ = √(Σᵢ xᵢ²)</div>
+        <p>norm اقلیدسی طول vector است. برای <code>[3,4]</code> برابر 5 می‌شود. اندازهٔ vector بر dot product اثر دارد؛ به همین علت «dot product بزرگ‌تر» همیشه صرفاً «جهت مشابه‌تر» نیست.</p>
+        <div class="lab"><h3>آزمایش دستی</h3><p>حاصل <code>[2,1]·[3,4]</code> را دستی و با تابع بالا بسنجید. سپس matrixهای 2×2 را با سه حلقه ضرب کنید و با <code>torch.tensor(A) @ torch.tensor(B)</code> مقایسه کنید.</p></div>
+        <div class="exercise"><h3>تمرین‌ها</h3><ol><li><strong>سطح ۱:</strong> shape حاصل <code>(3,4)@(4,7)</code> چیست؟</li><li><strong>سطح ۲:</strong> ضرب ماتریسی را با list پیاده کنید.</li><li><strong>سطح ۳:</strong> چرا <code>(3,4)@(3,4)</code> معتبر نیست؟</li><li><strong>سطح ۴:</strong> نشان دهید transpose دوباره، matrix اصلی را می‌دهد.</li></ol></div>
+        <nav class="chapter-nav"><a href="#ch3">→ فصل قبل</a><a href="#ch5">فصل بعد: Softmax ←</a></nav>
+      </section>
+
+      <section id="ch5" class="chapter">
+        <h2>فصل ۵ — احتمال، Logarithm و Softmax</h2>
+        <p class="objectives"><strong>یاد می‌گیرید:</strong> توزیع احتمال چیست، logits چگونه به احتمال تبدیل می‌شوند و log چرا در loss ظاهر می‌شود.</p>
+        <p>احتمال عددی بین صفر و یک است و مجموع احتمال گزینه‌های یک توزیع برابر یک. مدل مستقیماً احتمال نمی‌دهد؛ <strong>logit</strong> می‌دهد: امتیازهای آزاد مانند <code>[2.0, 1.0, 0.1]</code> که ممکن است منفی باشند و مجموعشان اهمیتی ندارد.</p>
+        <div class="math">softmax(zᵢ) = exp(zᵢ) / Σⱼ exp(zⱼ)</div>
+        <p><code>exp</code> یا تابع نمایی همهٔ مقدارها را مثبت می‌کند؛ تقسیم بر مجموع آن‌ها نتیجه را نرمال می‌کند. برای پایداری عددی، بزرگ‌ترین logit را پیش از exp کم می‌کنیم. این کار احتمال‌ها را عوض نمی‌کند.</p>
+        <pre><code>import math
+
+def softmax(values):
+    largest = max(values)
+    exps = [math.exp(v - largest) for v in values]
+    total = sum(exps)
+    return [v / total for v in exps]
+
+print(softmax([2.0, 1.0, 0.1]))
+# approximately [0.659, 0.242, 0.099]</code></pre>
+        <h3>چرا log؟</h3>
+        <p><code>log</code> معکوس exp است. <code>-log(p)</code> برای پاسخ درست وقتی <code>p</code> نزدیک 1 است به صفر نزدیک می‌شود و وقتی p به صفر نزدیک شود شدیداً بزرگ می‌شود. پس پیش‌بینی مطمئن اما غلط را سخت جریمه می‌کند.</p>
+        <table><thead><tr><th>احتمال پاسخ درست</th><th class="ltr">-log(p)</th></tr></thead><tbody><tr><td class="ltr">0.9</td><td class="ltr">0.105</td></tr><tr><td class="ltr">0.5</td><td class="ltr">0.693</td></tr><tr><td class="ltr">0.1</td><td class="ltr">2.303</td></tr></tbody></table>
+        <div class="warning"><h3>Logits ≠ probabilities</h3><p>روی logits جمع، تفریق و temperature اعمال می‌کنیم؛ برای نمایش احتمال softmax می‌زنیم. تابع <code>cross_entropy</code> در PyTorch logits خام می‌خواهد و خودش عملیات پایدار log-softmax را انجام می‌دهد. softmax را پیش از آن تکرار نکنید.</p></div>
+        <div class="lab"><h3>آزمایش دما</h3><p>softmax را روی <code>z/T</code> برای <code>T=0.5,1,2</code> حساب کنید. دمای کم توزیع را تیزتر و دمای زیاد آن را تخت‌تر می‌کند؛ ترتیب logits عوض نمی‌شود.</p></div>
+        <div class="exercise"><h3>تمرین‌ها</h3><ol><li><strong>سطح ۱:</strong> ویژگی‌های توزیع احتمال را بنویسید.</li><li><strong>سطح ۲:</strong> softmax را بدون library پیاده کنید.</li><li><strong>سطح ۳:</strong> ثابت کنید افزودن یک ثابت به همهٔ logits احتمال‌ها را عوض نمی‌کند.</li><li><strong>سطح ۴:</strong> نسخه‌ای بنویسید که list دوبعدی را سطربه‌سطر softmax کند.</li></ol></div>
+        <nav class="chapter-nav"><a href="#ch4">→ فصل قبل</a><a href="#ch6">فصل بعد: Gradient ←</a></nav>
+      </section>
+
+      <section id="ch6" class="chapter">
+        <h2>فصل ۶ — مشتق، Gradient و Gradient Descent</h2>
+        <p class="objectives"><strong>یاد می‌گیرید:</strong> مشتق را به‌عنوان حساسیت بخوانید، gradient چندپارامتری و chain rule را بفهمید و update را محاسبه کنید.</p>
+        <p>مشتق به‌طور محلی می‌پرسد: «اگر ورودی را کمی زیاد کنم، خروجی چقدر و در چه جهت تغییر می‌کند؟» برای <code>f(x)=x²</code> مشتق <code>2x</code> است. در <code>x=3</code> شیب 6 است؛ تغییر کوچک <code>+0.01</code> خروجی را تقریباً <code>+0.06</code> می‌کند.</p>
+        <p>اگر loss به چند پارامتر وابسته باشد، مشتق جزئی نسبت به هر پارامتر را کنار هم می‌گذاریم؛ این vector همان <strong>gradient</strong> است.</p>
+        <div class="math">θ ← θ − η ∇L(θ)</div>
+        <p><code>θ</code> مجموعهٔ پارامترها، <code>L</code> loss، <code>∇L</code> gradient و <code>η</code> نرخ یادگیری است. منفی می‌رویم چون gradient جهت افزایش سریع‌تر را نشان می‌دهد.</p>
+        <div class="example"><h3>یک update واقعی</h3><p>اگر <code>w=3</code>، gradient برابر <code>4</code> و learning rate برابر <code>0.1</code> باشد: <code>w_new = 3 - 0.1×4 = 2.6</code>. اگر نرخ بیش‌ازحد بزرگ باشد از دره می‌پریم؛ اگر خیلی کوچک باشد حرکت کند است.</p></div>
+        <h3>Chain rule و Backpropagation</h3>
+        <p>مدل زنجیره‌ای از عملیات است: <code>x → a → b → loss</code>. chain rule می‌گوید اثر x بر loss حاصل‌ضرب اثرهای محلی مسیر است:</p>
+        <div class="math">dL/dx = (dL/db)(db/da)(da/dx)</div>
+        <p><strong>Backpropagation</strong> الگوریتمی کارآمد برای پیمودن این graph از loss به عقب و جمع‌کردن gradientهاست. این یک الگوریتم محاسبه است، نه optimizer؛ optimizer بعداً تصمیم می‌گیرد gradientها چگونه پارامتر را تغییر دهند.</p>
+        <pre><code># numerical derivative: useful for checking, not normal training
+def derivative(f, x, epsilon=1e-5):
+    return (f(x + epsilon) - f(x - epsilon)) / (2 * epsilon)
+
+print(derivative(lambda x: x*x, 3.0))  # close to 6</code></pre>
+        <div class="lab"><h3>آزمایش</h3><p>برای loss برابر <code>(w-2)²</code> از <code>w=-3</code> شروع کنید. مشتق <code>2(w-2)</code> را بسازید و 20 update با نرخ 0.1 اجرا کنید. مقدار w باید به 2 نزدیک شود.</p></div>
+        <div class="exercise"><h3>تمرین‌ها</h3><ol><li><strong>سطح ۱:</strong> gradient چه اطلاعاتی دارد؟</li><li><strong>سطح ۲:</strong> آزمایش بالا را رسم یا چاپ کنید.</li><li><strong>سطح ۳:</strong> نتیجهٔ نرخ 1.1 را تحلیل کنید.</li><li><strong>سطح ۴:</strong> gradient عددی تابع دوپارامتری <code>(x-1)²+(y+2)²</code> را بسازید.</li></ol></div>
+        <nav class="chapter-nav"><a href="#ch5">→ فصل قبل</a><a href="#ch7">فصل بعد: شبکهٔ عصبی ←</a></nav>
+      </section>
+
+      <header class="part"><small>بخش سه</small><h2>شبکه‌های عصبی بدون رمز و راز</h2></header>
+      <section id="ch7" class="chapter">
+        <h2>فصل ۷ — از تابع خطی تا شبکهٔ عصبی</h2>
+        <p class="objectives"><strong>یاد می‌گیرید:</strong> Linear، weight، bias، activation، لایه و parameter count چگونه کار می‌کنند.</p>
+        <p>یک واحد خطی weighted sum می‌سازد: <code>y = w·x + b</code>. اگر ورودی C ویژگی و خروجی M ویژگی داشته باشد، weight شکل <code>(M,C)</code> و bias شکل <code>(M,)</code> دارد.</p>
+        <div class="math">x (B,C) @ Wᵀ (C,M) + b (M) → y (B,M)</div>
+        <p>bias با broadcasting به هر سطر batch افزوده می‌شود. تعداد پارامترها <code>M×C + M</code> است. یک لایهٔ صرفاً خطی، هرچقدر هم پشت سر هم تکرار شود، در مجموع هنوز یک تبدیل خطی است. برای ساخت رابطه‌های پیچیده به <strong>activation غیرخطی</strong> مانند ReLU یا GELU نیاز داریم.</p>
+        <pre><code>def linear(x, weights, bias):
+    # x: (C,), weights: (M,C), bias: (M,)
+    return [
+        sum(x_i * w_i for x_i, w_i in zip(x, row)) + b
+        for row, b in zip(weights, bias)
+    ]
+
+print(linear([2, 3], [[1, 0], [0.5, -1]], [1, 0]))
+# [3, -2]</code></pre>
+        <h3>لایه و شبکه</h3>
+        <p>شبکهٔ کوچک می‌تواند این مسیر را داشته باشد: <code>Linear(2→8) → ReLU → Linear(8→1)</code>. لایهٔ اول داده را به هشت ویژگی تبدیل می‌کند، activation خمیدگی می‌افزاید و لایهٔ دوم آن‌ها را ترکیب می‌کند. «نورون» استعاره‌ای تاریخی است؛ عملیات واقعی ضرب ماتریسی، جمع و تابع غیرخطی است.</p>
+        <div class="warning"><h3>مرز تشبیه</h3><p>شبکهٔ عصبی شبیه مغز به معنای زیستی دقیق نیست. اصطلاح‌های neuron و attention نباید ما را وادار کنند توانایی انسانی به مدل نسبت دهیم.</p></div>
+        <div class="lab"><h3>آزمایش</h3><p>برای لایهٔ <code>Linear(4,10)</code> تعداد پارامترها را دستی حساب کنید و بعداً با <code>sum(p.numel() for p in layer.parameters())</code> بسنجید.</p></div>
+        <div class="exercise"><h3>تمرین‌ها</h3><ol><li><strong>سطح ۱:</strong> نقش weight و bias را توضیح دهید.</li><li><strong>سطح ۲:</strong> ReLU را با <code>max(0,x)</code> پیاده کنید.</li><li><strong>سطح ۳:</strong> چرا دو Linear بدون activation معادل یک Linear هستند؟</li><li><strong>سطح ۴:</strong> shape و تعداد پارامترهای شبکهٔ 3→5→2 را حساب کنید.</li></ol></div>
+        <nav class="chapter-nav"><a href="#ch6">→ فصل قبل</a><a href="#ch8">فصل بعد: حلقهٔ یادگیری ←</a></nav>
+      </section>
+
+      <section id="ch8" class="chapter">
+        <h2>فصل ۸ — Forward، Backward و Optimizer</h2>
+        <p class="objectives"><strong>یاد می‌گیرید:</strong> یک iteration آموزش دقیقاً از چه گام‌هایی ساخته شده و batch و epoch چه تفاوتی دارند.</p>
+        <ol><li><strong>Forward pass:</strong> ورودی از مدل عبور می‌کند و prediction ساخته می‌شود.</li><li><strong>Loss:</strong> prediction با target مقایسه می‌شود.</li><li><strong>Backward pass:</strong> gradient هر پارامتر محاسبه می‌شود.</li><li><strong>Optimizer step:</strong> پارامترها با gradient تغییر می‌کنند.</li><li><strong>پاک‌کردن gradient:</strong> برای iteration بعدی gradientهای قبلی صفر می‌شوند.</li></ol>
+        <p><strong>Batch</strong> گروهی از نمونه‌هاست که هم‌زمان پردازش می‌شوند. <strong>Epoch</strong> یک عبور تقریبی از همهٔ دادهٔ train است. <strong>Step</strong> معمولاً یک update optimizer است. این سه مترادف نیستند.</p>
+        <pre><code>model.train()
+for inputs, targets in train_loader:
+    predictions = model(inputs)        # forward
+    loss = loss_function(predictions, targets)
+    optimizer.zero_grad(set_to_none=True)
+    loss.backward()                    # gradients
+    optimizer.step()                   # update</code></pre>
+        <p>PyTorch gradientها را به‌طور پیش‌فرض <em>جمع</em> می‌کند، بنابراین صفرکردن عمدی است. ترتیب <code>zero_grad</code> می‌تواند قبل از forward یا بعد از step باشد، به شرط سازگاری.</p>
+        <h3>SGD، Adam و AdamW</h3>
+        <p>SGD عمدتاً در جهت gradient حرکت می‌کند. Adam برای هر پارامتر میانگین‌های متحرک gradient و مربع gradient نگه می‌دارد و اندازهٔ گام را سازگار می‌کند. AdamW، weight decay را به‌صورت جداشده اعمال می‌کند و انتخاب رایجی برای Transformer است. optimizer هوشمندی مستقل ندارد؛ فقط قاعدهٔ update است.</p>
+        <div class="lab"><h3>چه چیزی را مشاهده کنیم؟</h3><p>loss هر step پرنوسان است، چون batchها فرق دارند. میانگین بازه‌ای و validation loss مهم‌ترند. اگر train پایین و validation بالا برود، نشانهٔ overfitting است.</p></div>
+        <div class="exercise"><h3>تمرین‌ها</h3><ol><li><strong>سطح ۱:</strong> forward و backward را جدا کنید.</li><li><strong>سطح ۲:</strong> ترتیب پنج گام آموزش را از حفظ بنویسید.</li><li><strong>سطح ۳:</strong> اثر فراموش‌کردن <code>zero_grad</code> چیست؟</li><li><strong>سطح ۴:</strong> gradient accumulation عمدی را تحقیق مفهومی کنید.</li></ol></div>
+        <nav class="chapter-nav"><a href="#ch7">→ فصل قبل</a><a href="#ch9">فصل بعد: Cross Entropy ←</a></nav>
+      </section>
+
+      <section id="ch9" class="chapter">
+        <h2>فصل ۹ — Classification، Logits و Cross Entropy</h2>
+        <p class="objectives"><strong>یاد می‌گیرید:</strong> طبقه‌بندی چندکلاسه چگونه همان مسئلهٔ انتخاب token بعدی می‌شود.</p>
+        <p>در classification، مدل برای هر کلاس یک logit می‌سازد. target معمولاً ID کلاس درست است. Cross entropy برای یک نمونه منفی log احتمال کلاس درست است؛ میانگین آن روی batch loss را می‌دهد.</p>
+        <div class="math">L = −(1/N) Σₙ log softmax(zₙ)[yₙ]</div>
+        <p><code>N</code> تعداد نمونه‌ها، <code>zₙ</code> vector logits نمونه n و <code>yₙ</code> ID کلاس درست است. در مدل زبان، هر موقعیت یک نمونهٔ classification با V کلاس است؛ کلاس‌ها tokenهای vocabulary هستند.</p>
+        <pre><code>import torch
+import torch.nn.functional as F
+
+logits = torch.tensor([[2.0, 1.0, 0.1],
+                       [0.2, 0.3, 1.8]])  # (N=2, classes=3)
+targets = torch.tensor([0, 2])            # (N=2,)
+loss = F.cross_entropy(logits, targets)
+print(loss.item())</code></pre>
+        <p>برای logits مدل زبان با shape <code>(B,T,V)</code> و target با shape <code>(B,T)</code> دو محور نخست را صاف می‌کنیم:</p>
+        <div class="shape-flow">logits (B,T,V) → (B×T,V)<br>targets (B,T) → (B×T)</div>
+        <div class="lab"><h3>آزمایش</h3><p>در مثال بالا logit کلاس درست سطر اول را از 2 به 8 تغییر دهید؛ loss باید کم شود. سپس logit کلاس غلط را 8 کنید؛ loss زیاد می‌شود. این آزمایش پیوند «امتیاز» و «جریمه» را ملموس می‌کند.</p></div>
+        <div class="exercise"><h3>تمرین‌ها</h3><ol><li><strong>سطح ۱:</strong> چرا target یک ID است؟</li><li><strong>سطح ۲:</strong> احتمال و loss نمونهٔ اول را دستی حساب کنید.</li><li><strong>سطح ۳:</strong> چرا softmax جداگانه قبل از <code>cross_entropy</code> نادرست/نامطلوب است؟</li><li><strong>سطح ۴:</strong> flatten کردن shapeهای <code>(4,16,100)</code> را بنویسید.</li></ol></div>
+        <nav class="chapter-nav"><a href="#ch8">→ فصل قبل</a><a href="#ch10">فصل بعد: PyTorch ←</a></nav>
+      </section>
+
+      <header class="part"><small>بخش چهار</small><h2>PyTorch از صفر</h2></header>
+      <section id="ch10" class="chapter">
+        <h2>فصل ۱۰ — Tensorهای PyTorch</h2>
+        <p class="objectives"><strong>یاد می‌گیرید:</strong> ساخت tensor، shape، dtype، indexing، slicing، reduction و device.</p>
+        <p>PyTorch کتابخانه‌ای برای محاسبات tensor، مشتق خودکار و ساخت moduleهای قابل آموزش است. Tensor شبیه آرایهٔ عددی است، اما می‌تواند روی CPU/GPU اجرا شود و تاریخچهٔ عملیات را برای gradient نگه دارد.</p>
+        <pre><code>import torch
+
+x = torch.tensor([[1, 2, 3], [4, 5, 6]], dtype=torch.float32)
+print(x.shape)       # torch.Size([2, 3])
+print(x.ndim)        # 2
+print(x.dtype)       # torch.float32
+print(x.device)      # cpu
+print(x[0, 1])       # tensor(2.)
+print(x[:, 1:])      # both rows, columns 1 onward</code></pre>
+        <p>برای ID token از <code>torch.long</code> (عدد صحیح 64 بیتی) استفاده می‌کنیم، چون <code>Embedding</code> ID صحیح می‌خواهد. برای weightها معمولاً float32 است. تبدیل بی‌دلیل dtype می‌تواند حافظه یا دقت را خراب کند.</p>
+        <h3>Reduction</h3>
+        <p>عملیات‌هایی مثل <code>sum</code> و <code>mean</code> یک محور را خلاصه می‌کنند. روی tensor شکل <code>(2,3)</code>، دستور <code>x.sum(dim=1)</code> سه ستون هر سطر را جمع و shape را به <code>(2,)</code> تبدیل می‌کند. با <code>keepdim=True</code> نتیجه <code>(2,1)</code> می‌شود.</p>
+        <pre><code>print(x.sum())                 # scalar, all elements
+print(x.sum(dim=0).shape)     # (3,) reduce rows
+print(x.mean(dim=1).shape)    # (2,) reduce columns
+print(x.mean(dim=1, keepdim=True).shape)  # (2,1)</code></pre>
+        <h3>CPU و GPU</h3>
+        <p>GPU برای ضرب‌های بزرگ موازی سریع است، نه اینکه هر کد کوچکی را سریع کند. مدل و ورودی باید روی device یکسان باشند. پروژهٔ این کتاب روی CPU اجرا می‌شود؛ GPU اختیاری است.</p>
+        <pre><code>device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+x = x.to(device)</code></pre>
+        <div class="lab"><h3>آزمایش</h3><p>tensor شکل <code>(2,3,4)</code> با <code>torch.arange(24).reshape(2,3,4)</code> بسازید. برش <code>x[1,:,0]</code> را پیش از اجرا پیش‌بینی کنید.</p></div>
+        <div class="exercise"><h3>تمرین‌ها</h3><ol><li><strong>سطح ۱:</strong> dtype مناسب token ID چیست؟</li><li><strong>سطح ۲:</strong> میانگین هر سطر یک tensor 3×4 را بگیرید.</li><li><strong>سطح ۳:</strong> تفاوت <code>x[0]</code> و <code>x[0:1]</code> در shape چیست؟</li><li><strong>سطح ۴:</strong> خطای device mismatch را عمداً بسازید و تفسیر کنید (فقط اگر CUDA دارید).</li></ol></div>
+        <nav class="chapter-nav"><a href="#ch9">→ فصل قبل</a><a href="#ch11">فصل بعد: Shape ←</a></nav>
+      </section>
+
+      <section id="ch11" class="chapter">
+        <h2>فصل ۱۱ — Broadcasting و مهندسی Shape</h2>
+        <p class="objectives"><strong>یاد می‌گیرید:</strong> broadcast، reshape/view، transpose/permute، unsqueeze/squeeze و matmul را با دلیل استفاده کنید.</p>
+        <h3>Broadcasting</h3>
+        <p>PyTorch هنگام جمع دو tensor، dimensionها را از راست مقایسه می‌کند. اندازه‌ها باید برابر باشند یا یکی از آن‌ها 1 باشد. مثال: bias شکل <code>(C,)</code> می‌تواند به tensor <code>(B,T,C)</code> افزوده شود؛ گویی برای همهٔ B و T تکرار شده، بدون ساخت کپی واقعی.</p>
+        <div class="shape-flow">(B,T,C) + (C) → (B,T,C)<br>(B,T,C) + (1,1,C) → (B,T,C)</div>
+        <h3>تغییر شکل یا جابه‌جایی معنا</h3>
+        <ul><li><code>reshape</code>/<code>view</code>: همان عنصرها با گروه‌بندی جدید. تعداد عنصر ثابت می‌ماند.</li><li><code>transpose(a,b)</code>: دو محور را جابه‌جا می‌کند.</li><li><code>permute(...)</code>: ترتیب همهٔ محورها را مشخص می‌کند.</li><li><code>unsqueeze(dim)</code>: محور اندازهٔ 1 اضافه می‌کند.</li><li><code>squeeze(dim)</code>: فقط محور اندازهٔ 1 را حذف می‌کند.</li></ul>
+        <pre><code>x = torch.arange(24).reshape(2, 3, 4)  # (B=2,T=3,C=4)
+y = x.reshape(2, 3, 2, 2)             # (B,T,H=2,D=2)
+z = y.transpose(1, 2)                  # (B,H,T,D)
+back = z.transpose(1, 2).contiguous().view(2, 3, 4)
+
+row = torch.tensor([1, 2, 3])          # (3,)
+print(row.unsqueeze(0).shape)          # (1,3)
+print(row.unsqueeze(1).shape)          # (3,1)</code></pre>
+        <p>پس از transpose ممکن است حافظه contiguous نباشد؛ پیش از <code>view</code> از <code>contiguous()</code> یا مستقیماً از <code>reshape</code> استفاده کنید. در multi-head attention دقیقاً همین مسیر را می‌رویم.</p>
+        <h3>Matmul با batch</h3>
+        <p><code>torch.matmul</code> دو محور آخر را ماتریسی می‌بیند و محورهای قبلی را broadcast می‌کند:</p>
+        <div class="shape-flow">Q (B,H,T,D) @ Kᵀ (B,H,D,T) → scores (B,H,T,T)</div>
+        <div class="lab"><h3>آزمایش شکل</h3><p><code>B=2,T=5,C=12,H=3</code> بگیرید؛ D برابر 4 است. tensor تصادفی بسازید، به <code>(B,T,H,D)</code> و سپس <code>(B,H,T,D)</code> ببرید و دوباره به شکل نخست برگردانید. با <code>torch.equal</code> برابری را چک کنید.</p></div>
+        <div class="warning"><h3>قانون طلایی</h3><p><code>reshape</code> خودبه‌خود معنای محور را نمی‌فهمد. اگر ترتیب عناصر اشتباه باشد، ممکن است کد بدون error اجرا شود اما داده‌ها را مخلوط کند. کنار هر تبدیل، معنای محور و shape را بنویسید.</p></div>
+        <div class="exercise"><h3>تمرین‌ها</h3><ol><li><strong>سطح ۱:</strong> D برای C=96 و H=4 چیست؟</li><li><strong>سطح ۲:</strong> مسیر بالا را با اعداد دیگر اجرا کنید.</li><li><strong>سطح ۳:</strong> آیا <code>(2,3,4)+(3,1)</code> broadcast می‌شود؟ نتیجه چه shapeی دارد؟</li><li><strong>سطح ۴:</strong> یک تبدیل axis بنویسید که batch و head را موقتاً ادغام کند.</li></ol></div>
+        <nav class="chapter-nav"><a href="#ch10">→ فصل قبل</a><a href="#ch12">فصل بعد: Autograd ←</a></nav>
+      </section>
+
+      <section id="ch12" class="chapter">
+        <h2>فصل ۱۲ — Autograd، nn.Module و اجزای آماده</h2>
+        <p class="objectives"><strong>یاد می‌گیرید:</strong> computational graph، <code>requires_grad</code>، parameter، module و حالت train/eval.</p>
+        <pre><code>import torch
+
+w = torch.tensor(3.0, requires_grad=True)
+loss = (w - 2) ** 2
+loss.backward()
+print(w.grad)  # 2*(3-2) = 2</code></pre>
+        <p>هر عملیات روی w گره‌ای در graph پویا ساخت. <code>backward()</code> chain rule را از scalar loss اجرا و نتیجه را در <code>w.grad</code> انباشته کرد. Autograd ریاضیات را حذف نمی‌کند؛ اجرای مکانیکی مشتق‌های محلی را انجام می‌دهد.</p>
+        <h3>nn.Module</h3>
+        <p>Module ظرفی استاندارد برای submoduleها و parameterهاست. اگر weight را به‌صورت <code>nn.Parameter</code> یا داخل <code>nn.Linear</code> ثبت کنید، <code>model.parameters()</code> آن را پیدا می‌کند، <code>state_dict</code> ذخیره‌اش می‌کند و انتقال device روی آن اعمال می‌شود.</p>
+        <pre><code>import torch.nn as nn
+
+class TinyNet(nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.layers = nn.Sequential(
+            nn.Linear(2, 8),
+            nn.ReLU(),
+            nn.Linear(8, 2),
+        )
+
+    def forward(self, x):
+        return self.layers(x)
+
+model = TinyNet()
+optimizer = torch.optim.AdamW(model.parameters(), lr=1e-3)</code></pre>
+        <h3>اجزایی که بعداً می‌بینیم</h3>
+        <table><thead><tr><th>API</th><th>عمل واقعی</th><th>کاربرد</th></tr></thead><tbody><tr><td><code>nn.Linear</code></td><td><code>xWᵀ+b</code></td><td>projectionهای Q/K/V و FFN</td></tr><tr><td><code>nn.Embedding</code></td><td>انتخاب سطر weight با ID</td><td>token و position</td></tr><tr><td><code>nn.LayerNorm</code></td><td>نرمال‌سازی ویژگی‌های هر موقعیت</td><td>پایداری بلوک</td></tr><tr><td><code>nn.GELU</code></td><td>تابع غیرخطی نرم</td><td>FFN</td></tr><tr><td><code>nn.Dropout</code></td><td>صفرکردن تصادفی در train</td><td>regularization</td></tr></tbody></table>
+        <p><code>model.train()</code> و <code>model.eval()</code> gradient را روشن/خاموش نمی‌کنند؛ رفتار dropout و برخی normalizationها را عوض می‌کنند. برای inference از <code>eval()</code> و <code>torch.no_grad()</code> با هم استفاده کنید.</p>
+        <div class="lab"><h3>گرادیان را ببینید</h3><p>یک input شکل <code>(4,2)</code> از TinyNet عبور دهید، مجموع خروجی را backward کنید و نام، shape و میانگین قدر مطلق gradient هر پارامتر را چاپ کنید.</p></div>
+        <div class="exercise"><h3>تمرین‌ها</h3><ol><li><strong>سطح ۱:</strong> Autograd چه می‌کند؟</li><li><strong>سطح ۲:</strong> تعداد پارامترهای TinyNet را چاپ کنید.</li><li><strong>سطح ۳:</strong> تفاوت <code>eval()</code> و <code>no_grad()</code> را توضیح دهید.</li><li><strong>سطح ۴:</strong> یک Linear را بدون <code>nn.Linear</code> ولی با <code>nn.Parameter</code> بسازید.</li></ol></div>
+        <nav class="chapter-nav"><a href="#ch11">→ فصل قبل</a><a href="#ch13">فصل بعد: Dataset ←</a></nav>
+      </section>
+
+      <section id="ch13" class="chapter">
+        <h2>فصل ۱۳ — Dataset، DataLoader و روش حل خطاهای Shape</h2>
+        <p class="objectives"><strong>یاد می‌گیرید:</strong> داده را به نمونه و batch تبدیل کنید و mismatchها را منظم تشخیص دهید.</p>
+        <p><code>Dataset</code> دو پرسش را جواب می‌دهد: چند نمونه داریم و نمونهٔ i چیست؟ <code>DataLoader</code> batching، shuffle و iteration را مدیریت می‌کند.</p>
+        <pre><code>from torch.utils.data import Dataset, DataLoader
+
+class Pairs(Dataset):
+    def __init__(self):
+        self.x = torch.tensor([[0.,0.], [0.,1.], [1.,0.], [1.,1.]])
+        self.y = torch.tensor([0, 1, 1, 0])
+    def __len__(self):
+        return len(self.x)
+    def __getitem__(self, i):
+        return self.x[i], self.y[i]
+
+loader = DataLoader(Pairs(), batch_size=2, shuffle=True)
+for x, y in loader:
+    print(x.shape, y.shape)  # (2,2), (2,)</code></pre>
+        <h3>پروتکل پنج‌مرحله‌ای Shape</h3>
+        <ol><li>پیام خطا و operation را بخوانید؛ حدس کور نزنید.</li><li>shape و dtype ورودی‌های همان خط را چاپ یا assert کنید.</li><li>برای هر محور نام معنایی بنویسید: B، T، C، H، D یا V.</li><li>قانون operation را بنویسید؛ مثلاً در matmul دو محور داخلی باید برابر باشند.</li><li>به عقب برگردید و اولین جایی را بیابید که shape با انتظار فرق کرده، نه آخرین جایی که crash کرده است.</li></ol>
+        <pre><code>assert x.ndim == 3
+B, T, C = x.shape
+assert C % H == 0, "embedding dimension must be divisible by heads"
+print({"B": B, "T": T, "C": C, "H": H, "D": C // H})</code></pre>
+        <div class="example"><h3>خطای رایج</h3><p>logits شکل <code>(B,T,V)</code> و target شکل <code>(B,T)</code> دارد، اما cross entropy برای حالت معمول ورودی <code>(N,V)</code> می‌خواهد. راه‌حل معنایی ادغام B و T است: <code>logits.reshape(B*T,V)</code> و <code>targets.reshape(B*T)</code>.</p></div>
+        <div class="lab"><h3>عمداً خراب کنید</h3><p>در آزمایش فصل قبل C=10 و H=3 انتخاب کنید. تقسیم‌ناپذیری را با assert پیدا کنید. سپس C را 12 کنید. هدف این تمرین خواندن shape است، نه فقط حذف error.</p></div>
+        <div class="exercise"><h3>تمرین‌ها</h3><ol><li><strong>سطح ۱:</strong> وظیفهٔ Dataset و DataLoader را جدا کنید.</li><li><strong>سطح ۲:</strong> Dataset از جفت‌های عددی خودتان بسازید.</li><li><strong>سطح ۳:</strong> mismatch بین <code>(8,32,64)</code> و Linear با <code>in_features=32</code> را تحلیل کنید.</li><li><strong>سطح ۴:</strong> helperای برای assert شکل <code>(B,T,C)</code> بنویسید.</li></ol></div>
+        <nav class="chapter-nav"><a href="#ch12">→ فصل قبل</a><a href="#ch14">فصل بعد: Tokenization ←</a></nav>
+      </section>
+
+      <header class="part"><small>بخش پنج</small><h2>از متن خام تا دادهٔ آموزشی</h2></header>
+      <section id="ch14" class="chapter">
+        <h2>فصل ۱۴ — Tokenization، Vocabulary و ID</h2>
+        <p class="objectives"><strong>یاد می‌گیرید:</strong> چرا متن باید قطعه‌قطعه و عددی شود، tokenizer کاراکتری و کلمه‌ای چگونه کار می‌کنند و special token چیست.</p>
+        <p>شبکه فقط tensor عددی می‌پذیرد. <strong>Tokenizer</strong> متن را به tokenها می‌شکند و هر token را با ID آن در <strong>vocabulary</strong> جایگزین می‌کند. tokenizer بخشی از قرارداد مدل است: اگر نگاشت IDها عوض شود، weightهای embedding معنای قبلی را از دست می‌دهند.</p>
+        <h3>گام اول: کاراکتر</h3>
+        <pre><code>text = "سلام!"
+vocab = sorted(set(text))
+token_to_id = {token: i for i, token in enumerate(vocab)}
+id_to_token = {i: token for token, i in token_to_id.items()}
+
+ids = [token_to_id[c] for c in text]
+decoded = "".join(id_to_token[i] for i in ids)
+assert decoded == text</code></pre>
+        <p>مزیت کاراکتری: vocabulary کوچک و تقریباً بدون unknown. عیب: دنباله بلند است و مدل باید مفهوم کلمه را از کنارهم‌آمدن چندین کاراکتر کشف کند. در فارسی فاصلهٔ مجازی، شکل‌های مختلف «ی/ک» و normalization نیز مهم‌اند.</p>
+        <h3>گام دوم: کلمه</h3>
+        <p>شکستن بر اساس فاصله دنباله را کوتاه می‌کند، اما نشانه‌گذاری، نیم‌فاصله و کلمه‌های ندیده مشکل می‌سازند. vocabulary کلمه‌ای ممکن است بسیار بزرگ شود. token مخصوص <code>&lt;unk&gt;</code> برای مورد ندیده و گاهی <code>&lt;pad&gt;</code>، <code>&lt;bos&gt;</code> و <code>&lt;eos&gt;</code> برای padding/آغاز/پایان به کار می‌روند.</p>
+        <table><thead><tr><th>روش</th><th>Vocabulary</th><th>طول دنباله</th><th>مشکل اصلی</th></tr></thead><tbody><tr><td>Character</td><td>کوچک</td><td>بلند</td><td>یادگیری الگوهای سطح بالاتر سخت‌تر</td></tr><tr><td>Word</td><td>بسیار بزرگ</td><td>کوتاه‌تر</td><td>کلمهٔ ناشناخته و جداسازی</td></tr><tr><td>Subword</td><td>میانه</td><td>میانه</td><td>پیچیدگی آموزش tokenizer</td></tr></tbody></table>
+        <div class="warning"><h3>Token ≠ word</h3><p>در tokenizer تولیدی، «برنامه‌نویسی» ممکن است یک token یا چند subword باشد. فاصله و نشانه نیز ممکن است بخشی از token باشند. شمارش کلمه با شمارش token یکی نیست.</p></div>
+        <div class="lab"><h3>آزمایش ۱: vocabulary</h3><p>در فایل <code>mini_gpt/tokenizer.py</code> tokenizer کاراکتری را اجرا کنید. یک حرف تازه که در corpus نبوده encode کنید و ID مربوط به <code>&lt;|unk|&gt;</code> را ببینید. سپس همان حرف را به corpus اضافه و vocabulary را دوباره بسازید. مشاهده کنید همهٔ نگاشت‌ها ممکن است جابه‌جا شوند.</p></div>
+        <div class="exercise"><h3>تمرین‌ها</h3><ol><li><strong>سطح ۱:</strong> encode و decode را تعریف کنید.</li><li><strong>سطح ۲:</strong> tokenizer کاراکتری با save/load JSON بسازید.</li><li><strong>سطح ۳:</strong> مشکل <code>text.split()</code> برای فارسی را با سه مثال نشان دهید.</li><li><strong>سطح ۴:</strong> normalization انتخابی برای «ي/ی» و «ك/ک» طراحی و پیامدش را تحلیل کنید.</li></ol></div>
+        <nav class="chapter-nav"><a href="#ch13">→ فصل قبل</a><a href="#ch15">فصل بعد: BPE ←</a></nav>
+      </section>
+
+      <section id="ch15" class="chapter">
+        <h2>فصل ۱۵ — Subword و ایدهٔ BPE</h2>
+        <p class="objectives"><strong>یاد می‌گیرید:</strong> چگونه subword بین کاراکتر و کلمه مصالحه می‌کند و BPE به‌صورت مفهومی چه می‌آموزد.</p>
+        <p>Subwordها قطعه‌هایی‌اند که می‌توانند یک کلمهٔ کامل یا بخشی پرتکرار از آن باشند. کلمهٔ رایج شاید یک token و واژهٔ تازه ترکیبی از چند قطعه شود. پس vocabulary محدود می‌ماند و unknown کمتر می‌شود.</p>
+        <h3>BPE کوچک، مرحله‌به‌مرحله</h3>
+        <p>فرض کنید corpus شامل «کار، کار، کارگر» است. ابتدا هر واژه را کاراکترها و نشانهٔ پایان می‌بینیم. فراوانی جفت‌های مجاور را می‌شماریم. اگر «ک+ا» پرتکرارترین باشد، آن را به «کا» merge می‌کنیم؛ سپس شاید «کا+ر» به «کار» تبدیل شود. این کار تا رسیدن به اندازهٔ vocabulary یا تعداد merge تعیین‌شده ادامه می‌یابد.</p>
+        <div class="shape-flow">ک ا ر → کا ر → کار<br>ک ا ر گ ر → کا ر گ ر → کار گ ر</div>
+        <p>هنگام encode، همان mergeهای آموخته‌شده با همان ترتیب اعمال می‌شوند. BPE معنا را مستقیماً نمی‌فهمد؛ فراوانی آماری قطعه‌ها را فشرده می‌کند. tokenizerهای واقعی جزئیات بیشتری دارند: pre-tokenization، byte fallback، normalization، special-token policy و پیاده‌سازی بسیار سریع.</p>
+        <div class="warning"><h3>Tokenizer آموزشی و تولیدی</h3><p>پروژهٔ ما character-level است تا رابطهٔ text→ID شفاف بماند. برای مدل جدی از tokenizer آزموده‌شده استفاده می‌شود. تغییر tokenizer نیازمند آموزش دوبارهٔ embedding و head است.</p></div>
+        <div class="lab"><h3>آزمایش دستی BPE</h3><p>واژه‌های «دانش، دانشجو، دانشگاه» را کاراکتری بنویسید، جفت‌ها را با فراوانی وزن‌دار بشمارید و سه merge انجام دهید. بعد نشان دهید واژهٔ «دانشمند» با قطعه‌های موجود چگونه شکسته می‌شود.</p></div>
+        <div class="exercise"><h3>تمرین‌ها</h3><ol><li><strong>سطح ۱:</strong> مزیت subword نسبت به word-level چیست؟</li><li><strong>سطح ۲:</strong> شمارندهٔ جفت‌های مجاور را در Python بنویسید.</li><li><strong>سطح ۳:</strong> چرا vocabulary بزرگ همیشه بهتر نیست؟</li><li><strong>سطح ۴:</strong> اثر tokenizer بر طول context قابل استفاده را تحلیل کنید.</li></ol></div>
+        <nav class="chapter-nav"><a href="#ch14">→ فصل قبل</a><a href="#ch16">فصل بعد: Dataset زبانی ←</a></nav>
+      </section>
+
+      <section id="ch16" class="chapter">
+        <h2>فصل ۱۶ — ساخت نمونه‌های Next-Token</h2>
+        <p class="objectives"><strong>یاد می‌گیرید:</strong> چرا target یک خانه شیفت دارد، sliding window چگونه dataset می‌سازد و batch چه شکلی دارد.</p>
+        <p>از دنبالهٔ <code>[A,B,C,D,E]</code> با context چهار، ورودی <code>[A,B,C,D]</code> و target <code>[B,C,D,E]</code> می‌سازیم. هر موقعیت باید token بعدی خود را حدس بزند:</p>
+        <table><thead><tr><th>Context قابل مشاهده</th><th>Target</th></tr></thead><tbody><tr><td class="ltr">A</td><td class="ltr">B</td></tr><tr><td class="ltr">A B</td><td class="ltr">C</td></tr><tr><td class="ltr">A B C</td><td class="ltr">D</td></tr><tr><td class="ltr">A B C D</td><td class="ltr">E</td></tr></tbody></table>
+        <p>یک forward pass چهار مسئلهٔ prediction می‌سازد. شیفت تصادفی نیست؛ تعریف هدف next-token همین است. اگر input و target برابر باشند، مدل می‌تواند هویت token جاری را یاد بگیرد و مسئلهٔ موردنظر را حل نکند.</p>
+        <pre><code>class NextTokenDataset(torch.utils.data.Dataset):
+    def __init__(self, token_ids, context_length):
+        self.tokens = torch.tensor(token_ids, dtype=torch.long)
+        self.context_length = context_length
+
+    def __len__(self):
+        return len(self.tokens) - self.context_length
+
+    def __getitem__(self, i):
+        chunk = self.tokens[i:i + self.context_length + 1]
+        return chunk[:-1], chunk[1:]</code></pre>
+        <div class="shape-flow">one sample: x (T), y (T)<br>DataLoader batch: x (B,T), y (B,T)</div>
+        <p>پنجره‌های مجاور بسیار هم‌پوشانی دارند. این برای آموزش کوچک ساده است، ولی pipeline صنعتی ممکن است corpus را chunk و pack کند تا I/O و padding بهینه شود. train و validation را پیش از ساخت پنجره‌ها جدا کنید تا نشت داده کمتر شود.</p>
+        <div class="lab"><h3>آزمایش ۲: IDها و context</h3><p>یک جمله را encode کنید، سه نمونهٔ اول dataset را decode کنید و input/target را کنار هم ببینید. context length را از 8 به 32 ببرید: تعداد نمونه‌ها کم‌تر و اطلاعات هر نمونه بیشتر می‌شود؛ حافظهٔ attention نیز با T تقریباً مربعی رشد می‌کند.</p></div>
+        <div class="exercise"><h3>تمرین‌ها</h3><ol><li><strong>سطح ۱:</strong> شیفت target را توضیح دهید.</li><li><strong>سطح ۲:</strong> dataset بالا را روی یک رشته اجرا کنید.</li><li><strong>سطح ۳:</strong> طول dataset برای N token و T context چیست؟</li><li><strong>سطح ۴:</strong> نسخه‌ای با stride قابل تنظیم طراحی کنید و trade-off را بنویسید.</li></ol></div>
+        <nav class="chapter-nav"><a href="#ch15">→ فصل قبل</a><a href="#ch17">فصل بعد: Embedding ←</a></nav>
+      </section>
+
+      <header class="part"><small>بخش شش</small><h2>نمایش یادگرفتنی Tokenها</h2></header>
+      <section id="ch17" class="chapter">
+        <h2>فصل ۱۷ — Embedding و اطلاعات موقعیت</h2>
+        <p class="objectives"><strong>یاد می‌گیرید:</strong> ID چگونه به vector تبدیل می‌شود، one-hot چه رابطه‌ای با Embedding دارد و چرا ترتیب باید افزوده شود.</p>
+        <p>ID فقط نشانی است؛ بزرگ‌تر بودن ID هیچ معنای «بیشتر» ندارد. <strong>Embedding</strong> جدولی با shape <code>(V,C)</code> است. برای هر ID، سطر مربوط را برمی‌داریم. این سطرها parameterهای قابل آموزش‌اند.</p>
+        <div class="shape-flow">token_ids (B,T) → Embedding table (V,C) → token vectors (B,T,C)</div>
+        <p>اگر ID را one-hot با طول V کنیم و در matrix embedding ضرب کنیم، دقیقاً همان سطر انتخاب می‌شود. <code>nn.Embedding</code> این lookup را بدون ساخت vector بزرگ one-hot انجام می‌دهد.</p>
+        <pre><code>import torch
+import torch.nn as nn
+
+V, C = 100, 32
+embedding = nn.Embedding(V, C)
+ids = torch.tensor([[4, 8, 4], [2, 1, 9]])  # (B=2,T=3)
+x = embedding(ids)                           # (2,3,32)
+assert torch.equal(x[0, 0], x[0, 2])         # same ID, same row</code></pre>
+        <h3>چرا position لازم است؟</h3>
+        <p>Self-attention بدون اطلاعات موقعیت، مجموعه‌ای از tokenها را می‌بیند و ترتیب را ذاتاً نمی‌داند. در Mini-GPT یک جدول position embedding با shape <code>(T_max,C)</code> داریم و vector موقعیت را به token embedding جمع می‌کنیم:</p>
+        <div class="math">x[b,t,:] = E_token[id[b,t],:] + E_pos[t,:]</div>
+        <p>هر دو طرف جمع shape <code>(B,T,C)</code> دارند؛ position با broadcast روی B تکرار می‌شود. روش‌های مدرن دیگری مانند sinusoidal، RoPE و ALiBi وجود دارند، اما اصل نیاز به نشانهٔ ترتیب ثابت است.</p>
+        <div class="warning"><h3>Embedding فقط dictionary ثابت نیست</h3><p>عمل lookup شبیه dictionary است، اما مقدارهای جدول طی آموزش با gradient تغییر می‌کنند. همچنین embedding اولیه context-independent است؛ نمایش contextual بعد از عبور از بلوک‌ها شکل می‌گیرد.</p></div>
+        <div class="lab"><h3>آزمایش ۳: بُعد embedding</h3><p>C را 32، 64 و 96 بگذارید. تعداد پارامتر جدول <code>V×C</code> و shape خروجی را ثبت کنید. C بزرگ‌تر ظرفیت و هزینه را بالا می‌برد؛ تضمین کیفیت نیست.</p></div>
+        <div class="exercise"><h3>تمرین‌ها</h3><ol><li><strong>سطح ۱:</strong> چرا ID را مستقیماً float ورودی نمی‌دهیم؟</li><li><strong>سطح ۲:</strong> lookup را با indexing یک tensor پیاده کنید.</li><li><strong>سطح ۳:</strong> تعداد پارامتر token و position embedding را حساب کنید.</li><li><strong>سطح ۴:</strong> نشان دهید one-hot@weight با lookup برابر است.</li></ol></div>
+        <nav class="chapter-nav"><a href="#ch16">→ فصل قبل</a><a href="#ch18">فصل بعد: Attention ←</a></nav>
+      </section>
+
+      <header class="part"><small>بخش هفت</small><h2>Attention از شهود تا ماتریس</h2></header>
+      <section id="ch18" class="chapter">
+        <h2>فصل ۱۸ — چرا Attention؟ Query، Key و Value</h2>
+        <p class="objectives"><strong>یاد می‌گیرید:</strong> مسئله‌ای که Attention حل می‌کند و نقش متمایز Q، K و V.</p>
+        <p>جمله را بخوانید: «سارا کتاب را روی میز گذاشت چون <strong>آن</strong> خیس بود.» برای ساخت نمایش «آن»، بعضی کلمه‌ها مرتبط‌تر از بقیه‌اند. Attention اجازه می‌دهد هر موقعیت برای ترکیب اطلاعات، وزن متفاوتی به موقعیت‌های مجاز بدهد.</p>
+        <div class="warning"><h3>مرز تشبیه</h3><p>این فقط تشبیه برای درک مفهوم است؛ مدل واقعاً مانند انسان توجه یا ارجاع را «نمی‌فهمد». سازوکار فنی، ضرب بردارها، softmax و weighted sum است.</p></div>
+        <h3>سه نقش</h3>
+        <p>یک مثال جست‌وجو را تصور کنید: query می‌گوید اکنون چه می‌خواهم؛ key توصیف می‌کند هر آیتم با چه درخواست‌هایی جور است؛ value محتوایی است که در صورت انتخاب منتقل می‌شود.</p>
+        <table><thead><tr><th>بردار</th><th>پرسش شهودی</th><th>نقش ریاضی</th></tr></thead><tbody><tr><td>Query (Q)</td><td>این موقعیت دنبال چه اطلاعاتی است؟</td><td>سطر درخواست برای مقایسه</td></tr><tr><td>Key (K)</td><td>این موقعیت چه نوع تطابقی پیشنهاد می‌دهد؟</td><td>سطر قابل مقایسه با query</td></tr><tr><td>Value (V)</td><td>اگر انتخاب شدم، چه اطلاعاتی منتقل کنم؟</td><td>محتوای weighted sum</td></tr></tbody></table>
+        <p>Q، K و V از یک ورودی x با سه projection خطی متفاوت ساخته می‌شوند:</p>
+        <div class="math">Q=XW_Q, &nbsp; K=XW_K, &nbsp; V=XW_V</div>
+        <p>چرا سه نسخه؟ چون معیار یافتن و محتوای منتقل‌شده الزاماً یک چیز نیست. مدل می‌تواند space تطابق و space محتوا را جدا یاد بگیرد. در self-attention منبع هر سه X یکسان است، اما weightها متفاوت‌اند.</p>
+        <h3>وزن‌دهی</h3>
+        <ol><li>هر query با همهٔ keyهای مجاز dot product می‌شود.</li><li>امتیازها scale و در مدل زبانی mask می‌شوند.</li><li>softmax آن‌ها را به وزن‌های جمع‌شونده به 1 تبدیل می‌کند.</li><li>weighted sum از valueها نمایش تازه را می‌سازد.</li></ol>
+        <div class="lab"><h3>فعالیت شهودی</h3><p>برای جملهٔ «علی لیوان را برداشت و آن را شست» به‌صورت دستی به هر واژه برای query «آن» وزن بدهید؛ مجموع را یک کنید. سپس توضیح دهید این وزن‌های انسانی با attention آموخته‌شده یکسان و تضمین‌شده نیستند.</p></div>
+        <div class="exercise"><h3>تمرین‌ها</h3><ol><li><strong>سطح ۱:</strong> Q/K/V را در یک جمله تعریف کنید.</li><li><strong>سطح ۲:</strong> weighted sum دو value دوبعدی را حساب کنید.</li><li><strong>سطح ۳:</strong> چرا جدا بودن K و V مفید است؟</li><li><strong>سطح ۴:</strong> مثالی بسازید که نزدیک‌ترین key محتوای متفاوتی در value داشته باشد.</li></ol></div>
+        <nav class="chapter-nav"><a href="#ch17">→ فصل قبل</a><a href="#ch19">فصل بعد: محاسبهٔ Q/K/V ←</a></nav>
+      </section>
+
+      <section id="ch19" class="chapter">
+        <h2>فصل ۱۹ — Attention(Q,K,V)، عدد به عدد</h2>
+        <p class="objectives"><strong>یاد می‌گیرید:</strong> فرمول Attention را با matrixهای کوچک کامل حساب کنید و shape هر گام را بدانید.</p>
+        <div class="math">Attention(Q,K,V) = softmax(QKᵀ / √dₖ)V</div>
+        <p>فرض کنید یک دنبالهٔ دو tokenی و head dimension برابر 2 داریم. برای ساده‌بودن Q و K بردارهای پایه‌اند:</p>
+        <div class="math">Q = [[1,0],[0,1]] &nbsp; K = [[1,0],[0,1]] &nbsp; V = [[10,0],[0,20]]</div>
+        <p>همه shape <code>(T=2,D=2)</code> دارند.</p>
+        <h3>۱. Transpose کردن K</h3>
+        <p>در این مثال K متقارن است و ظاهرش تغییر نمی‌کند، اما shape مفهومی از <code>(T,D)</code> به <code>(D,T)</code> می‌رود.</p>
+        <h3>۲. امتیازها: QKᵀ</h3>
+        <div class="math">[[1,0],[0,1]] × [[1,0],[0,1]] = [[1,0],[0,1]]</div>
+        <p>خروجی <code>(T,T)</code> است. سطر i می‌گوید query موقعیت i به keyهای همهٔ موقعیت‌ها چه امتیازی داده است.</p>
+        <h3>۳. Scaling</h3>
+        <p><code>dₖ=2</code>، پس بر <code>√2≈1.414</code> تقسیم می‌کنیم:</p>
+        <div class="math">scores = [[0.707,0],[0,0.707]]</div>
+        <p>وقتی D بزرگ شود، واریانس dot product معمولاً بزرگ می‌شود و softmax بیش‌ازحد اشباع می‌شود. تقسیم بر ریشهٔ D مقیاس را کنترل می‌کند و gradientها را قابل‌استفاده‌تر نگه می‌دارد.</p>
+        <h3>۴. Softmax سطری</h3>
+        <div class="math">weights ≈ [[0.67,0.33],[0.33,0.67]]</div>
+        <p>هر سطر جمعش 1 است. سطر اول بیشتر value اول و سطر دوم بیشتر value دوم را می‌گیرد.</p>
+        <h3>۵. ضرب در V</h3>
+        <div class="math">[[0.67,0.33],[0.33,0.67]] × [[10,0],[0,20]] ≈ [[6.7,6.6],[3.3,13.4]]</div>
+        <p>خروجی دوباره <code>(T,D)</code> است. هر سطر ترکیبی وزن‌دار از valueهاست؛ attention tokenها را به یک scalar تقلیل نداد، برای هر token یک vector تازه ساخت.</p>
+        <table><thead><tr><th>گام</th><th>Shape تک head</th><th>معنا</th></tr></thead><tbody><tr><td>Q,K,V</td><td class="ltr">(T,D)</td><td>درخواست، کلید و محتوا</td></tr><tr><td>Kᵀ</td><td class="ltr">(D,T)</td><td>آماده برای مقایسهٔ همه‌به‌همه</td></tr><tr><td>QKᵀ</td><td class="ltr">(T,T)</td><td>امتیاز هر query-key</td></tr><tr><td>softmax</td><td class="ltr">(T,T)</td><td>وزن سطری</td></tr><tr><td>weights@V</td><td class="ltr">(T,D)</td><td>نمایش ترکیبی</td></tr></tbody></table>
+        <pre><code>import math
+import torch
+
+Q = torch.tensor([[1., 0.], [0., 1.]])
+K = torch.tensor([[1., 0.], [0., 1.]])
+V = torch.tensor([[10., 0.], [0., 20.]])
+
+scores = Q @ K.T / math.sqrt(K.shape[-1])
+weights = torch.softmax(scores, dim=-1)
+output = weights @ V
+print(scores, weights, output, sep="\n\n")</code></pre>
+        <div class="lab"><h3>آزمایش ۴: وزن‌ها</h3><p>جای valueها را عوض کنید: weightها ثابت و خروجی عوض می‌شود. سپس Q را عوض کنید: weight و خروجی هر دو تغییر می‌کنند. این تفاوت «کجا نگاه کنیم» و «چه برداریم» است.</p></div>
+        <div class="exercise"><h3>تمرین‌ها</h3><ol><li><strong>سطح ۱:</strong> مجموع هر سطر weight چرا یک است؟</li><li><strong>سطح ۲:</strong> مثال را دستی تا یک رقم اعشار بازتولید کنید.</li><li><strong>سطح ۳:</strong> shapeها را برای T=5,D=8 بنویسید.</li><li><strong>سطح ۴:</strong> Attention را فقط با listهای Python پیاده کنید.</li></ol></div>
+        <nav class="chapter-nav"><a href="#ch18">→ فصل قبل</a><a href="#ch20">فصل بعد: Causal Mask ←</a></nav>
+      </section>
+
+      <section id="ch20" class="chapter">
+        <h2>فصل ۲۰ — Self-Attention و Causal Mask</h2>
+        <p class="objectives"><strong>یاد می‌گیرید:</strong> self-attention یعنی چه، چرا آینده باید پوشانده شود و mask دقیقاً کجای محاسبه می‌آید.</p>
+        <p>در <strong>self-attention</strong>، Q/K/V همگی از نمایش‌های همان دنباله ساخته می‌شوند. «self» به منبع داده اشاره دارد، نه اینکه هر token فقط به خودش نگاه کند.</p>
+        <h3>چرا mask؟</h3>
+        <p>برای ورودی «The cat sat on the ...» هدف موقعیت «the» شاید «mat» باشد. در آموزش، همهٔ tokenهای دنباله را موازی وارد می‌کنیم. اگر موقعیت جاری بتواند key آینده را ببیند، پاسخ واقعی را لو می‌دهد. مدل loss پایین می‌آورد بدون اینکه توان پیش‌بینی واقعی پیدا کند، چون هنگام generation آینده وجود ندارد.</p>
+        <table><thead><tr><th>Query \ Key</th><th>۱</th><th>۲</th><th>۳</th><th>۴</th></tr></thead><tbody><tr><td>۱</td><td>مجاز</td><td>آینده</td><td>آینده</td><td>آینده</td></tr><tr><td>۲</td><td>مجاز</td><td>مجاز</td><td>آینده</td><td>آینده</td></tr><tr><td>۳</td><td>مجاز</td><td>مجاز</td><td>مجاز</td><td>آینده</td></tr><tr><td>۴</td><td>مجاز</td><td>مجاز</td><td>مجاز</td><td>مجاز</td></tr></tbody></table>
+        <p>پیش از softmax، خانه‌های بالای قطر را <code>-∞</code> می‌کنیم. <code>exp(-∞)=0</code>، پس وزن آن‌ها دقیقاً صفر می‌شود. اگر بعد از softmax صفر کنیم، مجموع سطر دیگر یک نیست مگر دوباره نرمال کنیم.</p>
+        <div class="math">scores_masked[i,j] = −∞ &nbsp; if j &gt; i</div>
+        <p>در مثال فصل قبل، بعد از causal mask:</p>
+        <div class="math">scores = [[0.707,−∞],[0,0.707]]<br>weights ≈ [[1,0],[0.33,0.67]]<br>output ≈ [[10,0],[3.3,13.4]]</div>
+        <pre><code>T = scores.shape[-1]
+mask = torch.tril(torch.ones(T, T, dtype=torch.bool))
+masked_scores = scores.masked_fill(~mask, float("-inf"))
+weights = torch.softmax(masked_scores, dim=-1)</code></pre>
+        <p>این mask محدودیت جریان اطلاعات است، نه پاک‌کردن tokenهای آینده از batch. آینده هنوز برای محاسبهٔ target و loss موجود است، اما نمی‌تواند وارد نمایش موقعیت‌های قبلی شود.</p>
+        <div class="lab"><h3>آزمایش mask</h3><p>matrix وزن 5×5 را چاپ کنید. مجموع هر سطر باید نزدیک 1 و تمام خانه‌های بالای قطر صفر باشد. خط mask را حذف و تفاوت را ببینید؛ این آزمایش را فقط برای فهم انجام دهید، نه آموزش مدل زبانی معتبر.</p></div>
+        <div class="exercise"><h3>تمرین‌ها</h3><ol><li><strong>سطح ۱:</strong> علت mask را بدون عبارت «چون آینده را نبیند» و با توضیح نشت پاسخ بیان کنید.</li><li><strong>سطح ۲:</strong> mask 4×4 را بسازید.</li><li><strong>سطح ۳:</strong> چرا mask قبل از softmax اعمال می‌شود؟</li><li><strong>سطح ۴:</strong> تفاوت causal mask و padding mask را تحلیل کنید.</li></ol></div>
+        <nav class="chapter-nav"><a href="#ch19">→ فصل قبل</a><a href="#ch21">فصل بعد: Multi-Head ←</a></nav>
+      </section>
+
+      <section id="ch21" class="chapter">
+        <h2>فصل ۲۱ — Multi-Head Attention و حساب کامل Shape</h2>
+        <p class="objectives"><strong>یاد می‌گیرید:</strong> چرا چند head داریم، C چگونه تقسیم می‌شود و tensorها در پیاده‌سازی واقعی چه مسیری می‌روند.</p>
+        <p>یک attention head تنها یک مجموعه projection و یک الگوی وزن‌دهی دارد. چند head به مدل اجازه می‌دهد زیر‌فضاهای متفاوتی برای رابطه‌ها بیاموزد. تضمینی نیست یک head همیشه «فاعل» و دیگری «فاصله» باشد؛ این تنها ظرفیت ساختاری است.</p>
+        <p>فرض کنید <code>B=2,T=5,C=12,H=3</code>. در نتیجه <code>D=C/H=4</code>. projection یک‌جای QKV از <code>C</code> به <code>3C</code> می‌رود و سپس chunk می‌شود.</p>
+        <div class="shape-flow">x (2,5,12)<br>↓ Linear C→3C<br>qkv (2,5,36)<br>↓ chunk<br>q,k,v each (2,5,12)<br>↓ view(B,T,H,D)<br>(2,5,3,4)<br>↓ transpose T,H<br>(2,3,5,4)</div>
+        <p>اکنون هر batch و هر head مستقل matmul می‌شود:</p>
+        <div class="shape-flow">q (B,H,T,D) @ k.transpose(-2,-1) (B,H,D,T)<br>→ scores (B,H,T,T)<br>→ softmax/mask → weights (B,H,T,T)<br>weights @ v (B,H,T,D) → attended (B,H,T,D)</div>
+        <p>برای چسباندن headها، H و D را کنار هم می‌آوریم:</p>
+        <div class="shape-flow">(B,H,T,D) → transpose → (B,T,H,D) → contiguous/view → (B,T,C)</div>
+        <p>در پایان یک output projection با shape <code>C→C</code> اطلاعات headها را مخلوط می‌کند.</p>
+        <pre><code>B, T, C = x.shape
+q, k, v = self.qkv(x).chunk(3, dim=-1)
+q = q.view(B, T, H, D).transpose(1, 2)  # (B,H,T,D)
+k = k.view(B, T, H, D).transpose(1, 2)
+v = v.view(B, T, H, D).transpose(1, 2)
+
+scores = q @ k.transpose(-2, -1) / math.sqrt(D)  # (B,H,T,T)
+scores = scores.masked_fill(~mask[:, :, :T, :T], float("-inf"))
+weights = torch.softmax(scores, dim=-1)
+out = weights @ v                                  # (B,H,T,D)
+out = out.transpose(1, 2).contiguous().view(B, T, C)</code></pre>
+        <h3>هزینهٔ مهم</h3>
+        <p>matrix توجه <code>T×T</code> است؛ زمان و حافظهٔ بخش attention با طول context تقریباً <code>O(T²)</code> رشد می‌کند. دو برابر کردن T می‌تواند matrix را چهار برابر کند. تعداد head با C ثابت الزاماً اندازهٔ کل QKV را عوض نمی‌کند، اما تقسیم نمایش را عوض می‌کند.</p>
+        <div class="lab"><h3>آزمایش ۵ و ۶</h3><p>در config پروژه H را 1، 2 و 4 (با C تقسیم‌پذیر) امتحان و shape weightها را ثبت کنید. سپس T را دو برابر کنید و تعداد عناصر <code>B×H×T×T</code> را مقایسه کنید. آنچه مشاهده می‌کنید، دلیل محدودیت context در سخت‌افزار است.</p></div>
+        <div class="exercise"><h3>تمرین‌ها</h3><ol><li><strong>سطح ۱:</strong> برای C=96,H=6 مقدار D چیست؟</li><li><strong>سطح ۲:</strong> همهٔ shapeها را برای B=4,T=32,C=64,H=8 بنویسید.</li><li><strong>سطح ۳:</strong> چرا C باید بر H بخش‌پذیر باشد؟</li><li><strong>سطح ۴:</strong> تعداد عنصرهای attention weights را برای T=128 و 256 مقایسه کنید.</li></ol></div>
+        <div class="summary"><h3>جمع‌بندی بخش Attention</h3><p>Attention یک بازیابی نرم و آموختنی است: Q/K امتیاز می‌سازند، scale پایداری می‌دهد، mask جریان اطلاعات را محدود می‌کند، softmax وزن می‌سازد و V محتوای منتقل‌شده است. Multi-head همین عملیات را در چند زیر‌فضا موازی انجام می‌دهد.</p></div>
+        <nav class="chapter-nav"><a href="#ch20">→ فصل قبل</a><a href="#ch22">فصل بعد: اجزای بلوک ←</a></nav>
+      </section>
+
+      <header class="part"><small>بخش هشت</small><h2>از Attention تا Transformer و GPT</h2></header>
+      <section id="ch22" class="chapter">
+        <h2>فصل ۲۲ — Feed-Forward، Residual و LayerNorm</h2>
+        <p class="objectives"><strong>یاد می‌گیرید:</strong> سه جزء دیگر بلوک چه می‌کنند، چه shapeی می‌گیرند و حذفشان چه اثری دارد.</p>
+        <h3>Feed-Forward Network</h3>
+        <p>Attention اطلاعات را بین موقعیت‌ها جابه‌جا می‌کند. FFN هر موقعیت را جداگانه اما با weight مشترک پردازش می‌کند. در GPT کوچک معمولاً بُعد میانی تقریباً <code>4C</code> است:</p>
+        <div class="shape-flow">(B,T,C) → Linear(C,4C) → GELU → Linear(4C,C) → (B,T,C)</div>
+        <p>اگر Attention را ارتباط بین tokenها بدانیم، FFN محاسبهٔ غنی روی ویژگی‌های هر token است. این تشبیه عملی است، اما FFN «دانش» را در یک مکان مشخص ذخیره نمی‌کند.</p>
+        <h3>Residual connection</h3>
+        <div class="math">y = x + sublayer(x)</div>
+        <p>مسیر residual اجازه می‌دهد اطلاعات و gradient یک راه مستقیم داشته باشند. sublayer لازم نیست نمایش را از صفر بازسازی کند؛ فقط اصلاحی روی x می‌آموزد. چون جمع انجام می‌شود، shape ورودی و خروجی sublayer باید یکسان باشد.</p>
+        <h3>Layer Normalization</h3>
+        <p>برای هر token، C ویژگی را با میانگین و واریانس همان token نرمال می‌کند و سپس scale و shift آموختنی می‌افزاید:</p>
+        <div class="math">μ = mean(x), &nbsp; σ² = mean((x−μ)²)<br>LayerNorm(x) = γ ⊙ (x−μ)/√(σ²+ε) + β</div>
+        <p>برای x شکل <code>(B,T,C)</code>، میانگین روی محور C گرفته می‌شود و خروجی همان <code>(B,T,C)</code> است. <code>γ</code> و <code>β</code> هرکدام C پارامتر دارند. epsilon جلوی تقسیم بر صفر را می‌گیرد.</p>
+        <pre><code>class FeedForward(nn.Module):
+    def __init__(self, C, dropout):
+        super().__init__()
+        self.net = nn.Sequential(
+            nn.Linear(C, 4*C), nn.GELU(),
+            nn.Linear(4*C, C), nn.Dropout(dropout)
+        )
+    def forward(self, x):
+        return self.net(x)</code></pre>
+        <h3>Pre-Norm در پروژه</h3>
+        <p>پروژه پیش از هر sublayer نرمال می‌کند:</p>
+        <pre><code>x = x + attention(norm_1(x))
+x = x + feed_forward(norm_2(x))</code></pre>
+        <table><thead><tr><th>اگر حذف شود</th><th>پیامد محتمل</th></tr></thead><tbody><tr><td>FFN</td><td>ظرفیت تبدیل غیرخطی هر موقعیت کم می‌شود</td></tr><tr><td>Residual</td><td>آموزش شبکهٔ عمیق‌تر سخت و جریان gradient ضعیف‌تر می‌شود</td></tr><tr><td>LayerNorm</td><td>مقیاس activationها ناپایدارتر و آموزش حساس‌تر می‌شود</td></tr><tr><td>Activation</td><td>دو Linear پشت سر هم عملاً یک تبدیل خطی می‌شوند</td></tr></tbody></table>
+        <div class="lab"><h3>آزمایش حذف کنترل‌شده</h3><p>یک بار FFN را با identity جایگزین کنید و parameter count و loss اولیه را ثبت کنید. این آزمایش اثبات علمی با یک run نیست، اما نقش ظرفیت را آشکار می‌کند. هر بار فقط یک متغیر را عوض کنید.</p></div>
+        <div class="exercise"><h3>تمرین‌ها</h3><ol><li><strong>سطح ۱:</strong> کار FFN و Attention را مقایسه کنید.</li><li><strong>سطح ۲:</strong> LayerNorm را برای vector سه‌عددی دستی حساب کنید.</li><li><strong>سطح ۳:</strong> چرا residual به shape یکسان نیاز دارد؟</li><li><strong>سطح ۴:</strong> parameter count یک FFN با C=64 را حساب کنید.</li></ol></div>
+        <nav class="chapter-nav"><a href="#ch21">→ فصل قبل</a><a href="#ch23">فصل بعد: بلوک Transformer ←</a></nav>
+      </section>
+
+      <section id="ch23" class="chapter">
+        <h2>فصل ۲۳ — Transformer Block و خانوادهٔ Transformer</h2>
+        <p class="objectives"><strong>یاد می‌گیرید:</strong> قطعه‌های آشنا را به بلوک و stack تبدیل کنید و encoder/decoder/GPT را دقیق جدا کنید.</p>
+        <p>اکنون هیچ جزء ناشناخته‌ای نمانده است. بلوک decoder-only ما ورودی <code>(B,T,C)</code> می‌گیرد، causal self-attention و FFN را با pre-norm و residual اجرا می‌کند و همان shape را پس می‌دهد. ثابت‌ماندن shape اجازه می‌دهد بلوک‌ها را روی هم بگذاریم.</p>
+        <pre><code>class TransformerBlock(nn.Module):
+    def __init__(self, config):
+        super().__init__()
+        self.norm_1 = nn.LayerNorm(config.embedding_dim)
+        self.attention = CausalSelfAttention(config)
+        self.norm_2 = nn.LayerNorm(config.embedding_dim)
+        self.feed_forward = FeedForward(config)
+
+    def forward(self, x):
+        x = x + self.attention(self.norm_1(x))
+        x = x + self.feed_forward(self.norm_2(x))
+        return x</code></pre>
+        <div class="shape-flow">IDs (B,T)<br>→ token + position embedding (B,T,C)<br>→ Block 1 (B,T,C)<br>→ Block 2 (B,T,C)<br>→ ... Block L (B,T,C)<br>→ final LayerNorm (B,T,C)</div>
+        <h3>سه خانواده را قاطی نکنیم</h3>
+        <table><thead><tr><th>معماری</th><th>جریان attention</th><th>کاربرد نمونه</th></tr></thead><tbody><tr><td>Encoder-only</td><td>معمولاً دوطرفه؛ هر token دو سوی متن را می‌بیند</td><td>فهم/طبقه‌بندی و embedding متن</td></tr><tr><td>Decoder-only</td><td>causal؛ هر موقعیت فقط گذشته و خودش</td><td>مدل‌سازی و تولید autoregressive؛ GPT</td></tr><tr><td>Encoder-decoder</td><td>encoder دوطرفه؛ decoder causal و cross-attention به encoder</td><td>ترجمه و تبدیل sequence-to-sequence</td></tr></tbody></table>
+        <p>«Decoder» در Transformer اصلی می‌تواند cross-attention داشته باشد؛ GPT آن بخش را ندارد و ورودی encoder جداگانه‌ای نیز ندارد. بنابراین عبارت دقیق برای پروژه ما <strong>decoder-only Transformer</strong> است.</p>
+        <div class="lab"><h3>آزمایش تعداد لایه‌ها</h3><p><code>num_layers</code> را 1 و 3 کنید. parameter count، زمان هر step و validation loss را با seed ثابت ثبت کنید. مدل عمیق‌تر ظرفیت و هزینهٔ بیشتر دارد، اما روی corpus کوچک ممکن است سریع‌تر overfit کند.</p></div>
+        <div class="exercise"><h3>تمرین‌ها</h3><ol><li><strong>سطح ۱:</strong> ورودی/خروجی block چه shapeی دارد؟</li><li><strong>سطح ۲:</strong> stack سه block را با <code>ModuleList</code> بنویسید.</li><li><strong>سطح ۳:</strong> تفاوت encoder attention و causal attention چیست؟</li><li><strong>سطح ۴:</strong> توضیح دهید چرا Transformer مساوی GPT نیست.</li></ol></div>
+        <nav class="chapter-nav"><a href="#ch22">→ فصل قبل</a><a href="#ch24">فصل بعد: Head و Loss ←</a></nav>
+      </section>
+
+      <section id="ch24" class="chapter">
+        <h2>فصل ۲۴ — Language-Model Head، Logits و Loss</h2>
+        <p class="objectives"><strong>یاد می‌گیرید:</strong> نمایش Cبعدی چگونه به امتیاز V token تبدیل و loss همهٔ موقعیت‌ها محاسبه می‌شود.</p>
+        <p>پس از آخرین block و LayerNorm، برای هر موقعیت یک vector Cبعدی داریم. یک Linear بدون bias آن را به V logit تبدیل می‌کند:</p>
+        <div class="shape-flow">hidden (B,T,C) @ W_headᵀ (C,V) → logits (B,T,V)</div>
+        <p>سطر <code>logits[b,t,:]</code> امتیاز همهٔ tokenهای ممکن برای هدف موقعیت t در نمونه b است. هنوز probability نیست. برای loss، B و T را ادغام می‌کنیم؛ هر جایگاه یک نمونهٔ classification است.</p>
+        <pre><code>logits = language_model_head(hidden)  # (B,T,V)
+B, T, V = logits.shape
+loss = F.cross_entropy(
+    logits.reshape(B*T, V),
+    targets.reshape(B*T)
+)</code></pre>
+        <h3>مسیر کامل داده</h3>
+        <div class="shape-flow">text<br>→ tokenizer: ids (B,T)<br>→ embeddings: (B,T,C)<br>→ L Transformer blocks: (B,T,C)<br>→ LM head: logits (B,T,V)<br>→ cross entropy with targets (B,T): scalar loss</div>
+        <p>Backward از scalar loss شروع می‌کند و gradient را تا embeddingها و همهٔ projectionها می‌رساند. به همین دلیل حتی Q/K/V یاد می‌گیرند: تغییر کوچک آن‌ها attention weights، hidden state، logits و نهایتاً loss را تغییر می‌دهد.</p>
+        <div class="warning"><h3>یک token، یک neuron نیست</h3><p>خروجی vocabulary یک vector از logits است. هر logit حاصل ترکیب تمام C ویژگی است و خود ویژگی‌ها حاصل شبکه‌اند. نسبت سادهٔ «این نورون معنی فلان کلمه را دارد» معمولاً درست نیست.</p></div>
+        <div class="lab"><h3>آزمایش logits</h3><p>روی مدل آموزش‌ندیده یک batch بفرستید. shape logits و پنج logit اول آخرین موقعیت را چاپ کنید؛ سپس softmax و مجموع probability را ببینید. در مدل تصادفی توزیع تقریباً بی‌معناست.</p></div>
+        <div class="exercise"><h3>تمرین‌ها</h3><ol><li><strong>سطح ۱:</strong> V در logits چیست؟</li><li><strong>سطح ۲:</strong> flatten صحیح logits/target را بنویسید.</li><li><strong>سطح ۳:</strong> gradient چگونه به embedding می‌رسد؟</li><li><strong>سطح ۴:</strong> تعداد پارامتر head برای C=96,V=200 را حساب کنید.</li></ol></div>
+        <nav class="chapter-nav"><a href="#ch23">→ فصل قبل</a><a href="#ch25">فصل بعد: آموزش ←</a></nav>
+      </section>
+
+      <header class="part"><small>بخش نه</small><h2>آموزش، ارزیابی و تولید متن</h2></header>
+      <section id="ch25" class="chapter">
+        <h2>فصل ۲۵ — حلقهٔ آموزش، Validation و Checkpoint</h2>
+        <p class="objectives"><strong>یاد می‌گیرید:</strong> Mini-GPT را آموزش دهید، loss را درست بخوانید، gradient را کنترل و حالت را ذخیره/بازیابی کنید.</p>
+        <pre><code>for step in range(1, steps + 1):
+    inputs, targets = next_batch()       # each (B,T), dtype long
+    model.train()
+    logits, loss = model(inputs, targets)
+
+    optimizer.zero_grad(set_to_none=True)
+    loss.backward()
+    torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)
+    optimizer.step()
+
+    if step % eval_every == 0:
+        validation_loss = evaluate(model, validation_loader)</code></pre>
+        <p><strong>Gradient clipping</strong> norm کل gradient را اگر از حد بزرگ‌تر شد مقیاس می‌کند؛ درمان همهٔ مشکل‌ها نیست، اما از updateهای انفجاری محافظت می‌کند. validation با <code>model.eval()</code> و <code>torch.no_grad()</code> اجرا می‌شود و optimizer step ندارد.</p>
+        <h3>خواندن منحنی‌ها</h3>
+        <table><thead><tr><th>Train loss</th><th>Validation loss</th><th>برداشت محتمل</th></tr></thead><tbody><tr><td>پایین</td><td>پایین</td><td>یادگیری و تعمیم بهتر</td></tr><tr><td>پایین‌رونده</td><td>پس از مدتی بالا</td><td>Overfitting</td></tr><tr><td>ثابت بالا</td><td>ثابت بالا</td><td>نرخ کم، bug، داده یا ظرفیت نامناسب</td></tr><tr><td>NaN/جهشی</td><td>نامعتبر</td><td>نرخ بالا، انفجار عددی یا دادهٔ خراب</td></tr></tbody></table>
+        <h3>Checkpoint چه دارد؟</h3>
+        <p>برای ادامهٔ دقیق آموزش، state مدل، optimizer، step و config را ذخیره می‌کنیم. tokenizer نیز باید کنار آن بماند. فقط ذخیرهٔ Python object کامل شکننده‌تر از <code>state_dict</code> است.</p>
+        <pre><code>torch.save({
+    "model": model.state_dict(),
+    "optimizer": optimizer.state_dict(),
+    "config": asdict(config),
+    "step": step,
+}, "checkpoint.pt")
+
+checkpoint = torch.load("checkpoint.pt", map_location="cpu")
+model = MiniGPT(ModelConfig(**checkpoint["config"]))
+model.load_state_dict(checkpoint["model"])</code></pre>
+        <p>برای reproducibility، seed، نسخهٔ کد، config و داده را ثبت کنید. تکرار کاملاً bitwise روی همهٔ GPUها همیشه تضمین‌شده نیست، اما ثبت محیط تفاوت را قابل‌پیگیری می‌کند.</p>
+        <div class="lab"><h3>آزمایش ۷ و ۸</h3><p>learning rate را <code>3e-5</code>، <code>3e-4</code> و <code>3e-3</code> امتحان کنید و train/validation loss را هر 50 step ثبت کنید. فقط یک seed و config ثابت نگه دارید. سپس توضیح دهید کدام کند، مناسب یا ناپایدار بود.</p></div>
+        <div class="exercise"><h3>تمرین‌ها</h3><ol><li><strong>سطح ۱:</strong> validation چرا backward ندارد؟</li><li><strong>سطح ۲:</strong> checkpoint را ذخیره و دوباره load کنید.</li><li><strong>سطح ۳:</strong> الگوی overfitting را از منحنی‌ها تشخیص دهید.</li><li><strong>سطح ۴:</strong> resume training با بازیابی optimizer و step را اضافه کنید.</li></ol></div>
+        <nav class="chapter-nav"><a href="#ch24">→ فصل قبل</a><a href="#ch26">فصل بعد: تولید ←</a></nav>
+      </section>
+
+      <section id="ch26" class="chapter">
+        <h2>فصل ۲۶ — تولید Autoregressive و Sampling</h2>
+        <p class="objectives"><strong>یاد می‌گیرید:</strong> prompt تا token تازه چه مسیری دارد و greedy، temperature، top-k و top-p چگونه رفتار را عوض می‌کنند.</p>
+        <div class="shape-flow">prompt → encode → model → last-position logits → filter/softmax → choose token → append → repeat</div>
+        <p>در هر دور فقط logits آخرین موقعیت برای token تازه لازم است. دنباله از سمت چپ به context length محدود می‌شود. پیاده‌سازی آموزشی هر بار context را دوباره محاسبه می‌کند؛ KV cache در سامانهٔ واقعی key/valueهای قبلی را نگه می‌دارد.</p>
+        <h3>Greedy</h3>
+        <p>بالاترین logit را می‌گیرد. قطعی و ساده است، اما ممکن است تکراری یا در یک ادامهٔ محلی گیر کند. در پروژه، <code>top_k=1</code> همان رفتار را می‌دهد.</p>
+        <h3>Temperature</h3>
+        <div class="math">p = softmax(logits / temperature)</div>
+        <table><thead><tr><th>Logits فرضی</th><th>Temperature</th><th>Probability تقریبی</th></tr></thead><tbody><tr><td class="ltr">[2,1,0]</td><td class="ltr">0.5</td><td class="ltr">[0.87,0.12,0.02]</td></tr><tr><td class="ltr">[2,1,0]</td><td class="ltr">1.0</td><td class="ltr">[0.67,0.24,0.09]</td></tr><tr><td class="ltr">[2,1,0]</td><td class="ltr">2.0</td><td class="ltr">[0.51,0.31,0.19]</td></tr></tbody></table>
+        <p>دمای کم محافظه‌کار و دمای زیاد متنوع‌تر است، اما دمای زیاد خطا و بی‌ربطی را بالا می‌برد. temperature کیفیت مدل را بهبود نمی‌دهد؛ فقط توزیع انتخاب را تغییر می‌دهد.</p>
+        <h3>Top-k و Top-p</h3>
+        <p><strong>Top-k</strong> فقط k token پرامتیاز را نگه می‌دارد. <strong>Top-p</strong> کوچک‌ترین مجموعهٔ مرتب‌شده‌ای را نگه می‌دارد که احتمال تجمعی‌اش به p می‌رسد؛ پس اندازهٔ مجموعه با اطمینان مدل تغییر می‌کند. سپس از گزینه‌های باقی‌مانده نمونه‌گیری می‌شود.</p>
+        <pre><code>context = ids[:, -model.config.context_length:]
+logits, _ = model(context)
+next_logits = logits[:, -1, :] / temperature
+next_logits = filter_logits(next_logits, top_k=20, top_p=0.9)
+probabilities = torch.softmax(next_logits, dim=-1)
+next_id = torch.multinomial(probabilities, num_samples=1)
+ids = torch.cat((ids, next_id), dim=1)</code></pre>
+        <div class="lab"><h3>آزمایش ۹ و ۱۰</h3><p>با prompt و seed یکسان خروجی greedy، <code>temperature=0.7/top_k=20</code> و <code>temperature=1.2/top_p=0.9</code> را مقایسه کنید. تکرار، تنوع، انسجام و خطا را جدا ثبت کنید؛ «جالب‌تر» لزوماً «بهتر» نیست.</p></div>
+        <div class="exercise"><h3>تمرین‌ها</h3><ol><li><strong>سطح ۱:</strong> چرخهٔ generation را نام ببرید.</li><li><strong>سطح ۲:</strong> greedy را با <code>argmax</code> پیاده کنید.</li><li><strong>سطح ۳:</strong> top-k و top-p را مقایسه کنید.</li><li><strong>سطح ۴:</strong> شرط توقف روی EOS یا طول را اضافه کنید.</li></ol></div>
+        <nav class="chapter-nav"><a href="#ch25">→ فصل قبل</a><a href="#ch27">فصل بعد: عیب‌یابی ←</a></nav>
+      </section>
+
+      <section id="ch27" class="chapter">
+        <h2>فصل ۲۷ — وقتی مدل یاد نمی‌گیرد: راهنمای عیب‌یابی</h2>
+        <p class="objectives"><strong>یاد می‌گیرید:</strong> نشانه، علت محتمل و آزمایش تشخیصی را از هم جدا کنید.</p>
+        <table><thead><tr><th>نشانه</th><th>علت‌های محتمل</th><th>اولین بررسی</th></tr></thead><tbody>
+          <tr><td>Loss اصلاً پایین نمی‌آید</td><td>target بدون shift، optimizer step جاافتاده، lr خیلی کم، gradient قطع</td><td>روی یک batch کوچک overfit کنید؛ gradientها را چاپ کنید</td></tr>
+          <tr><td>Loss نوسان شدید/NaN</td><td>lr زیاد، دادهٔ نامعتبر، انفجار gradient</td><td>lr را 10× کم، finite بودن tensorها و grad norm را چک کنید</td></tr>
+          <tr><td>Train خوب، validation بد</td><td>overfitting، split آلوده/نامتناسب</td><td>منحنی دو loss، داده و تکرارها را ببینید</td></tr>
+          <tr><td>خروجی تکراری</td><td>دادهٔ کوچک/تکراری، greedy، overfit</td><td>sampling و نمونه‌های corpus را مقایسه کنید</td></tr>
+          <tr><td>Shape mismatch</td><td>محور اشتباه، C%H≠0، flatten غلط</td><td>نام محور و shape دو operand را بنویسید</td></tr>
+          <tr><td>Out of memory</td><td>B/T/C/L زیاد، attention مربعی</td><td>ابتدا batch و context را کم کنید</td></tr>
+          <tr><td>متن خراب</td><td>tokenizer متفاوت، encoding/normalization بد، checkpoint ناسازگار</td><td>encode→decode و فایل tokenizer را چک کنید</td></tr>
+        </tbody></table>
+        <h3>آزمون طلایی: overfit یک batch</h3>
+        <p>یک batch بسیار کوچک را بارها train کنید. مدل با ظرفیت کافی باید loss آن را شدیداً پایین بیاورد. اگر نمی‌تواند، معمولاً bug در داده، target، forward، gradient یا optimizer است. اگر می‌تواند ولی dataset کامل نه، مسئله به optimization، data scale یا generalization نزدیک‌تر است.</p>
+        <h3>مدل خیلی کوچک یا خیلی بزرگ</h3>
+        <p>مدل کوچک ممکن است underfit کند: هر دو loss بالا می‌مانند. مدل بزرگ روی دادهٔ کم ممکن است train را حفظ کند و validation بد شود و سخت‌افزار را هم اشباع کند. «بزرگ‌تر» بدون داده و بودجهٔ مناسب، خودکار بهتر نیست.</p>
+        <h3>روند علمی کوچک</h3>
+        <ol><li>یک baseline قابل تکرار ثبت کنید.</li><li>فرضیهٔ مشخص بنویسید.</li><li>فقط یک متغیر را تغییر دهید.</li><li>metric و مشاهده را ثبت کنید.</li><li>نتیجه را با چند run در صورت اهمیت تأیید کنید.</li></ol>
+        <div class="lab"><h3>دفتر آزمایش</h3><p>جدولی با ستون‌های seed، config، تغییر، train loss، val loss، زمان و یادداشت خروجی بسازید. سه learning rate را مقایسه کنید. این عادت از ده‌ها تغییر بدون نتیجه جلوگیری می‌کند.</p></div>
+        <div class="exercise"><h3>تمرین‌ها</h3><ol><li><strong>سطح ۱:</strong> نشانهٔ overfitting چیست؟</li><li><strong>سطح ۲:</strong> gradient norm همهٔ پارامترها را چاپ کنید.</li><li><strong>سطح ۳:</strong> برای loss ثابت یک درخت تشخیص بنویسید.</li><li><strong>سطح ۴:</strong> آزمایش controlled ablation برای dropout طراحی کنید.</li></ol></div>
+        <nav class="chapter-nav"><a href="#ch26">→ فصل قبل</a><a href="#ch28">فصل بعد: پروژهٔ کامل ←</a></nav>
+      </section>
+
+      <header class="part"><small>بخش ده</small><h2>پروژهٔ کامل و دنیای LLMهای مدرن</h2></header>
+      <section id="ch28" class="chapter">
+        <h2>فصل ۲۸ — مونتاژ و اجرای Mini-GPT</h2>
+        <p class="objectives"><strong>یاد می‌گیرید:</strong> فایل‌های پروژه چگونه قطعه‌های کتاب را کنار هم می‌گذارند و چگونه یک run کوچک و قابل بررسی انجام دهید.</p>
+        <h3>ساختار نهایی</h3>
+        <pre><code>mini_gpt/
+├── config.py       # V, T, C, H, L and validation
+├── tokenizer.py    # text ↔ character IDs
+├── dataset.py      # shifted (x, y) windows
+├── model.py        # attention, FFN, block, MiniGPT, sampling
+├── train.py        # loaders, optimizer, validation, checkpoint
+├── generate.py     # load and autoregressive inference
+└── smoke_test.py   # shape, gradient and generation checks
+
+data/sample.txt
+requirements.txt</code></pre>
+        <p>این جداسازی بعد از فهم اجزا معرفی شد: config قرارداد shapeهاست؛ tokenizer زبان نمادها را تعیین می‌کند؛ dataset نمونه می‌سازد؛ model تابع قابل‌آموزش است؛ train پارامترها را تغییر می‌دهد؛ generate فقط inference می‌کند.</p>
+        <h3>نصب و smoke test</h3>
+        <pre><code>python -m pip install -r requirements.txt
+python -m mini_gpt.smoke_test</code></pre>
+        <p>smoke test encode/decode، save/load tokenizer، logits شکل <code>(1,T,V)</code>، finite بودن loss، رسیدن gradient به embedding و افزایش طول generation را بررسی می‌کند. این تست کیفیت زبان را ثابت نمی‌کند؛ سلامت مسیر محاسباتی را می‌سنجد.</p>
+        <h3>آموزش و تولید</h3>
+        <pre><code>python -m mini_gpt.train --text data/sample.txt --steps 300
+python -m mini_gpt.generate --prompt "مدل " --tokens 150</code></pre>
+        <p>corpus نمونه عمداً کوچک است و برای تولید متن خوب کافی نیست. هدف مشاهدهٔ کاهش loss و سالم‌بودن pipeline است. یک فایل UTF-8 تمیز و بزرگ‌تر جایگزین کنید؛ فقط متنی را استفاده کنید که مجاز به استفاده از آن هستید.</p>
+        <h3>Config پیش‌فرض</h3>
+        <table><thead><tr><th>پارامتر</th><th>مقدار</th><th>معنا</th></tr></thead><tbody><tr><td>T</td><td>64</td><td>بیشترین context آموزشی</td></tr><tr><td>C</td><td>96</td><td>embedding dimension</td></tr><tr><td>H</td><td>4</td><td>چهار head؛ D=24</td></tr><tr><td>L</td><td>3</td><td>سه Transformer block</td></tr><tr><td>Dropout</td><td>0.1</td><td>regularization</td></tr></tbody></table>
+        <p>روی CPU مدرن، smoke test کوتاه است و آموزش نمونه باید شدنی باشد، اما سرعت به دستگاه و نسخهٔ PyTorch وابسته است. اگر کند یا کم‌حافظه است، batch، T، C یا L را کم کنید. GPU اختیاری با <code>--device auto</code> انتخاب می‌شود.</p>
+        <h3>ردیابی یک batch</h3>
+        <div class="shape-flow">input IDs (16,64)<br>→ embeddings (16,64,96)<br>→ heads (16,4,64,24)<br>→ attention weights (16,4,64,64)<br>→ merged (16,64,96)<br>→ 3 blocks (16,64,96)<br>→ logits (16,64,V)<br>→ loss scalar</div>
+        <div class="lab"><h3>Mini-task نهایی</h3><ol><li>corpus خود را آماده و encode/decode چند جمله را بازبینی کنید.</li><li>smoke test را اجرا کنید.</li><li>baseline را با config پیش‌فرض آموزش دهید.</li><li>checkpoint را load و سه sampling را مقایسه کنید.</li><li>فقط یکی از C، H، T یا L را تغییر و نتیجه را ثبت کنید.</li></ol></div>
+        <div class="exercise"><h3>تمرین‌ها</h3><ol><li><strong>سطح ۱:</strong> مسئولیت هر فایل را بگویید.</li><li><strong>سطح ۲:</strong> attention weight یک head را در debug چاپ کنید.</li><li><strong>سطح ۳:</strong> parameter count را بر اساس بخش‌ها گزارش کنید.</li><li><strong>سطح ۴:</strong> resume training و early stopping ساده اضافه کنید.</li></ol></div>
+        <nav class="chapter-nav"><a href="#ch27">→ فصل قبل</a><a href="#ch29">فصل بعد: مقیاس واقعی ←</a></nav>
+      </section>
+
+      <section id="ch29" class="chapter">
+        <h2>فصل ۲۹ — از Mini-GPT تا LLM واقعی</h2>
+        <p class="objectives"><strong>یاد می‌گیرید:</strong> کدام اصل‌ها ثابت می‌مانند و مهندسی تولید چه لایه‌هایی اضافه می‌کند.</p>
+        <p>هسته عوض نمی‌شود: token، embedding، attention، FFN، residual، normalization، logits و next-token loss. تفاوت اصلی در مقیاس، داده، جزئیات معماری و زیرساخت است.</p>
+        <table><thead><tr><th>افزودهٔ صنعتی</th><th>مسئله‌ای که حل می‌کند</th></tr></thead><tbody>
+          <tr><td>دادهٔ بزرگ و پالایش‌شده</td><td>پوشش الگوها، کیفیت، حذف تکرار و کنترل آلودگی</td></tr>
+          <tr><td>Distributed training</td><td>تقسیم داده، پارامتر و pipeline میان شتاب‌دهنده‌ها</td></tr>
+          <tr><td>Mixed precision</td><td>کاهش حافظه و افزایش throughput با حفظ پایداری بخش‌های حساس</td></tr>
+          <tr><td>Optimized kernels / Flash Attention</td><td>کاهش رفت‌وآمد حافظه و محاسبهٔ کارآمد attention</td></tr>
+          <tr><td>KV cache</td><td>استفادهٔ دوباره از K/V گذشته هنگام تولید</td></tr>
+          <tr><td>Quantization</td><td>نمایش weight/activation با بیت کمتر برای حافظه و inference</td></tr>
+          <tr><td>Serving/batching</td><td>پاسخ‌گویی هم‌زمان با latency و هزینهٔ کنترل‌شده</td></tr>
+        </tbody></table>
+        <h3>KV cache با زبان shape</h3>
+        <p>در generation ساده، برای هر token تازه K/V تمام T موقعیت دوباره محاسبه می‌شود. چون موقعیت‌های قدیمی عوض نمی‌شوند، cache برای هر layer چیزی شبیه <code>(B,H,T,D)</code> نگه می‌دارد و فقط K/V token تازه را اضافه می‌کند. attention token تازه هنوز با کل گذشته مقایسه می‌شود، اما projectionهای گذشته تکرار نمی‌شوند.</p>
+        <h3>Quantization دقیقاً چیست؟</h3>
+        <p>به‌جای float32 برای هر weight، نمایش‌های 16، 8 یا 4 بیتی با scaleهای مناسب استفاده می‌شوند. حافظه و گاهی سرعت بهتر می‌شود، اما خطای تقریب و محدودیت kernel وجود دارد. quantization مدل را «کوچک‌تر از نظر تعداد پارامتر» نمی‌کند؛ نمایش هر پارامتر فشرده‌تر می‌شود.</p>
+        <div class="warning"><h3>هسته در برابر مهندسی تولید</h3><p>برای فهم Transformer به cluster، CUDA kernel یا میلیاردها token نیاز ندارید. برای ساخت سامانهٔ رقابتی واقعی، آن‌ها مهم می‌شوند. این دو سطح را مخلوط نکنید.</p></div>
+        <div class="exercise"><h3>تمرین‌ها</h3><ol><li><strong>سطح ۱:</strong> دو اصل ثابت میان Mini-GPT و LLM نام ببرید.</li><li><strong>سطح ۲:</strong> حافظهٔ تقریبی یک میلیون پارامتر float32 را حساب کنید.</li><li><strong>سطح ۳:</strong> KV cache چه محاسبه‌ای را حذف می‌کند و چه چیزی باقی می‌ماند؟</li><li><strong>سطح ۴:</strong> trade-off دقت/حافظه در quantization را توضیح دهید.</li></ol></div>
+        <nav class="chapter-nav"><a href="#ch28">→ فصل قبل</a><a href="#ch30">فصل بعد: پس‌آموزش ←</a></nav>
+      </section>
+
+      <section id="ch30" class="chapter">
+        <h2>فصل ۳۰ — Instruction Tuning، Preference Optimization و RAG</h2>
+        <p class="objectives"><strong>یاد می‌گیرید:</strong> چرا پیش‌آموزش next-token به‌تنهایی یک دستیار خوب نمی‌سازد و سه لایهٔ رایج پس از آن چیست.</p>
+        <h3>Pretraining</h3>
+        <p>مدل با حجم زیادی متن، next-token prediction می‌آموزد. حاصل completion engine توانمندی است، اما الزاماً دستور را دنبال نمی‌کند یا پاسخ ایمن و مفید نمی‌دهد.</p>
+        <h3>Supervised Fine-Tuning (SFT)</h3>
+        <p>نمونه‌های prompt→response مطلوب به شکل sequence آموزشی تبدیل می‌شوند. معمولاً loss روی بخش پاسخ اعمال می‌شود. هدف، شکل‌دادن رفتار و قالب پاسخ است؛ هستهٔ Transformer همان است.</p>
+        <h3>Preference Optimization</h3>
+        <p>دادهٔ ترجیح می‌گوید برای یک prompt کدام پاسخ بهتر است. روش‌هایی مانند RLHF یا روش‌های مستقیم‌تر از این سیگنال برای نزدیک‌کردن رفتار به ترجیح‌ها استفاده می‌کنند. این به معنی حقیقت مطلق نیست؛ کیفیت معیار و داده تعیین‌کننده است.</p>
+        <h3>Retrieval-Augmented Generation (RAG)</h3>
+        <div class="shape-flow">question → retrieve relevant documents → place excerpts in prompt → model generates answer</div>
+        <p>RAG weightهای مدل را برای هر پرسش تغییر نمی‌دهد. اطلاعات بیرونی را در context می‌آورد. retrieval بد، سند قدیمی یا prompt بیش‌ازحد بلند می‌تواند نتیجه را خراب کند. RAG تضمین نمی‌کند مدل فقط از سند استفاده کند؛ ارزیابی و citation لازم‌اند.</p>
+        <h3>نقشهٔ ادامهٔ مسیر</h3>
+        <ol><li>پروژه را طوری تغییر دهید که attention weights را ثبت کند.</li><li>یک tokenizer subword استاندارد را جایگزین کنید و طول دنباله را مقایسه کنید.</li><li>weight tying، learning-rate schedule و mixed precision را جداگانه بیاموزید.</li><li>مقالهٔ «Attention Is All You Need» را اکنون با shapeها بازخوانی کنید.</li><li>یک پروژهٔ کوچک evaluation بسازید؛ کیفیت را فقط با چند خروجی زیبا نسنجید.</li></ol>
+        <div class="summary"><h3>جمع‌بندی نهایی</h3><p>مدل زبان از جادو ساخته نشده است: متن به ID، ID به vector، vectorها با attention و FFN تبدیل، logits به توزیع و خطا به gradient تبدیل می‌شود. تکرار updateها پارامترهایی می‌سازد که الگوهای داده را بازتاب می‌دهند. GPT یک decoder-only Transformer است؛ LLM مدرن همین هسته را با مقیاس، داده، پس‌آموزش و سامانهٔ inference گسترده ترکیب می‌کند.</p></div>
+        <div class="exercise"><h3>تمرین‌های پایان مسیر</h3><ol><li><strong>سطح ۱:</strong> pretraining و SFT را مقایسه کنید.</li><li><strong>سطح ۲:</strong> pipeline مفهومی RAG را با listهای Python شبیه‌سازی کنید.</li><li><strong>سطح ۳:</strong> چرا RAG و fine-tuning جایگزین کامل یکدیگر نیستند؟</li><li><strong>سطح ۴:</strong> طرح ارزیابی Mini-GPT خود را با metricهای کمی و بررسی انسانی بنویسید.</li></ol></div>
+        <nav class="chapter-nav"><a href="#ch29">→ فصل قبل</a><a href="#solutions">پاسخ تمرین‌ها ←</a></nav>
+      </section>
+
+      <header class="part" id="solutions"><small>پیوست یک</small><h2>راهنمای حل تمرین‌ها</h2></header>
+      <p>این بخش جدا نگه داشته شده تا ابتدا خودتان تلاش کنید. پاسخ‌های کدنویسی «یک راه‌حل» هستند، نه تنها راه‌حل ممکن.</p>
+
+      <details class="solution"><summary>فصل ۱ — مدل و یادگیری</summary><ol><li>آموزش پارامترها را با داده تغییر می‌دهد؛ inference با پارامتر ثابت خروجی می‌سازد.</li><li><code>sum((w*x-y)**2 for x,y in data)/len(data)</code>.</li><li>مدل ممکن است نمونه‌های train را حفظ کند؛ دادهٔ ندیده تعمیم را می‌سنجد.</li><li>مثال: شناسهٔ هر نمونه را ورودی و برچسب را lookup کند؛ روی شناسهٔ تازه قاعده‌ای ندارد.</li></ol></details>
+      <details class="solution"><summary>فصل ۲ — مدل زبانی</summary><ol><li>کلمه واحد زبانی انسانی است؛ token واحد tokenizer و ممکن است قطعه/نشانه باشد.</li><li>هر توزیع درست است اگر مقادیر نامنفی و مجموع 1 باشند.</li><li>برای پیش‌بینی درست، مدل ناچار می‌شود الگوهای syntax، معنا و وابستگی‌های context را تا حدی بازنمایی کند.</li><li>دنباله طولانی‌تر، محاسبه بیشتر و دشواری یادگیری مرز واژه‌ها.</li></ol></details>
+      <details class="solution"><summary>فصل ۳ — Tensor</summary><ol><li>سه محور و 420 عنصر.</li><li><code>return (len(x), len(x[0]))</code> همراه با بررسی منظم‌بودن سطرها.</li><li>B تعداد دنباله‌ها و T تعداد ID در هر دنباله است.</li><li>tensor عددی و هم‌نوع است؛ متن ابتدا باید ID شود.</li></ol></details>
+      <details class="solution"><summary>فصل ۴ — ضرب‌ها</summary><ol><li><code>(3,7)</code>.</li><li>هر خروجی <code>sum(A[i][k]*B[k][j] for k ...)</code> است.</li><li>ابعاد داخلی 4 و 3 برابر نیستند.</li><li><code>(Aᵀ)ᵀ=A</code> چون جابه‌جایی دو بار indexها را برمی‌گرداند.</li></ol></details>
+      <details class="solution"><summary>فصل ۵ — Softmax</summary><ol><li>هر مقدار بین 0 و 1 و مجموع 1.</li><li>پیاده‌سازی متن فصل پاسخ نمونه است.</li><li><code>exp(zᵢ+c)/Σexp(zⱼ+c)</code>؛ عامل <code>exp(c)</code> صورت و مخرج حذف می‌شود.</li><li>روی هر سطر همان تابع یک‌بعدی را اجرا کنید.</li></ol></details>
+      <details class="solution"><summary>فصل ۶ — Gradient</summary><ol><li>حساسیت loss به هر پارامتر و جهت افزایش سریع‌تر.</li><li>در هر دور <code>w -= 0.1*2*(w-2)</code>.</li><li>برای تابع درجه‌دو، نرخ 1.1 update را ناپایدار و فاصله را بزرگ‌تر می‌کند.</li><li>مشتق عددی هر محور را جدا با perturbation همان محور بسنجید؛ پاسخ تحلیلی <code>[2(x-1),2(y+2)]</code>.</li></ol></details>
+      <details class="solution"><summary>فصل ۷ — لایهٔ عصبی</summary><ol><li>weight ترکیب ویژگی‌ها و bias انتقال مستقل از ورودی را تعیین می‌کند.</li><li><code>def relu(x): return max(0,x)</code>.</li><li>ترکیب تبدیل‌های affine دوباره affine است.</li><li>پارامترها: <code>3×5+5 + 5×2+2 = 32</code>.</li></ol></details>
+      <details class="solution"><summary>فصل ۸ — حلقهٔ آموزش</summary><ol><li>forward خروجی می‌سازد؛ backward مشتق loss را محاسبه می‌کند.</li><li>forward، loss، zero gradients، backward، optimizer step.</li><li>gradient دورهای قبل جمع می‌شود و update ناخواسته تغییر می‌کند.</li><li>چند mini-batch backward می‌شوند و پس از مقیاس مناسب یک step انجام می‌شود تا batch مؤثر بزرگ‌تر شود.</li></ol></details>
+      <details class="solution"><summary>فصل ۹ — Cross Entropy</summary><ol><li>ID ستون logit درست را مشخص می‌کند؛ one-hot لازم نیست.</li><li>softmax سطر اول حدود <code>[.659,.242,.099]</code> و loss آن <code>−log(.659)≈.417</code>.</li><li>تابع logits خام را با log-softmax پایدار می‌خواهد؛ softmax اضافی اطلاعات و پایداری را بدتر می‌کند.</li><li><code>logits.reshape(64,100)</code> و target به <code>(64,)</code>.</li></ol></details>
+      <details class="solution"><summary>فصل ۱۰ — PyTorch Tensor</summary><ol><li><code>torch.long</code>.</li><li><code>x.mean(dim=1)</code>.</li><li>اولی محور را حذف و دومی آن را با اندازهٔ 1 نگه می‌دارد.</li><li>جمع tensor CPU و CUDA خطا می‌دهد چون kernel واحد روی دو device اجرا نمی‌شود.</li></ol></details>
+      <details class="solution"><summary>فصل ۱۱ — Shape</summary><ol><li><code>D=24</code>.</li><li><code>view(B,T,H,D).transpose(1,2)</code> و مسیر معکوس متن.</li><li>بله؛ از راست: 4 با 1 و 3 با 3 سازگار، نتیجه <code>(2,3,4)</code>.</li><li>برای <code>x(B,H,T,D)</code>: <code>x.reshape(B*H,T,D)</code> پس از اطمینان از ترتیب/contiguous بودن.</li></ol></details>
+      <details class="solution"><summary>فصل ۱۲ — Autograd</summary><ol><li>graph عملیات را دنبال و chain rule را برای gradient اجرا می‌کند.</li><li><code>sum(p.numel() for p in model.parameters())</code>؛ برای TinyNet برابر 42.</li><li><code>eval</code> رفتار layerها؛ <code>no_grad</code> ثبت graph را عوض می‌کند.</li><li>weight شکل <code>(out,in)</code> و bias را <code>nn.Parameter</code> کنید و <code>x@weight.T+bias</code> برگردانید.</li></ol></details>
+      <details class="solution"><summary>فصل ۱۳ — Dataset و Shape</summary><ol><li>Dataset نمونه را تعریف می‌کند؛ DataLoader نمونه‌ها را batch/shuffle می‌کند.</li><li>از الگوی Pairs استفاده کنید و طول/list خود را جایگزین کنید.</li><li>آخرین محور ورودی 64 است ولی Linear انتظار 32 دارد؛ باید <code>Linear(64,...)</code> یا projection/محور درست شود.</li><li><code>assert x.ndim==3; B,T,C=x.shape</code> و شرط‌های مقادیر.</li></ol></details>
+      <details class="solution"><summary>فصل ۱۴ — Tokenization</summary><ol><li>encode متن→ID و decode ID→متن است.</li><li>فایل companion راه‌حل کامل JSON را دارد.</li><li>نیم‌فاصله، چسبیدن نشانه‌گذاری و چند فاصله/خط جدید نمونه‌اند.</li><li>نگاشت شکل عربی به فارسی vocabulary را کم می‌کند، اما متن اصلی را دقیقاً قابل بازسازی نمی‌گذارد؛ تصمیم را ثبت کنید.</li></ol></details>
+      <details class="solution"><summary>فصل ۱۵ — BPE</summary><ol><li>unknown کمتر از word و sequence کوتاه‌تر از character.</li><li><code>Counter(zip(tokens,tokens[1:]))</code> برای یک sequence؛ فراوانی واژه‌ها را لحاظ کنید.</li><li>پارامتر embedding/head، حافظه و دشواری tokenهای کم‌داده بیشتر می‌شود.</li><li>tokenization فشرده‌تر متن بیشتری را در T ثابت جا می‌دهد، اما قطعه‌بندی و کیفیت نیز مهم است.</li></ol></details>
+      <details class="solution"><summary>فصل ۱۶ — نمونهٔ آموزشی</summary><ol><li>هر input در موقعیت t باید ID موقعیت t+1 را هدف بگیرد.</li><li><code>NextTokenDataset(tokenizer.encode(text), T)</code>.</li><li><code>N−T</code>.</li><li><code>__len__ = floor((N−T−1)/stride)+1</code> و start برابر <code>i*stride</code>؛ هم‌پوشانی کمتر یعنی نمونه کمتر و I/O سبک‌تر.</li></ol></details>
+      <details class="solution"><summary>فصل ۱۷ — Embedding</summary><ol><li>ID ترتیب معنایی ندارد؛ float کردن رابطهٔ مصنوعی می‌سازد.</li><li><code>weight[ids]</code>.</li><li><code>V×C + T_max×C</code>.</li><li><code>F.one_hot(ids,V).float() @ weight</code> با <code>weight[ids]</code> برابر است.</li></ol></details>
+      <details class="solution"><summary>فصل ۱۸ — Q/K/V</summary><ol><li>Q نیاز، K معیار تطابق و V محتوای منتقل‌شده است.</li><li>برای وزن‌های a,b و valueهای v1,v2: <code>a*v1+b*v2</code>.</li><li>ویژگی مناسب جست‌وجو می‌تواند با payload مناسب انتقال فرق کند.</li><li>مثلاً key برچسب موضوع و value متن/اطلاعات کامل سند باشد.</li></ol></details>
+      <details class="solution"><summary>فصل ۱۹ — Attention عددی</summary><ol><li>softmax هر سطر را به توزیع تبدیل می‌کند.</li><li>اعداد مرجع در پنج گام فصل آمده‌اند.</li><li>Q/K/V: (5,8)، score/weight: (5,5)، خروجی: (5,8).</li><li>dot، transpose، softmax پایدار و weighted sum را با حلقه‌ها ترکیب کنید.</li></ol></details>
+      <details class="solution"><summary>فصل ۲۰ — Causal Mask</summary><ol><li>بدون mask موقعیت t از token هدف در t+1 اطلاعات می‌گیرد؛ این اطلاعات هنگام تولید وجود ندارد.</li><li><code>torch.tril(torch.ones(4,4,dtype=torch.bool))</code>.</li><li><code>-inf</code> پیش از exp وزن صفر و مجموع سطری معتبر می‌دهد.</li><li>Causal بر اساس زمان آینده را می‌بندد؛ padding موقعیت‌های ساختگی را صرف‌نظر از جهت می‌بندد.</li></ol></details>
+      <details class="solution"><summary>فصل ۲۱ — Multi-Head</summary><ol><li><code>D=16</code>.</li><li>Q/K/V <code>(4,8,32,8)</code>، score <code>(4,8,32,32)</code>، خروجی ادغام‌شده <code>(4,32,64)</code>.</li><li>reshape باید C را به H گروه مساوی D تقسیم کند.</li><li>برای هر B,H: 16384 در برابر 65536؛ چهار برابر.</li></ol></details>
+      <details class="solution"><summary>فصل ۲۲ — اجزای بلوک</summary><ol><li>Attention بین موقعیت‌ها ترکیب می‌کند؛ FFN هر موقعیت را جدا تبدیل می‌کند.</li><li>میانگین/واریانس را طبق فرمول بگیرید؛ سپس با γ=1 و β=0 نرمال کنید.</li><li>جمع elementwise فقط برای shape سازگار معنای مستقیم دارد.</li><li>دو Linear با bias: <code>64×256+256 + 256×64+64 = 33088</code>.</li></ol></details>
+      <details class="solution"><summary>فصل ۲۳ — Transformer</summary><ol><li><code>(B,T,C)</code> به <code>(B,T,C)</code>.</li><li><code>nn.ModuleList([TransformerBlock(config) for _ in range(3)])</code> و حلقه در forward.</li><li>encoder معمولاً دوطرفه؛ causal موقعیت‌های آینده را mask می‌کند.</li><li>Transformer خانواده است؛ GPT زیرنوع decoder-only causal آن است.</li></ol></details>
+      <details class="solution"><summary>فصل ۲۴ — Head و Loss</summary><ol><li>اندازهٔ vocabulary/تعداد کلاس‌های token.</li><li><code>logits.reshape(B*T,V)</code> و <code>targets.reshape(B*T)</code>.</li><li>loss→head→blocks→جمع embedding→سطرهای token/position؛ chain rule.</li><li><code>96×200=19200</code> چون head بدون bias است.</li></ol></details>
+      <details class="solution"><summary>فصل ۲۵ — آموزش</summary><ol><li>برای سنجش است و نباید parameter update کند؛ graph هم لازم نیست.</li><li>الگوی <code>torch.save/load</code> در فصل و فایل train موجود است.</li><li>train ادامه می‌دهد پایین، validation کف می‌سازد و بالا می‌رود.</li><li>state optimizer و step را load و loop را از <code>step+1</code> ادامه دهید؛ RNG هم برای تکرار دقیق مفید است.</li></ol></details>
+      <details class="solution"><summary>فصل ۲۶ — Generation</summary><ol><li>encode، forward، last logits، filter/softmax، choose، append، repeat.</li><li><code>next_id = logits[:,-1,:].argmax(dim=-1,keepdim=True)</code>.</li><li>top-k تعداد ثابت و top-p جرم احتمال تطبیقی نگه می‌دارد.</li><li>پس از append اگر همهٔ batch به EOS رسیدند <code>break</code> کنید.</li></ol></details>
+      <details class="solution"><summary>فصل ۲۷ — عیب‌یابی</summary><ol><li>شکاف train/validation رو به افزایش.</li><li>norm کلی: <code>sqrt(sum(p.grad.norm()**2 ...))</code> با بررسی None.</li><li>داده/shift→forward/loss→grad→optimizer→lr؛ overfit یک batch در هر مرحله شاهد است.</li><li>baseline و چند dropout با seedها/بودجه برابر؛ validation loss و شکاف را مقایسه کنید.</li></ol></details>
+      <details class="solution"><summary>فصل ۲۸ — پروژه</summary><ol><li>جدول مسئولیت‌ها در ساختار فصل است.</li><li><code>return_weights=True</code> روی attention یک block را موقتاً فراخوانی و shape <code>(B,H,T,T)</code> را چاپ کنید.</li><li>پارامترها را بر اساس نام پیشوند گروه‌بندی و <code>numel()</code> را جمع کنید.</li><li>برای early stopping بهترین validation loss و patience نگه دارید؛ resume پاسخ فصل ۲۵.</li></ol></details>
+      <details class="solution"><summary>فصل ۲۹ — مقیاس صنعتی</summary><ol><li>next-token loss و اجزای Transformer نمونه‌اند.</li><li>تقریباً 4 MB ده‌دهی یا 3.81 MiB، بدون optimizer/gradient.</li><li>projection K/V گذشته حذف می‌شود؛ attention query تازه با keyهای گذشته باقی می‌ماند.</li><li>بیت کمتر حافظه/پهنای‌باند را کم ولی خطای تقریب و احتمال افت کیفیت را زیاد می‌کند.</li></ol></details>
+      <details class="solution"><summary>فصل ۳۰ — پس‌آموزش و RAG</summary><ol><li>pretraining الگوی عمومی next-token؛ SFT رفتار پاسخ به دستور را با نمونه‌های منتخب شکل می‌دهد.</li><li>فهرست سندها را با overlap ساده رتبه‌بندی، چند متن را به prompt متصل و پاسخ فرضی بسازید.</li><li>RAG دانش بیرونی لحظه‌ای می‌دهد؛ fine-tuning رفتار/توان را در weightها تغییر می‌دهد. هرکدام مشکل دیگری را کامل حل نمی‌کند.</li><li>loss/perplexity روی validation، تنوع/تکرار، صحت نمونه‌ها، چند seed و rubric انسانی با blind review.</li></ol></details>
+
+      <header class="part" id="cheatsheet"><small>پیوست دو</small><h2>برگهٔ تقلب Tensor Shape</h2></header>
+      <table><thead><tr><th>نماد</th><th>معنا</th><th>نمونه</th></tr></thead><tbody><tr><td>B</td><td>batch size</td><td>16 دنباله</td></tr><tr><td>T</td><td>sequence/context length</td><td>64 token</td></tr><tr><td>C</td><td>embedding/channel dimension</td><td>96 ویژگی</td></tr><tr><td>H</td><td>number of heads</td><td>4</td></tr><tr><td>D</td><td>head dimension = C/H</td><td>24</td></tr><tr><td>V</td><td>vocabulary size</td><td>تعداد tokenهای متمایز</td></tr><tr><td>L</td><td>number of blocks</td><td>3</td></tr></tbody></table>
+      <table><thead><tr><th>مرحله</th><th>ورودی</th><th>خروجی</th></tr></thead><tbody>
+        <tr><td>Tokenizer batch</td><td>text</td><td class="ltr">IDs (B,T)</td></tr>
+        <tr><td>Token embedding</td><td class="ltr">(B,T)</td><td class="ltr">(B,T,C)</td></tr>
+        <tr><td>QKV projection</td><td class="ltr">(B,T,C)</td><td class="ltr">(B,T,3C)</td></tr>
+        <tr><td>Split heads</td><td class="ltr">(B,T,C)</td><td class="ltr">(B,H,T,D)</td></tr>
+        <tr><td>Attention scores</td><td class="ltr">Q,K: (B,H,T,D)</td><td class="ltr">(B,H,T,T)</td></tr>
+        <tr><td>Weighted values</td><td class="ltr">weights@V</td><td class="ltr">(B,H,T,D)</td></tr>
+        <tr><td>Merge heads</td><td class="ltr">(B,H,T,D)</td><td class="ltr">(B,T,C)</td></tr>
+        <tr><td>FFN / Block</td><td class="ltr">(B,T,C)</td><td class="ltr">(B,T,C)</td></tr>
+        <tr><td>LM head</td><td class="ltr">(B,T,C)</td><td class="ltr">(B,T,V)</td></tr>
+        <tr><td>Cross entropy</td><td class="ltr">(B×T,V), (B×T)</td><td>scalar loss</td></tr>
+      </tbody></table>
+      <div class="note"><h3>پرسش‌های فوری هنگام خطا</h3><ol><li>هر محور چه معنایی دارد؟</li><li>operation کدام محور را می‌خواند یا حذف می‌کند؟</li><li>آیا dtype و device یکی است؟</li><li>آیا تعداد عنصرها در reshape ثابت مانده؟</li><li>آیا transpose ترتیب حافظه را non-contiguous کرده؟</li><li>اولین shape غلط کجاست؟</li></ol></div>
+
+      <header class="part" id="glossary"><small>پیوست سه</small><h2>واژه‌نامهٔ فشرده</h2></header>
+      <table><thead><tr><th>واژه</th><th>تعریف عملی</th></tr></thead><tbody>
+        <tr><td>Activation</td><td>تابع غیرخطی میان تبدیل‌های خطی، مانند GELU</td></tr>
+        <tr><td>Attention</td><td>weighted sum از valueها با وزن حاصل از سازگاری query/key</td></tr>
+        <tr><td>Autograd</td><td>موتور مشتق خودکار PyTorch روی graph عملیات</td></tr>
+        <tr><td>Backpropagation</td><td>محاسبهٔ کارآمد gradient از خروجی به ورودی با chain rule</td></tr>
+        <tr><td>Batch</td><td>گروهی از نمونه‌ها که هم‌زمان پردازش می‌شوند</td></tr>
+        <tr><td>Causal</td><td>محدودیتی که اطلاعات آینده را برای prediction فعلی می‌بندد</td></tr>
+        <tr><td>Checkpoint</td><td>state ذخیره‌شدهٔ مدل و اطلاعات لازم برای load/resume</td></tr>
+        <tr><td>Context</td><td>tokenهای در دسترس مدل برای یک prediction</td></tr>
+        <tr><td>Cross Entropy</td><td>جریمهٔ منفی log احتمال کلاس درست</td></tr>
+        <tr><td>Embedding</td><td>جدول vectorهای قابل‌آموزش برای IDها یا موقعیت‌ها</td></tr>
+        <tr><td>Epoch</td><td>یک عبور تقریبی از کل دادهٔ train</td></tr>
+        <tr><td>Forward Pass</td><td>محاسبهٔ خروجی مدل از ورودی با پارامتر فعلی</td></tr>
+        <tr><td>Gradient</td><td>بردار مشتق‌های loss نسبت به پارامترها</td></tr>
+        <tr><td>Inference</td><td>استفاده از مدل ثابت برای پیش‌بینی/تولید</td></tr>
+        <tr><td>Learning Rate</td><td>مقیاس قدم‌های update optimizer</td></tr>
+        <tr><td>Logits</td><td>امتیازهای خام و نرمال‌نشدهٔ کلاس‌ها/tokenها</td></tr>
+        <tr><td>Loss</td><td>scalar سنجش بدی پیش‌بینی برای آموزش</td></tr>
+        <tr><td>Optimizer</td><td>قاعدهٔ تبدیل gradient به تغییر پارامتر، مانند AdamW</td></tr>
+        <tr><td>Overfitting</td><td>خوب‌شدن روی train بدون تعمیم مناسب</td></tr>
+        <tr><td>Parameter</td><td>عدد قابل‌آموزش مدل، مانند weight یا bias</td></tr>
+        <tr><td>Perplexity</td><td>برای میانگین cross entropy، معمولاً <code>exp(loss)</code>؛ کمتر بهتر و وابسته به tokenizer</td></tr>
+        <tr><td>Softmax</td><td>تبدیل logits به توزیع مثبت با مجموع یک</td></tr>
+        <tr><td>Tensor</td><td>آرایهٔ عددی چندبعدی با shape، dtype و device</td></tr>
+        <tr><td>Token</td><td>واحد خروجی tokenizer؛ الزاماً کلمه نیست</td></tr>
+        <tr><td>Transformer</td><td>خانوادهٔ معماری مبتنی بر attention و بلوک‌های تکرارشونده</td></tr>
+        <tr><td>Vocabulary</td><td>مجموعهٔ tokenها و نگاشت پایدار token↔ID</td></tr>
+      </tbody></table>
+
+      <section class="chapter">
+        <h2>چک‌لیست پایان کتاب</h2>
+        <ul class="checklist"><li>می‌توانم مسیر text تا scalar loss را با shapeها توضیح دهم.</li><li>می‌توانم dot product، softmax و cross entropy کوچک را دستی حساب کنم.</li><li>می‌دانم gradient، backward و optimizer هرکدام چه کار جداگانه‌ای می‌کنند.</li><li>می‌توانم مسیر <code>(B,T,C)→(B,H,T,D)→(B,T,C)</code> را debug کنم.</li><li>می‌توانم Q/K/V، scaling، mask و weighted sum را توضیح دهم.</li><li>فرق Transformer، GPT و LLM را می‌دانم.</li><li>می‌توانم Mini-GPT را train، save، load و با چند sampling اجرا کنم.</li><li>می‌دانم یک خروجی روان اثبات فهم، حقیقت یا کیفیت عمومی مدل نیست.</li></ul>
+        <p>اگر در یک مورد تردید دارید، به همان فصل برگردید و آزمایش آن را دوباره با اعداد کوچک انجام دهید. در این حوزه، توانایی ردیابی داده از میان shapeها از حفظ‌کردن APIها ارزشمندتر است.</p>
+        <nav class="chapter-nav"><a href="#ch30">→ فصل ۳۰</a><a href="#guide">بازگشت به آغاز ←</a></nav>
+      </section>
+    </article>
+    <footer>«از پایتون تا GPT» — نسخهٔ خودبسندهٔ آموزشی</footer>
+  </main>
+</div>
+</body>
+</html>

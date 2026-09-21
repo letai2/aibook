@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="fa" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>mini_gpt/evaluate.py | از Python تا Mini-GPT</title><meta name="description" content="کتاب فارسیِ ساخت تدریجی یک مدل زبان؛ درس، آزمایش، کد و خودسنجی.">
+<link rel="stylesheet" href="../../assets/book.css?v=78afa5746b9f">
+<link rel="preload" href="../../assets/fonts/Vazirmatn.woff2" as="font" type="font/woff2" crossorigin>
+<script src="../../assets/manifest.js?v=78afa5746b9f" defer></script><script src="../../assets/book.js?v=78afa5746b9f" defer></script><script src="../../assets/experience.js?v=78afa5746b9f" defer></script></head>
+<body data-page-kind="reference" data-theme="model" data-mode="reference" data-unit-id="" data-root="../../index.html"><a class="skip" href="#main">رفتن به متن</a>
+<header class="topbar"><a class="brand" href="../../index.html" data-book-link>از <bdi dir="ltr">Python</bdi> تا <bdi dir="ltr" class="nowrap">Mini-GPT</bdi></a>
+<div class="header-actions"><nav class="atlas" aria-label="اطلس مسیر"><details><summary>فهرست درس‌ها</summary><div class="atlas-content"><label>پیداکردن درس <input type="search" data-lesson-search placeholder="مثلاً بلوک یا mask"></label><div data-search-results aria-live="polite"></div><div class="atlas-grid"><details><summary>بخش 1 · مسئله را با Python لمس کنیم</summary><a href="../../part-01/index.html" data-book-link>صفحهٔ بخش</a><ol><li><a href="../../part-01/chapter-01/index.html" data-book-link>مسئلهٔ یادگیری</a></li><li><a href="../../part-01/chapter-02/index.html" data-book-link>متن به <bdi dir="ltr">Token</bdi></a></li><li><a href="../../part-01/chapter-03/index.html" data-book-link>اولین ادامه‌دهنده</a></li><li><a href="../../part-01/chapter-04/index.html" data-book-link>شواهد یادگیری</a></li><li><a href="../../part-01/checkpoint.html" data-book-link data-unit="checkpoint-01">ایستگاه عملی</a></li></ol></details><details><summary>بخش 2 · عدد، احتمال و تغییر</summary><a href="../../part-02/index.html" data-book-link>صفحهٔ بخش</a><ol><li><a href="../../part-02/chapter-01/index.html" data-book-link>ساختار عددها</a></li><li><a href="../../part-02/chapter-02/index.html" data-book-link>ترکیب عددها</a></li><li><a href="../../part-02/chapter-03/index.html" data-book-link>از شمارش تا اطمینان</a></li><li><a href="../../part-02/chapter-04/index.html" data-book-link>سنجش پیش‌بینی</a></li><li><a href="../../part-02/chapter-05/index.html" data-book-link>تغییر <bdi dir="ltr">Parameter</bdi></a></li><li><a href="../../part-02/chapter-06/index.html" data-book-link>از محاسبه تا شبکه</a></li><li><a href="../../part-02/checkpoint.html" data-book-link data-unit="checkpoint-02">ایستگاه عملی</a></li></ol></details><details><summary>بخش 3 · ابزار محاسبه و اولین شبکه</summary><a href="../../part-03/index.html" data-book-link>صفحهٔ بخش</a><ol><li><a href="../../part-03/chapter-01/index.html" data-book-link>آشنایی با ابزار</a></li><li><a href="../../part-03/chapter-02/index.html" data-book-link>حساب محورها</a></li><li><a href="../../part-03/chapter-03/index.html" data-book-link>اولین یادگیری عصبی</a></li><li><a href="../../part-03/chapter-04/index.html" data-book-link>گردش داده</a></li><li><a href="../../part-03/checkpoint.html" data-book-link data-unit="checkpoint-03">ایستگاه عملی</a></li></ol></details><details><summary>بخش 4 · متن و نمایش یادگرفتنی</summary><a href="../../part-04/index.html" data-book-link>صفحهٔ بخش</a><ol><li><a href="../../part-04/chapter-01/index.html" data-book-link>متن قابل اعتماد</a></li><li><a href="../../part-04/chapter-02/index.html" data-book-link>نمونهٔ آموزش</a></li><li><a href="../../part-04/chapter-03/index.html" data-book-link>نمایش یادگرفتنی</a></li><li><a href="../../part-04/checkpoint.html" data-book-link data-unit="checkpoint-04">ایستگاه عملی</a></li></ol></details><details><summary>بخش 5 · <bdi dir="ltr">Attention</bdi> تک‌سر</summary><a href="../../part-05/index.html" data-book-link>صفحهٔ بخش</a><ol><li><a href="../../part-05/chapter-01/index.html" data-book-link>پرسش و اطلاعات</a></li><li><a href="../../part-05/chapter-02/index.html" data-book-link><bdi dir="ltr">Attention</bdi> با عدد</a></li><li><a href="../../part-05/chapter-03/index.html" data-book-link>محدودیت اطلاعات</a></li><li><a href="../../part-05/checkpoint.html" data-book-link data-unit="checkpoint-05">ایستگاه عملی</a></li></ol></details><details><summary>بخش 6 · از چند سر تا بلوک</summary><a href="../../part-06/index.html" data-book-link>صفحهٔ بخش</a><ol><li><a href="../../part-06/chapter-01/index.html" data-book-link>چند نگاه هم‌زمان</a></li><li><a href="../../part-06/chapter-02/index.html" data-book-link>پردازش هر موقعیت</a></li><li><a href="../../part-06/chapter-03/index.html" data-book-link>پایداری بلوک</a></li><li><a href="../../part-06/chapter-04/index.html" data-book-link>مونتاژ معماری</a></li><li><a href="../../part-06/checkpoint.html" data-book-link data-unit="checkpoint-06">ایستگاه عملی</a></li></ol></details><details><summary>بخش 7 · مدل زبانی کامل</summary><a href="../../part-07/index.html" data-book-link>صفحهٔ بخش</a><ol><li><a href="../../part-07/chapter-01/index.html" data-book-link>از نمایش به پیش‌بینی</a></li><li><a href="../../part-07/chapter-02/index.html" data-book-link>ردیابی کل مدل</a></li><li><a href="../../part-07/checkpoint.html" data-book-link data-unit="checkpoint-07">ایستگاه عملی</a></li></ol></details><details><summary>بخش 8 · زندگی روزمرهٔ آموزش</summary><a href="../../part-08/index.html" data-book-link>صفحهٔ بخش</a><ol><li><a href="../../part-08/chapter-01/index.html" data-book-link>آموزش روزمره</a></li><li><a href="../../part-08/chapter-02/index.html" data-book-link>ذخیره و ادامه</a></li><li><a href="../../part-08/chapter-03/index.html" data-book-link>خواندن نتیجه</a></li><li><a href="../../part-08/checkpoint.html" data-book-link data-unit="checkpoint-08">ایستگاه عملی</a></li></ol></details><details><summary>بخش 9 · تولید، خرابی و آزمایش</summary><a href="../../part-09/index.html" data-book-link>صفحهٔ بخش</a><ol><li><a href="../../part-09/chapter-01/index.html" data-book-link>یک <bdi dir="ltr">Token</bdi> در هر گام</a></li><li><a href="../../part-09/chapter-02/index.html" data-book-link>کنترل انتخاب</a></li><li><a href="../../part-09/chapter-03/index.html" data-book-link>حدود تولید</a></li><li><a href="../../part-09/chapter-04/index.html" data-book-link>آزمایش علّی و موقعیتی</a></li><li><a href="../../part-09/chapter-05/index.html" data-book-link>کارگاه خطا</a></li><li><a href="../../part-09/checkpoint.html" data-book-link data-unit="checkpoint-09">ایستگاه عملی</a></li></ol></details><details><summary>بخش 10 · ارتباط با مدل‌های بزرگ</summary><a href="../../part-10/index.html" data-book-link>صفحهٔ بخش</a><ol><li><a href="../../part-10/chapter-01/index.html" data-book-link>فراتر از رایانهٔ شخصی</a></li><li><a href="../../part-10/chapter-02/index.html" data-book-link>از ادامه‌دهنده به دستیار</a></li><li><a href="../../part-10/checkpoint.html" data-book-link data-unit="checkpoint-10">ایستگاه عملی</a></li></ol></details></div></div></details></nav><details class="book-tools"><summary>میز کار</summary><nav class="toplinks" aria-label="فضاهای کتاب"><a href="../../guide.html" data-book-link>راهنمای آغاز</a><a href="../../lab.html" data-book-link>آزمایشگاه</a><a href="../../journal.html" data-book-link>دفتر آزمایش</a><a href="../../project.html" data-book-link>پروژه</a><a href="../../glossary.html" data-book-link>واژه‌ها</a><a href="../../api.html" data-book-link>مرجع کد</a></nav></details></div></header>
+<div class="layout"><main id="main"><nav class="breadcrumbs" aria-label="مسیر صفحه"><a href="../../index.html" data-book-link>خانه</a> <span aria-hidden="true">/</span> <span aria-current="page">mini_gpt/evaluate.py</span></nav>
+<header class="page-masthead"><p class="eyebrow">از Python تا Mini-GPT</p><h1>mini_gpt/evaluate.py</h1></header><div class="page-content"><p>این فایل مرجع است. متن فارسی درون کد ممکن است به‌علت چیدمان چپ‌به‌راست جدا دیده شود؛ نسخهٔ دانلودی <a class="term-link" id="term-ref-utf-8-1" data-term="utf-8" href="../../glossary/utf-8.html?return=..%2Fcode%2Fmini_gpt%2Fevaluate.py.html%23term-ref-utf-8-1" title="توضیح UTF-8"><bdi dir="ltr">UTF-8</bdi></a> است.</p><p><a href="../../api.html" data-book-link>توضیح نام‌ها و دستورها</a> · <a href="../../project.html" data-book-link>دریافت همهٔ فایل‌ها</a></p><p>درس‌های مرتبط: <a href="../../part-08/chapter-01/48-evaluate.html" data-book-link data-unit="48-evaluate">ارزیابی دقیقاً چه چیزی را میانگین می‌گیرد؟</a></p><pre data-code-language="python"><code><span class="syntax-string">&quot;&quot;&quot;ارزیابی همهٔ هدف‌ها با وزن برابر؛ بدون تغییر پارامترها.&quot;&quot;&quot;</span>
+
+<span class="syntax-keyword">import</span> argparse
+<span class="syntax-keyword">import</span> math
+<span class="syntax-keyword">import</span> hashlib
+<span class="syntax-keyword">from</span> pathlib <span class="syntax-keyword">import</span> Path
+
+<span class="syntax-keyword">import</span> torch
+<span class="syntax-keyword">from</span> torch.utils.data <span class="syntax-keyword">import</span> DataLoader
+
+<span class="syntax-keyword">from</span> .checkpoint <span class="syntax-keyword">import</span> load_checkpoint
+<span class="syntax-keyword">from</span> .dataset <span class="syntax-keyword">import</span> NextTokenDataset
+<span class="syntax-keyword">from</span> .runtime <span class="syntax-keyword">import</span> resolve_device
+
+
+<span class="syntax-keyword">def</span> evaluation_ids(path, tokenizer, training_metadata, *, independent_test=<span class="syntax-keyword">False</span>):
+    <span class="syntax-string">&quot;&quot;&quot;Use the checkpoint vocabulary; never fit a vocabulary on held-out text.&quot;&quot;&quot;</span>
+    <span class="syntax-keyword">from</span> .data <span class="syntax-keyword">import</span> prepare_corpus
+    <span class="syntax-keyword">if</span> independent_test:
+        text = Path(path).read_text(encoding=<span class="syntax-string">&quot;utf-8&quot;</span>)
+        <span class="syntax-keyword">if</span> <span class="syntax-keyword">not</span> text:
+            <span class="syntax-keyword">raise</span> ValueError(<span class="syntax-string">&quot;test text must be nonempty&quot;</span>)
+        digest = hashlib.sha256(text.encode(<span class="syntax-string">&quot;utf-8&quot;</span>)).hexdigest()
+        <span class="syntax-keyword">if</span> digest == training_metadata[<span class="syntax-string">&quot;corpus_sha256&quot;</span>]:
+            <span class="syntax-keyword">raise</span> ValueError(<span class="syntax-string">&quot;test text is the training corpus; provide separately held-out documents&quot;</span>)
+        ids = tokenizer.encode(text)
+        unknown_id = tokenizer.token_to_id[tokenizer.UNK]
+        <span class="syntax-keyword">return</span> ids, {<span class="syntax-string">&quot;split&quot;</span>: <span class="syntax-string">&quot;test&quot;</span>, <span class="syntax-string">&quot;unknown_rate&quot;</span>: ids.count(unknown_id)/len(ids),
+                     <span class="syntax-string">&quot;corpus_sha256&quot;</span>: digest}
+    _, ids, _, metadata = prepare_corpus(path, training_metadata[<span class="syntax-string">&quot;train_fraction&quot;</span>], tokenizer)
+    <span class="syntax-keyword">if</span> metadata[<span class="syntax-string">&quot;corpus_sha256&quot;</span>] != training_metadata[<span class="syntax-string">&quot;corpus_sha256&quot;</span>]:
+        <span class="syntax-keyword">raise</span> ValueError(<span class="syntax-string">&quot;corpus differs from training; use --test-text for independently held-out text&quot;</span>)
+    <span class="syntax-keyword">return</span> ids, {<span class="syntax-string">&quot;split&quot;</span>: <span class="syntax-string">&quot;validation&quot;</span>, <span class="syntax-string">&quot;unknown_rate&quot;</span>: metadata[<span class="syntax-string">&quot;validation_unknown_rate&quot;</span>],
+                 <span class="syntax-string">&quot;corpus_sha256&quot;</span>: metadata[<span class="syntax-string">&quot;corpus_sha256&quot;</span>]}
+
+
+@torch.no_grad()
+<span class="syntax-keyword">def</span> evaluate(model, loader, device, max_batches=<span class="syntax-keyword">None</span>):
+    was_training = model.training
+    model.eval()
+    total_loss, total_tokens = <span class="syntax-number">0.0</span>, <span class="syntax-number">0</span>
+    <span class="syntax-keyword">try</span>:
+        <span class="syntax-keyword">for</span> index, (inputs, targets) <span class="syntax-keyword">in</span> enumerate(loader):
+            <span class="syntax-keyword">if</span> max_batches <span class="syntax-keyword">is</span> <span class="syntax-keyword">not</span> <span class="syntax-keyword">None</span> <span class="syntax-keyword">and</span> index &gt;= max_batches:
+                <span class="syntax-keyword">break</span>
+            _, loss = model(inputs.to(device), targets.to(device))
+            count = targets.numel()
+            total_loss += loss.item() * count
+            total_tokens += count
+    <span class="syntax-keyword">finally</span>:
+        model.train(was_training)
+    <span class="syntax-keyword">if</span> total_tokens == <span class="syntax-number">0</span>:
+        <span class="syntax-keyword">raise</span> ValueError(<span class="syntax-string">&quot;evaluation loader contains no target tokens&quot;</span>)
+    <span class="syntax-keyword">return</span> total_loss / total_tokens
+
+
+<span class="syntax-keyword">def</span> main():
+    parser = argparse.ArgumentParser(description=<span class="syntax-string">&quot;Evaluate the original validation tail or a separate test document&quot;</span>)
+    parser.add_argument(<span class="syntax-string">&quot;--checkpoint&quot;</span>, default=<span class="syntax-string">&quot;checkpoints/best.pt&quot;</span>)
+    corpus = parser.add_mutually_exclusive_group()
+    corpus.add_argument(<span class="syntax-string">&quot;--text&quot;</span>, help=<span class="syntax-string">&quot;Original training corpus; default: data/sample.txt&quot;</span>)
+    corpus.add_argument(<span class="syntax-string">&quot;--test-text&quot;</span>, help=<span class="syntax-string">&quot;Independent UTF-8 test document, evaluated in full with the saved vocabulary&quot;</span>)
+    parser.add_argument(<span class="syntax-string">&quot;--batch-size&quot;</span>, type=int, default=<span class="syntax-number">16</span>)
+    parser.add_argument(<span class="syntax-string">&quot;--device&quot;</span>, choices=(<span class="syntax-string">&quot;auto&quot;</span>, <span class="syntax-string">&quot;cpu&quot;</span>, <span class="syntax-string">&quot;cuda&quot;</span>), default=<span class="syntax-string">&quot;cpu&quot;</span>)
+    parser.add_argument(<span class="syntax-string">&quot;--threads&quot;</span>, type=int, default=<span class="syntax-number">2</span>)
+    args = parser.parse_args()
+    <span class="syntax-keyword">if</span> args.threads &lt; <span class="syntax-number">1</span> <span class="syntax-keyword">or</span> args.batch_size &lt; <span class="syntax-number">1</span>:
+        <span class="syntax-keyword">raise</span> ValueError(<span class="syntax-string">&quot;threads and batch_size must be positive&quot;</span>)
+    torch.set_num_threads(args.threads)
+    device = resolve_device(args.device)
+    model, tokenizer, payload = load_checkpoint(args.checkpoint, device)
+    valid_ids, metadata = evaluation_ids(args.test_text <span class="syntax-keyword">or</span> args.text <span class="syntax-keyword">or</span> <span class="syntax-string">&quot;data/sample.txt&quot;</span>, tokenizer,
+                                         payload[<span class="syntax-string">&quot;metadata&quot;</span>], independent_test=args.test_text <span class="syntax-keyword">is</span> <span class="syntax-keyword">not</span> <span class="syntax-keyword">None</span>)
+    loader = DataLoader(NextTokenDataset(valid_ids, model.config.context_length), batch_size=args.batch_size)
+    loss = evaluate(model, loader, device)
+    perplexity = math.exp(loss) <span class="syntax-keyword">if</span> loss &lt; <span class="syntax-number">700</span> <span class="syntax-keyword">else</span> float(<span class="syntax-string">&quot;inf&quot;</span>)
+    print(<span class="syntax-string">f&quot;{metadata[&#x27;split&#x27;]}_loss={loss:.6f} perplexity={perplexity:.4f} unknown_rate={metadata[&#x27;unknown_rate&#x27;]:.4f}&quot;</span>)
+    <span class="syntax-keyword">if</span> args.test_text:
+        print(<span class="syntax-string">&quot;Test uses all overlapping windows. Different file content does not prove independence; check document overlap.&quot;</span>)
+
+
+<span class="syntax-keyword">if</span> __name__ == <span class="syntax-string">&quot;__main__&quot;</span>:
+    <span class="syntax-keyword">from</span> .console <span class="syntax-keyword">import</span> configure_console
+    configure_console()
+    main()</code></pre><nav class="pager learning-continuation" aria-label="ادامهٔ مسیر یادگیری"><div class="next-step"><p class="eyebrow">گام بعد <span></span></p><p class="next-context">از مدل امتحان می‌گیریم؛ اندازهٔ کوچک‌تر <bdi dir="ltr">Batch</bdi> آخر نباید به آن رأی اضافه بدهد.</p><a rel="next" data-next-step href="../../part-08/chapter-01/48-evaluate.html" data-book-link data-unit="48-evaluate">کد را در یک مسئله دنبال کنید: ارزیابی دقیقاً چه چیزی را میانگین می‌گیرد؟</a></div><div class="nearby-steps"><a data-return-section href="../index.html" data-book-link>همهٔ فایل‌های مرجع</a></div></nav></div><div class="reading-finish"><a href="../../journal.html" data-book-link>ثبت در دفتر آزمایش</a></div><details class="progress-panel"><summary>پیشرفت مسیر <span data-progress-count>0 / 86</span></summary><div class="progress-tools"><progress value="0" max="86" aria-label="درس‌ها و ایستگاه‌های انجام‌شده"></progress><button type="button" data-export>خروجی پیشرفت</button><label class="import-label">ورود پیشرفت <input type="file" accept=".json,application/json" data-import></label></div><details data-export-preview hidden><summary>نسخهٔ متنی پیشرفت؛ اگر دانلود انجام نشد، این JSON را کپی و در فایل نگه دارید</summary><pre><code data-export-code></code></pre></details><p class="progress-note">علامت انجام فقط با انتخاب شما ثبت می‌شود. برای نگهداری مطمئن یا انتقال به مرورگر دیگر، خروجی پیشرفت بگیرید. دفتر آزمایش جداست.</p><p class="status" role="status" aria-live="polite" data-status></p></details><footer class="footer"><span>از یک <a class="term-link" id="term-ref-token-1" data-term="token" href="../../glossary/token.html?return=..%2Fcode%2Fmini_gpt%2Fevaluate.py.html%23term-ref-token-1" title="توضیح Token"><bdi dir="ltr">Token</bdi></a>، تا یک مدل.</span><a href="../../guide.html" data-book-link>راهنما</a> · <a href="../../api.html" data-book-link>کد و منابع</a></footer></main></div>
+<noscript><p>خواندن و ناوبری بدون JavaScript هم کار می‌کند؛ کپی خودکار و ثبت پیشرفت به آن نیاز دارند.</p></noscript></body></html>

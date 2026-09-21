@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="fa" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>mini_gpt/model.py | از Python تا Mini-GPT</title><meta name="description" content="کتاب فارسیِ ساخت تدریجی یک مدل زبان؛ درس، آزمایش، کد و خودسنجی.">
+<link rel="stylesheet" href="../../assets/book.css?v=78afa5746b9f">
+<link rel="preload" href="../../assets/fonts/Vazirmatn.woff2" as="font" type="font/woff2" crossorigin>
+<script src="../../assets/manifest.js?v=78afa5746b9f" defer></script><script src="../../assets/book.js?v=78afa5746b9f" defer></script><script src="../../assets/experience.js?v=78afa5746b9f" defer></script></head>
+<body data-page-kind="reference" data-theme="model" data-mode="reference" data-unit-id="" data-root="../../index.html"><a class="skip" href="#main">رفتن به متن</a>
+<header class="topbar"><a class="brand" href="../../index.html" data-book-link>از <bdi dir="ltr">Python</bdi> تا <bdi dir="ltr" class="nowrap">Mini-GPT</bdi></a>
+<div class="header-actions"><nav class="atlas" aria-label="اطلس مسیر"><details><summary>فهرست درس‌ها</summary><div class="atlas-content"><label>پیداکردن درس <input type="search" data-lesson-search placeholder="مثلاً بلوک یا mask"></label><div data-search-results aria-live="polite"></div><div class="atlas-grid"><details><summary>بخش 1 · مسئله را با Python لمس کنیم</summary><a href="../../part-01/index.html" data-book-link>صفحهٔ بخش</a><ol><li><a href="../../part-01/chapter-01/index.html" data-book-link>مسئلهٔ یادگیری</a></li><li><a href="../../part-01/chapter-02/index.html" data-book-link>متن به <bdi dir="ltr">Token</bdi></a></li><li><a href="../../part-01/chapter-03/index.html" data-book-link>اولین ادامه‌دهنده</a></li><li><a href="../../part-01/chapter-04/index.html" data-book-link>شواهد یادگیری</a></li><li><a href="../../part-01/checkpoint.html" data-book-link data-unit="checkpoint-01">ایستگاه عملی</a></li></ol></details><details><summary>بخش 2 · عدد، احتمال و تغییر</summary><a href="../../part-02/index.html" data-book-link>صفحهٔ بخش</a><ol><li><a href="../../part-02/chapter-01/index.html" data-book-link>ساختار عددها</a></li><li><a href="../../part-02/chapter-02/index.html" data-book-link>ترکیب عددها</a></li><li><a href="../../part-02/chapter-03/index.html" data-book-link>از شمارش تا اطمینان</a></li><li><a href="../../part-02/chapter-04/index.html" data-book-link>سنجش پیش‌بینی</a></li><li><a href="../../part-02/chapter-05/index.html" data-book-link>تغییر <bdi dir="ltr">Parameter</bdi></a></li><li><a href="../../part-02/chapter-06/index.html" data-book-link>از محاسبه تا شبکه</a></li><li><a href="../../part-02/checkpoint.html" data-book-link data-unit="checkpoint-02">ایستگاه عملی</a></li></ol></details><details><summary>بخش 3 · ابزار محاسبه و اولین شبکه</summary><a href="../../part-03/index.html" data-book-link>صفحهٔ بخش</a><ol><li><a href="../../part-03/chapter-01/index.html" data-book-link>آشنایی با ابزار</a></li><li><a href="../../part-03/chapter-02/index.html" data-book-link>حساب محورها</a></li><li><a href="../../part-03/chapter-03/index.html" data-book-link>اولین یادگیری عصبی</a></li><li><a href="../../part-03/chapter-04/index.html" data-book-link>گردش داده</a></li><li><a href="../../part-03/checkpoint.html" data-book-link data-unit="checkpoint-03">ایستگاه عملی</a></li></ol></details><details><summary>بخش 4 · متن و نمایش یادگرفتنی</summary><a href="../../part-04/index.html" data-book-link>صفحهٔ بخش</a><ol><li><a href="../../part-04/chapter-01/index.html" data-book-link>متن قابل اعتماد</a></li><li><a href="../../part-04/chapter-02/index.html" data-book-link>نمونهٔ آموزش</a></li><li><a href="../../part-04/chapter-03/index.html" data-book-link>نمایش یادگرفتنی</a></li><li><a href="../../part-04/checkpoint.html" data-book-link data-unit="checkpoint-04">ایستگاه عملی</a></li></ol></details><details><summary>بخش 5 · <bdi dir="ltr">Attention</bdi> تک‌سر</summary><a href="../../part-05/index.html" data-book-link>صفحهٔ بخش</a><ol><li><a href="../../part-05/chapter-01/index.html" data-book-link>پرسش و اطلاعات</a></li><li><a href="../../part-05/chapter-02/index.html" data-book-link><bdi dir="ltr">Attention</bdi> با عدد</a></li><li><a href="../../part-05/chapter-03/index.html" data-book-link>محدودیت اطلاعات</a></li><li><a href="../../part-05/checkpoint.html" data-book-link data-unit="checkpoint-05">ایستگاه عملی</a></li></ol></details><details><summary>بخش 6 · از چند سر تا بلوک</summary><a href="../../part-06/index.html" data-book-link>صفحهٔ بخش</a><ol><li><a href="../../part-06/chapter-01/index.html" data-book-link>چند نگاه هم‌زمان</a></li><li><a href="../../part-06/chapter-02/index.html" data-book-link>پردازش هر موقعیت</a></li><li><a href="../../part-06/chapter-03/index.html" data-book-link>پایداری بلوک</a></li><li><a href="../../part-06/chapter-04/index.html" data-book-link>مونتاژ معماری</a></li><li><a href="../../part-06/checkpoint.html" data-book-link data-unit="checkpoint-06">ایستگاه عملی</a></li></ol></details><details><summary>بخش 7 · مدل زبانی کامل</summary><a href="../../part-07/index.html" data-book-link>صفحهٔ بخش</a><ol><li><a href="../../part-07/chapter-01/index.html" data-book-link>از نمایش به پیش‌بینی</a></li><li><a href="../../part-07/chapter-02/index.html" data-book-link>ردیابی کل مدل</a></li><li><a href="../../part-07/checkpoint.html" data-book-link data-unit="checkpoint-07">ایستگاه عملی</a></li></ol></details><details><summary>بخش 8 · زندگی روزمرهٔ آموزش</summary><a href="../../part-08/index.html" data-book-link>صفحهٔ بخش</a><ol><li><a href="../../part-08/chapter-01/index.html" data-book-link>آموزش روزمره</a></li><li><a href="../../part-08/chapter-02/index.html" data-book-link>ذخیره و ادامه</a></li><li><a href="../../part-08/chapter-03/index.html" data-book-link>خواندن نتیجه</a></li><li><a href="../../part-08/checkpoint.html" data-book-link data-unit="checkpoint-08">ایستگاه عملی</a></li></ol></details><details><summary>بخش 9 · تولید، خرابی و آزمایش</summary><a href="../../part-09/index.html" data-book-link>صفحهٔ بخش</a><ol><li><a href="../../part-09/chapter-01/index.html" data-book-link>یک <bdi dir="ltr">Token</bdi> در هر گام</a></li><li><a href="../../part-09/chapter-02/index.html" data-book-link>کنترل انتخاب</a></li><li><a href="../../part-09/chapter-03/index.html" data-book-link>حدود تولید</a></li><li><a href="../../part-09/chapter-04/index.html" data-book-link>آزمایش علّی و موقعیتی</a></li><li><a href="../../part-09/chapter-05/index.html" data-book-link>کارگاه خطا</a></li><li><a href="../../part-09/checkpoint.html" data-book-link data-unit="checkpoint-09">ایستگاه عملی</a></li></ol></details><details><summary>بخش 10 · ارتباط با مدل‌های بزرگ</summary><a href="../../part-10/index.html" data-book-link>صفحهٔ بخش</a><ol><li><a href="../../part-10/chapter-01/index.html" data-book-link>فراتر از رایانهٔ شخصی</a></li><li><a href="../../part-10/chapter-02/index.html" data-book-link>از ادامه‌دهنده به دستیار</a></li><li><a href="../../part-10/checkpoint.html" data-book-link data-unit="checkpoint-10">ایستگاه عملی</a></li></ol></details></div></div></details></nav><details class="book-tools"><summary>میز کار</summary><nav class="toplinks" aria-label="فضاهای کتاب"><a href="../../guide.html" data-book-link>راهنمای آغاز</a><a href="../../lab.html" data-book-link>آزمایشگاه</a><a href="../../journal.html" data-book-link>دفتر آزمایش</a><a href="../../project.html" data-book-link>پروژه</a><a href="../../glossary.html" data-book-link>واژه‌ها</a><a href="../../api.html" data-book-link>مرجع کد</a></nav></details></div></header>
+<div class="layout"><main id="main"><nav class="breadcrumbs" aria-label="مسیر صفحه"><a href="../../index.html" data-book-link>خانه</a> <span aria-hidden="true">/</span> <span aria-current="page">mini_gpt/model.py</span></nav>
+<header class="page-masthead"><p class="eyebrow">از Python تا Mini-GPT</p><h1>mini_gpt/model.py</h1></header><div class="page-content"><p>این فایل مرجع است. متن فارسی درون کد ممکن است به‌علت چیدمان چپ‌به‌راست جدا دیده شود؛ نسخهٔ دانلودی <a class="term-link" id="term-ref-utf-8-1" data-term="utf-8" href="../../glossary/utf-8.html?return=..%2Fcode%2Fmini_gpt%2Fmodel.py.html%23term-ref-utf-8-1" title="توضیح UTF-8"><bdi dir="ltr">UTF-8</bdi></a> است.</p><p><a href="../../api.html" data-book-link>توضیح نام‌ها و دستورها</a> · <a href="../../project.html" data-book-link>دریافت همهٔ فایل‌ها</a></p><p>درس‌های مرتبط: <a href="../../part-07/chapter-01/43-lm-head.html" data-book-link data-unit="43-lm-head">نمایش Cتایی چگونه V امتیاز می‌سازد؟</a> · <a href="../../part-07/chapter-02/45-trace.html" data-book-link data-unit="45-trace">یک جمله را تا امتیاز بعدی دنبال کنیم</a></p><pre data-code-language="python"><code><span class="syntax-string">&quot;&quot;&quot;مدل زبانی کوچک: شناسه → نمایش → بلوک‌ها → امتیاز نشانهٔ بعدی.&quot;&quot;&quot;</span>
+
+<span class="syntax-keyword">import</span> torch
+<span class="syntax-keyword">from</span> torch <span class="syntax-keyword">import</span> nn
+<span class="syntax-keyword">from</span> torch.nn <span class="syntax-keyword">import</span> functional <span class="syntax-keyword">as</span> F
+
+<span class="syntax-keyword">from</span> .attention <span class="syntax-keyword">import</span> CausalSelfAttention
+<span class="syntax-keyword">from</span> .config <span class="syntax-keyword">import</span> ModelConfig
+<span class="syntax-keyword">from</span> .sampling <span class="syntax-keyword">import</span> choose_token, filter_logits
+<span class="syntax-keyword">from</span> .transformer <span class="syntax-keyword">import</span> FeedForward, TransformerBlock
+
+<span class="syntax-comment"># سازگاری با نام استفاده‌شده در ویرایش نخست</span>
+_filter_logits = filter_logits
+
+
+<span class="syntax-keyword">class</span> MiniGPT(nn.Module):
+    <span class="syntax-keyword">def</span> __init__(self, config: ModelConfig):
+        super().__init__()
+        self.config = config
+        C = config.embedding_dim
+        self.token_embedding = nn.Embedding(config.vocab_size, C)
+        self.position_embedding = nn.Embedding(config.context_length, C)
+        self.dropout = nn.Dropout(config.dropout)
+        self.blocks = nn.ModuleList([TransformerBlock(config) <span class="syntax-keyword">for</span> _ <span class="syntax-keyword">in</span> range(config.num_layers)])
+        self.final_norm = nn.LayerNorm(C)
+        self.language_model_head = nn.Linear(C, config.vocab_size, bias=<span class="syntax-keyword">False</span>)
+        self.apply(self._initialize_weights)
+
+    @staticmethod
+    <span class="syntax-keyword">def</span> _initialize_weights(module):
+        <span class="syntax-keyword">if</span> isinstance(module, (nn.Linear, nn.Embedding)):
+            nn.init.normal_(module.weight, mean=<span class="syntax-number">0.0</span>, std=<span class="syntax-number">0.02</span>)
+            <span class="syntax-keyword">if</span> isinstance(module, nn.Linear) <span class="syntax-keyword">and</span> module.bias <span class="syntax-keyword">is</span> <span class="syntax-keyword">not</span> <span class="syntax-keyword">None</span>:
+                nn.init.zeros_(module.bias)
+
+    <span class="syntax-keyword">def</span> _validate_ids(self, ids):
+        <span class="syntax-keyword">if</span> ids.ndim != <span class="syntax-number">2</span> <span class="syntax-keyword">or</span> ids.dtype != torch.long:
+            <span class="syntax-keyword">raise</span> ValueError(<span class="syntax-string">&quot;token_ids must be torch.long with shape (B,T)&quot;</span>)
+        <span class="syntax-keyword">if</span> ids.shape[<span class="syntax-number">0</span>] &lt; <span class="syntax-number">1</span> <span class="syntax-keyword">or</span> <span class="syntax-keyword">not</span> <span class="syntax-number">1</span> &lt;= ids.shape[<span class="syntax-number">1</span>] &lt;= self.config.context_length:
+            <span class="syntax-keyword">raise</span> ValueError(<span class="syntax-string">&quot;B must be positive and 1 &lt;= T &lt;= context_length&quot;</span>)
+        <span class="syntax-keyword">if</span> ids.device != self.token_embedding.weight.device:
+            <span class="syntax-keyword">raise</span> ValueError(<span class="syntax-string">&quot;model and token_ids must be on the same device&quot;</span>)
+        <span class="syntax-keyword">if</span> ids.min().item() &lt; <span class="syntax-number">0</span> <span class="syntax-keyword">or</span> ids.max().item() &gt;= self.config.vocab_size:
+            <span class="syntax-keyword">raise</span> ValueError(<span class="syntax-string">&quot;token ID is outside the vocabulary&quot;</span>)
+
+    <span class="syntax-keyword">def</span> forward(self, token_ids, targets=<span class="syntax-keyword">None</span>, *, causal=<span class="syntax-keyword">True</span>, use_positions=<span class="syntax-keyword">True</span>, residual=<span class="syntax-keyword">True</span>, trace=<span class="syntax-keyword">None</span>):
+        self._validate_ids(token_ids)
+        B, T = token_ids.shape
+        positions = torch.arange(T, device=token_ids.device)
+        x = self.token_embedding(token_ids)
+        token_vectors = x
+        position_vectors = self.position_embedding(positions) <span class="syntax-keyword">if</span> use_positions <span class="syntax-keyword">else</span> torch.zeros_like(x[<span class="syntax-number">0</span>])
+        <span class="syntax-keyword">if</span> use_positions:
+            x = x + position_vectors
+        <span class="syntax-keyword">if</span> trace <span class="syntax-keyword">is</span> <span class="syntax-keyword">not</span> <span class="syntax-keyword">None</span>:
+            trace.update(token_embedding=token_vectors, position_embedding=position_vectors,
+                         combined_embedding=x, layers=[])
+        x = self.dropout(x)
+        <span class="syntax-keyword">for</span> block <span class="syntax-keyword">in</span> self.blocks:
+            block_trace = {} <span class="syntax-keyword">if</span> trace <span class="syntax-keyword">is</span> <span class="syntax-keyword">not</span> <span class="syntax-keyword">None</span> <span class="syntax-keyword">else</span> <span class="syntax-keyword">None</span>
+            x = block(x, causal=causal, residual=residual, trace=block_trace)
+            <span class="syntax-keyword">if</span> trace <span class="syntax-keyword">is</span> <span class="syntax-keyword">not</span> <span class="syntax-keyword">None</span>:
+                trace[<span class="syntax-string">&quot;layers&quot;</span>].append(block_trace)
+        logits = self.language_model_head(self.final_norm(x))
+        <span class="syntax-keyword">if</span> trace <span class="syntax-keyword">is</span> <span class="syntax-keyword">not</span> <span class="syntax-keyword">None</span>:
+            trace[<span class="syntax-string">&quot;logits&quot;</span>] = logits
+        loss = <span class="syntax-keyword">None</span>
+        <span class="syntax-keyword">if</span> targets <span class="syntax-keyword">is</span> <span class="syntax-keyword">not</span> <span class="syntax-keyword">None</span>:
+            <span class="syntax-keyword">if</span> targets.shape != token_ids.shape <span class="syntax-keyword">or</span> targets.dtype != torch.long:
+                <span class="syntax-keyword">raise</span> ValueError(<span class="syntax-string">&quot;targets must be torch.long with shape (B,T), matching input&quot;</span>)
+            <span class="syntax-keyword">if</span> targets.device != token_ids.device:
+                <span class="syntax-keyword">raise</span> ValueError(<span class="syntax-string">&quot;targets and inputs must be on the same device&quot;</span>)
+            <span class="syntax-keyword">if</span> targets.min().item() &lt; <span class="syntax-number">0</span> <span class="syntax-keyword">or</span> targets.max().item() &gt;= self.config.vocab_size:
+                <span class="syntax-keyword">raise</span> ValueError(<span class="syntax-string">&quot;target ID is outside the vocabulary&quot;</span>)
+            loss = F.cross_entropy(logits.reshape(B * T, self.config.vocab_size), targets.reshape(B * T))
+        <span class="syntax-keyword">return</span> logits, loss
+
+    @torch.no_grad()
+    <span class="syntax-keyword">def</span> generate(self, token_ids, max_new_tokens, temperature=<span class="syntax-number">1.0</span>, top_k=<span class="syntax-keyword">None</span>, top_p=<span class="syntax-keyword">None</span>, greedy=<span class="syntax-keyword">False</span>):
+        <span class="syntax-keyword">if</span> type(max_new_tokens) <span class="syntax-keyword">is</span> <span class="syntax-keyword">not</span> int <span class="syntax-keyword">or</span> max_new_tokens &lt; <span class="syntax-number">0</span>:
+            <span class="syntax-keyword">raise</span> ValueError(<span class="syntax-string">&quot;max_new_tokens must be a nonnegative integer&quot;</span>)
+        <span class="syntax-keyword">if</span> token_ids.ndim != <span class="syntax-number">2</span> <span class="syntax-keyword">or</span> token_ids.shape[<span class="syntax-number">0</span>] == <span class="syntax-number">0</span> <span class="syntax-keyword">or</span> token_ids.shape[<span class="syntax-number">1</span>] == <span class="syntax-number">0</span>:
+            <span class="syntax-keyword">raise</span> ValueError(<span class="syntax-string">&quot;prompt must have shape (B,T), with B,T &gt; 0&quot;</span>)
+        <span class="syntax-comment"># اعتبارسنجی کل متن اولیه، حتی قسمت بریده‌شده</span>
+        <span class="syntax-keyword">if</span> token_ids.dtype != torch.long <span class="syntax-keyword">or</span> token_ids.min().item() &lt; <span class="syntax-number">0</span> <span class="syntax-keyword">or</span> token_ids.max().item() &gt;= self.config.vocab_size:
+            <span class="syntax-keyword">raise</span> ValueError(<span class="syntax-string">&quot;prompt must contain valid long token IDs&quot;</span>)
+        <span class="syntax-keyword">if</span> token_ids.device != self.token_embedding.weight.device:
+            <span class="syntax-keyword">raise</span> ValueError(<span class="syntax-string">&quot;model and prompt must be on the same device&quot;</span>)
+        was_training = self.training
+        self.eval()
+        <span class="syntax-keyword">try</span>:
+            <span class="syntax-keyword">for</span> _ <span class="syntax-keyword">in</span> range(max_new_tokens):
+                context = token_ids[:, -self.config.context_length:]
+                logits, _ = self(context)
+                next_id = choose_token(logits[:, -<span class="syntax-number">1</span>, :], temperature, top_k, top_p, greedy)
+                token_ids = torch.cat((token_ids, next_id), dim=<span class="syntax-number">1</span>)
+        <span class="syntax-keyword">finally</span>:
+            self.train(was_training)
+        <span class="syntax-keyword">return</span> token_ids</code></pre><nav class="pager learning-continuation" aria-label="ادامهٔ مسیر یادگیری"><div class="next-step"><p class="eyebrow">گام بعد <span></span></p><p class="next-context">نمایش درونی هنوز پاسخ نیست؛ آن را به یک امتیاز برای هر <bdi dir="ltr">Token</bdi> ممکن تبدیل می‌کنیم.</p><a rel="next" data-next-step href="../../part-07/chapter-01/43-lm-head.html" data-book-link data-unit="43-lm-head">کد را در یک مسئله دنبال کنید: نمایش Cتایی چگونه V امتیاز می‌سازد؟</a></div><div class="nearby-steps"><a data-return-section href="../index.html" data-book-link>همهٔ فایل‌های مرجع</a></div></nav></div><div class="reading-finish"><a href="../../journal.html" data-book-link>ثبت در دفتر آزمایش</a></div><details class="progress-panel"><summary>پیشرفت مسیر <span data-progress-count>0 / 86</span></summary><div class="progress-tools"><progress value="0" max="86" aria-label="درس‌ها و ایستگاه‌های انجام‌شده"></progress><button type="button" data-export>خروجی پیشرفت</button><label class="import-label">ورود پیشرفت <input type="file" accept=".json,application/json" data-import></label></div><details data-export-preview hidden><summary>نسخهٔ متنی پیشرفت؛ اگر دانلود انجام نشد، این JSON را کپی و در فایل نگه دارید</summary><pre><code data-export-code></code></pre></details><p class="progress-note">علامت انجام فقط با انتخاب شما ثبت می‌شود. برای نگهداری مطمئن یا انتقال به مرورگر دیگر، خروجی پیشرفت بگیرید. دفتر آزمایش جداست.</p><p class="status" role="status" aria-live="polite" data-status></p></details><footer class="footer"><span>از یک <a class="term-link" id="term-ref-token-1" data-term="token" href="../../glossary/token.html?return=..%2Fcode%2Fmini_gpt%2Fmodel.py.html%23term-ref-token-1" title="توضیح Token"><bdi dir="ltr">Token</bdi></a>، تا یک مدل.</span><a href="../../guide.html" data-book-link>راهنما</a> · <a href="../../api.html" data-book-link>کد و منابع</a></footer></main></div>
+<noscript><p>خواندن و ناوبری بدون JavaScript هم کار می‌کند؛ کپی خودکار و ثبت پیشرفت به آن نیاز دارند.</p></noscript></body></html>

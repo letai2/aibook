@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="fa" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>mini_gpt/milestones.py | از Python تا Mini-GPT</title><meta name="description" content="کتاب فارسیِ ساخت تدریجی یک مدل زبان؛ درس، آزمایش، کد و خودسنجی.">
+<link rel="stylesheet" href="../../assets/book.css?v=78afa5746b9f">
+<link rel="preload" href="../../assets/fonts/Vazirmatn.woff2" as="font" type="font/woff2" crossorigin>
+<script src="../../assets/manifest.js?v=78afa5746b9f" defer></script><script src="../../assets/book.js?v=78afa5746b9f" defer></script><script src="../../assets/experience.js?v=78afa5746b9f" defer></script></head>
+<body data-page-kind="reference" data-theme="model" data-mode="reference" data-unit-id="" data-root="../../index.html"><a class="skip" href="#main">رفتن به متن</a>
+<header class="topbar"><a class="brand" href="../../index.html" data-book-link>از <bdi dir="ltr">Python</bdi> تا <bdi dir="ltr" class="nowrap">Mini-GPT</bdi></a>
+<div class="header-actions"><nav class="atlas" aria-label="اطلس مسیر"><details><summary>فهرست درس‌ها</summary><div class="atlas-content"><label>پیداکردن درس <input type="search" data-lesson-search placeholder="مثلاً بلوک یا mask"></label><div data-search-results aria-live="polite"></div><div class="atlas-grid"><details><summary>بخش 1 · مسئله را با Python لمس کنیم</summary><a href="../../part-01/index.html" data-book-link>صفحهٔ بخش</a><ol><li><a href="../../part-01/chapter-01/index.html" data-book-link>مسئلهٔ یادگیری</a></li><li><a href="../../part-01/chapter-02/index.html" data-book-link>متن به <bdi dir="ltr">Token</bdi></a></li><li><a href="../../part-01/chapter-03/index.html" data-book-link>اولین ادامه‌دهنده</a></li><li><a href="../../part-01/chapter-04/index.html" data-book-link>شواهد یادگیری</a></li><li><a href="../../part-01/checkpoint.html" data-book-link data-unit="checkpoint-01">ایستگاه عملی</a></li></ol></details><details><summary>بخش 2 · عدد، احتمال و تغییر</summary><a href="../../part-02/index.html" data-book-link>صفحهٔ بخش</a><ol><li><a href="../../part-02/chapter-01/index.html" data-book-link>ساختار عددها</a></li><li><a href="../../part-02/chapter-02/index.html" data-book-link>ترکیب عددها</a></li><li><a href="../../part-02/chapter-03/index.html" data-book-link>از شمارش تا اطمینان</a></li><li><a href="../../part-02/chapter-04/index.html" data-book-link>سنجش پیش‌بینی</a></li><li><a href="../../part-02/chapter-05/index.html" data-book-link>تغییر <bdi dir="ltr">Parameter</bdi></a></li><li><a href="../../part-02/chapter-06/index.html" data-book-link>از محاسبه تا شبکه</a></li><li><a href="../../part-02/checkpoint.html" data-book-link data-unit="checkpoint-02">ایستگاه عملی</a></li></ol></details><details><summary>بخش 3 · ابزار محاسبه و اولین شبکه</summary><a href="../../part-03/index.html" data-book-link>صفحهٔ بخش</a><ol><li><a href="../../part-03/chapter-01/index.html" data-book-link>آشنایی با ابزار</a></li><li><a href="../../part-03/chapter-02/index.html" data-book-link>حساب محورها</a></li><li><a href="../../part-03/chapter-03/index.html" data-book-link>اولین یادگیری عصبی</a></li><li><a href="../../part-03/chapter-04/index.html" data-book-link>گردش داده</a></li><li><a href="../../part-03/checkpoint.html" data-book-link data-unit="checkpoint-03">ایستگاه عملی</a></li></ol></details><details><summary>بخش 4 · متن و نمایش یادگرفتنی</summary><a href="../../part-04/index.html" data-book-link>صفحهٔ بخش</a><ol><li><a href="../../part-04/chapter-01/index.html" data-book-link>متن قابل اعتماد</a></li><li><a href="../../part-04/chapter-02/index.html" data-book-link>نمونهٔ آموزش</a></li><li><a href="../../part-04/chapter-03/index.html" data-book-link>نمایش یادگرفتنی</a></li><li><a href="../../part-04/checkpoint.html" data-book-link data-unit="checkpoint-04">ایستگاه عملی</a></li></ol></details><details><summary>بخش 5 · <bdi dir="ltr">Attention</bdi> تک‌سر</summary><a href="../../part-05/index.html" data-book-link>صفحهٔ بخش</a><ol><li><a href="../../part-05/chapter-01/index.html" data-book-link>پرسش و اطلاعات</a></li><li><a href="../../part-05/chapter-02/index.html" data-book-link><bdi dir="ltr">Attention</bdi> با عدد</a></li><li><a href="../../part-05/chapter-03/index.html" data-book-link>محدودیت اطلاعات</a></li><li><a href="../../part-05/checkpoint.html" data-book-link data-unit="checkpoint-05">ایستگاه عملی</a></li></ol></details><details><summary>بخش 6 · از چند سر تا بلوک</summary><a href="../../part-06/index.html" data-book-link>صفحهٔ بخش</a><ol><li><a href="../../part-06/chapter-01/index.html" data-book-link>چند نگاه هم‌زمان</a></li><li><a href="../../part-06/chapter-02/index.html" data-book-link>پردازش هر موقعیت</a></li><li><a href="../../part-06/chapter-03/index.html" data-book-link>پایداری بلوک</a></li><li><a href="../../part-06/chapter-04/index.html" data-book-link>مونتاژ معماری</a></li><li><a href="../../part-06/checkpoint.html" data-book-link data-unit="checkpoint-06">ایستگاه عملی</a></li></ol></details><details><summary>بخش 7 · مدل زبانی کامل</summary><a href="../../part-07/index.html" data-book-link>صفحهٔ بخش</a><ol><li><a href="../../part-07/chapter-01/index.html" data-book-link>از نمایش به پیش‌بینی</a></li><li><a href="../../part-07/chapter-02/index.html" data-book-link>ردیابی کل مدل</a></li><li><a href="../../part-07/checkpoint.html" data-book-link data-unit="checkpoint-07">ایستگاه عملی</a></li></ol></details><details><summary>بخش 8 · زندگی روزمرهٔ آموزش</summary><a href="../../part-08/index.html" data-book-link>صفحهٔ بخش</a><ol><li><a href="../../part-08/chapter-01/index.html" data-book-link>آموزش روزمره</a></li><li><a href="../../part-08/chapter-02/index.html" data-book-link>ذخیره و ادامه</a></li><li><a href="../../part-08/chapter-03/index.html" data-book-link>خواندن نتیجه</a></li><li><a href="../../part-08/checkpoint.html" data-book-link data-unit="checkpoint-08">ایستگاه عملی</a></li></ol></details><details><summary>بخش 9 · تولید، خرابی و آزمایش</summary><a href="../../part-09/index.html" data-book-link>صفحهٔ بخش</a><ol><li><a href="../../part-09/chapter-01/index.html" data-book-link>یک <bdi dir="ltr">Token</bdi> در هر گام</a></li><li><a href="../../part-09/chapter-02/index.html" data-book-link>کنترل انتخاب</a></li><li><a href="../../part-09/chapter-03/index.html" data-book-link>حدود تولید</a></li><li><a href="../../part-09/chapter-04/index.html" data-book-link>آزمایش علّی و موقعیتی</a></li><li><a href="../../part-09/chapter-05/index.html" data-book-link>کارگاه خطا</a></li><li><a href="../../part-09/checkpoint.html" data-book-link data-unit="checkpoint-09">ایستگاه عملی</a></li></ol></details><details><summary>بخش 10 · ارتباط با مدل‌های بزرگ</summary><a href="../../part-10/index.html" data-book-link>صفحهٔ بخش</a><ol><li><a href="../../part-10/chapter-01/index.html" data-book-link>فراتر از رایانهٔ شخصی</a></li><li><a href="../../part-10/chapter-02/index.html" data-book-link>از ادامه‌دهنده به دستیار</a></li><li><a href="../../part-10/checkpoint.html" data-book-link data-unit="checkpoint-10">ایستگاه عملی</a></li></ol></details></div></div></details></nav><details class="book-tools"><summary>میز کار</summary><nav class="toplinks" aria-label="فضاهای کتاب"><a href="../../guide.html" data-book-link>راهنمای آغاز</a><a href="../../lab.html" data-book-link>آزمایشگاه</a><a href="../../journal.html" data-book-link>دفتر آزمایش</a><a href="../../project.html" data-book-link>پروژه</a><a href="../../glossary.html" data-book-link>واژه‌ها</a><a href="../../api.html" data-book-link>مرجع کد</a></nav></details></div></header>
+<div class="layout"><main id="main"><nav class="breadcrumbs" aria-label="مسیر صفحه"><a href="../../index.html" data-book-link>خانه</a> <span aria-hidden="true">/</span> <span aria-current="page">mini_gpt/milestones.py</span></nav>
+<header class="page-masthead"><p class="eyebrow">از Python تا Mini-GPT</p><h1>mini_gpt/milestones.py</h1></header><div class="page-content"><p>این فایل مرجع است. متن فارسی درون کد ممکن است به‌علت چیدمان چپ‌به‌راست جدا دیده شود؛ نسخهٔ دانلودی <a class="term-link" id="term-ref-utf-8-1" data-term="utf-8" href="../../glossary/utf-8.html?return=..%2Fcode%2Fmini_gpt%2Fmilestones.py.html%23term-ref-utf-8-1" title="توضیح UTF-8"><bdi dir="ltr">UTF-8</bdi></a> است.</p><p><a href="../../api.html" data-book-link>توضیح نام‌ها و دستورها</a> · <a href="../../project.html" data-book-link>دریافت همهٔ فایل‌ها</a></p><pre data-code-language="python"><code><span class="syntax-string">&quot;&quot;&quot;۲۳ ایستگاه اجرایی روی قطعه‌های مشترک Mini-GPT، نه ۲۳ مدل بی‌ارتباط.&quot;&quot;&quot;</span>
+
+<span class="syntax-keyword">import</span> argparse
+<span class="syntax-keyword">import</span> json
+<span class="syntax-keyword">import</span> tempfile
+<span class="syntax-keyword">from</span> pathlib <span class="syntax-keyword">import</span> Path
+
+<span class="syntax-keyword">from</span> .tokenizer <span class="syntax-keyword">import</span> CharacterTokenizer
+<span class="syntax-keyword">from</span> .stages.v0 <span class="syntax-keyword">import</span> transition_counts
+
+
+TITLES = [
+    <span class="syntax-string">&quot;شمارش ادامهٔ نویسه&quot;</span>, <span class="syntax-string">&quot;نشانه‌بند&quot;</span>, <span class="syntax-string">&quot;واژگان و شناسه&quot;</span>, <span class="syntax-string">&quot;بردار نمایش&quot;</span>, <span class="syntax-string">&quot;اطلاعات موقعیت&quot;</span>,
+    <span class="syntax-string">&quot;توجه تک‌سر بدون پوشش؛ نمونهٔ نادرست برای آموزش علّی&quot;</span>, <span class="syntax-string">&quot;پوشش آینده&quot;</span>, <span class="syntax-string">&quot;توجه چندسر&quot;</span>,
+    <span class="syntax-string">&quot;شبکهٔ پیش‌خور&quot;</span>, <span class="syntax-string">&quot;مسیر جمع&quot;</span>, <span class="syntax-string">&quot;نرمال‌سازی ویژگی‌ها&quot;</span>, <span class="syntax-string">&quot;یک بلوک کامل&quot;</span>, <span class="syntax-string">&quot;چند بلوک&quot;</span>,
+    <span class="syntax-string">&quot;سر مدل زبان&quot;</span>, <span class="syntax-string">&quot;یک حلقهٔ آموزش کوچک&quot;</span>, <span class="syntax-string">&quot;ارزیابی بدون تغییر وزن&quot;</span>, <span class="syntax-string">&quot;ذخیره و بارگذاری&quot;</span>,
+    <span class="syntax-string">&quot;تولید پیاپی&quot;</span>, <span class="syntax-string">&quot;نمونه‌گیری&quot;</span>, <span class="syntax-string">&quot;دمای نمونه‌گیری&quot;</span>, <span class="syntax-string">&quot;نگه‌داشتن k گزینه&quot;</span>, <span class="syntax-string">&quot;جرم احتمال p&quot;</span>,
+    <span class="syntax-string">&quot;Mini-GPT آموزشی یکپارچه&quot;</span>,
+]
+
+
+<span class="syntax-keyword">def</span> run_milestone(number, *, checkpoint=<span class="syntax-keyword">None</span>):
+    <span class="syntax-keyword">if</span> type(number) <span class="syntax-keyword">is</span> <span class="syntax-keyword">not</span> int <span class="syntax-keyword">or</span> <span class="syntax-keyword">not</span> <span class="syntax-number">0</span> &lt;= number &lt; len(TITLES):
+        <span class="syntax-keyword">raise</span> ValueError(<span class="syntax-string">&quot;milestone must be an integer from 0 to 22&quot;</span>)
+    <span class="syntax-keyword">if</span> checkpoint <span class="syntax-keyword">is</span> <span class="syntax-keyword">not</span> <span class="syntax-keyword">None</span> <span class="syntax-keyword">and</span> number &lt; <span class="syntax-number">16</span>:
+        <span class="syntax-keyword">raise</span> ValueError(<span class="syntax-string">&quot;--checkpoint is available from milestone 16&quot;</span>)
+    text = <span class="syntax-string">&quot;سلام مدل سلام مدل سلام مدل سلام مدل &quot;</span>
+    tokenizer = CharacterTokenizer.from_text(text)
+    token_ids = tokenizer.encode(text)
+    report = {<span class="syntax-string">&quot;milestone&quot;</span>: number, <span class="syntax-string">&quot;title&quot;</span>: TITLES[number], <span class="syntax-string">&quot;fixture_text&quot;</span>: text,
+              <span class="syntax-string">&quot;note&quot;</span>: <span class="syntax-string">&quot;این ایستگاه با ورودی کوچک و ثابت کار می‌کند؛ جای آموزش پیکرهٔ واقعی را نمی‌گیرد.&quot;</span>}
+    <span class="syntax-keyword">if</span> number == <span class="syntax-number">0</span>:
+        counts = transition_counts(token_ids)
+        report[<span class="syntax-string">&quot;probability_contract&quot;</span>] = <span class="syntax-string">&quot;Unsmoothed observed count / row total; v0 generation instead uses add-one smoothing over its full vocabulary.&quot;</span>
+        report[<span class="syntax-string">&quot;vocabulary_includes_unknown&quot;</span>] = <span class="syntax-keyword">True</span>
+        report[<span class="syntax-string">&quot;transitions&quot;</span>] = [dict(current=tokenizer.id_to_token[current],
+                                      following=tokenizer.id_to_token[following], count=count,
+                                      probability=count / sum(row.values()))
+                                 <span class="syntax-keyword">for</span> current, row <span class="syntax-keyword">in</span> counts.items() <span class="syntax-keyword">for</span> following, count <span class="syntax-keyword">in</span> row.items()]
+        <span class="syntax-keyword">return</span> report
+    <span class="syntax-keyword">if</span> number == <span class="syntax-number">1</span>:
+        report.update(tokens=list(text), encoded=token_ids, decoded=tokenizer.decode(token_ids),
+                      unknown_example={<span class="syntax-string">&quot;input&quot;</span>: <span class="syntax-string">&quot;X&quot;</span>, <span class="syntax-string">&quot;ids&quot;</span>: tokenizer.encode(<span class="syntax-string">&quot;X&quot;</span>),
+                                       <span class="syntax-string">&quot;decoded&quot;</span>: tokenizer.decode(tokenizer.encode(<span class="syntax-string">&quot;X&quot;</span>))})
+        <span class="syntax-keyword">return</span> report
+    <span class="syntax-keyword">if</span> number == <span class="syntax-number">2</span>:
+        report.update(vocabulary=[dict(id=index, token=token) <span class="syntax-keyword">for</span> index, token <span class="syntax-keyword">in</span> enumerate(tokenizer.id_to_token)],
+                      token_to_id=tokenizer.token_to_id, ids=token_ids, decoded=tokenizer.decode(token_ids))
+        <span class="syntax-keyword">return</span> report
+
+    <span class="syntax-keyword">import</span> torch
+    <span class="syntax-keyword">from</span> torch <span class="syntax-keyword">import</span> nn
+    <span class="syntax-keyword">from</span> torch.utils.data <span class="syntax-keyword">import</span> DataLoader
+    <span class="syntax-keyword">from</span> .attention <span class="syntax-keyword">import</span> CausalSelfAttention
+    <span class="syntax-keyword">from</span> .checkpoint <span class="syntax-keyword">import</span> load_checkpoint, save_checkpoint
+    <span class="syntax-keyword">from</span> .config <span class="syntax-keyword">import</span> ModelConfig
+    <span class="syntax-keyword">from</span> .dataset <span class="syntax-keyword">import</span> NextTokenDataset
+    <span class="syntax-keyword">from</span> .evaluate <span class="syntax-keyword">import</span> evaluate
+    <span class="syntax-keyword">from</span> .model <span class="syntax-keyword">import</span> MiniGPT
+    <span class="syntax-keyword">from</span> .sampling <span class="syntax-keyword">import</span> choose_token, sampling_distribution
+    <span class="syntax-keyword">from</span> .transformer <span class="syntax-keyword">import</span> FeedForward, TransformerBlock
+
+    torch.set_num_threads(<span class="syntax-number">1</span>)
+    torch.manual_seed(<span class="syntax-number">42</span>)
+    config = ModelConfig(tokenizer.vocab_size, <span class="syntax-number">8</span>, <span class="syntax-number">16</span>, <span class="syntax-number">2</span>, <span class="syntax-number">2</span>, <span class="syntax-number">0.0</span>)
+    model = MiniGPT(config)
+    ids = torch.tensor([token_ids[:<span class="syntax-number">8</span>]], dtype=torch.long)
+    targets = torch.tensor([token_ids[<span class="syntax-number">1</span>:<span class="syntax-number">9</span>]], dtype=torch.long)
+    report.update(input_ids=ids.tolist(), shifted_targets=targets.tolist(), vocabulary=tokenizer.id_to_token)
+    x = model.token_embedding(ids)
+    position = model.position_embedding(torch.arange(ids.shape[<span class="syntax-number">1</span>]))
+    <span class="syntax-keyword">if</span> number == <span class="syntax-number">3</span>:
+        result = x
+    <span class="syntax-keyword">elif</span> number == <span class="syntax-number">4</span>:
+        result = x + position
+        report[<span class="syntax-string">&quot;position_vectors&quot;</span>] = position.detach().tolist()
+    <span class="syntax-keyword">elif</span> number <span class="syntax-keyword">in</span> (<span class="syntax-number">5</span>, <span class="syntax-number">6</span>, <span class="syntax-number">7</span>):
+        attention_config = ModelConfig(tokenizer.vocab_size, <span class="syntax-number">8</span>, <span class="syntax-number">16</span>, <span class="syntax-number">2</span> <span class="syntax-keyword">if</span> number == <span class="syntax-number">7</span> <span class="syntax-keyword">else</span> <span class="syntax-number">1</span>, <span class="syntax-number">1</span>, <span class="syntax-number">0.</span>)
+        attention = CausalSelfAttention(attention_config)
+        result, weights = attention(x + position, return_weights=<span class="syntax-keyword">True</span>, causal=number != <span class="syntax-number">5</span>)
+        report[<span class="syntax-string">&quot;weights&quot;</span>] = weights.detach().tolist()
+        report[<span class="syntax-string">&quot;future_weight_sum&quot;</span>] = weights.triu(<span class="syntax-number">1</span>).sum().item()
+    <span class="syntax-keyword">elif</span> number == <span class="syntax-number">8</span>:
+        result = FeedForward(config)(x)
+    <span class="syntax-keyword">elif</span> number == <span class="syntax-number">9</span>:
+        update = FeedForward(config)(x)
+        result = x + update
+        report[<span class="syntax-string">&quot;update_norm&quot;</span>] = update.norm().item()
+        report[<span class="syntax-string">&quot;input_norm&quot;</span>] = x.norm().item()
+    <span class="syntax-keyword">elif</span> number == <span class="syntax-number">10</span>:
+        result = nn.LayerNorm(config.embedding_dim)(x)
+        report[<span class="syntax-string">&quot;row_means&quot;</span>] = result.mean(-<span class="syntax-number">1</span>).detach().tolist()
+        report[<span class="syntax-string">&quot;row_variances&quot;</span>] = result.var(-<span class="syntax-number">1</span>, unbiased=<span class="syntax-keyword">False</span>).detach().tolist()
+    <span class="syntax-keyword">elif</span> number == <span class="syntax-number">11</span>:
+        result = TransformerBlock(config)(x + position)
+    <span class="syntax-keyword">elif</span> number == <span class="syntax-number">12</span>:
+        result = x + position
+        <span class="syntax-keyword">for</span> block <span class="syntax-keyword">in</span> model.blocks:
+            result = block(result)
+        report[<span class="syntax-string">&quot;blocks&quot;</span>] = len(model.blocks)
+    <span class="syntax-keyword">else</span>:
+        result, loss = model(ids, targets)
+        report[<span class="syntax-string">&quot;initial_loss&quot;</span>] = loss.item()
+        <span class="syntax-keyword">if</span> number &gt;= <span class="syntax-number">14</span>:
+            optimizer = torch.optim.AdamW(model.parameters(), lr=<span class="syntax-number">0.01</span>)
+            <span class="syntax-keyword">for</span> _ <span class="syntax-keyword">in</span> range(<span class="syntax-number">20</span>):
+                _, loss = model(ids, targets)
+                optimizer.zero_grad(set_to_none=<span class="syntax-keyword">True</span>)
+                loss.backward()
+                optimizer.step()
+            result, loss = model(ids, targets)
+            report[<span class="syntax-string">&quot;final_training_loss&quot;</span>] = loss.item()
+        <span class="syntax-keyword">if</span> number &gt;= <span class="syntax-number">15</span>:
+            <span class="syntax-comment"># دادهٔ تمرینی جدا اما مصنوعی/هم‌خانواده است؛ معیار تعمیم عمومی نیست.</span>
+            validation_ids = tokenizer.encode(<span class="syntax-string">&quot;مدل سلام مدل سلام مدل &quot;</span>)
+            loader = DataLoader(NextTokenDataset(validation_ids, config.context_length), batch_size=<span class="syntax-number">3</span>)
+            report[<span class="syntax-string">&quot;validation_loss&quot;</span>] = evaluate(model, loader, torch.device(<span class="syntax-string">&quot;cpu&quot;</span>))
+        <span class="syntax-keyword">if</span> number &gt;= <span class="syntax-number">16</span>:
+            <span class="syntax-keyword">with</span> tempfile.TemporaryDirectory() <span class="syntax-keyword">as</span> temporary:
+                path = Path(checkpoint) <span class="syntax-keyword">if</span> checkpoint <span class="syntax-keyword">is</span> <span class="syntax-keyword">not</span> <span class="syntax-keyword">None</span> <span class="syntax-keyword">else</span> Path(temporary) / <span class="syntax-string">&quot;milestone.pt&quot;</span>
+                <span class="syntax-keyword">if</span> path.exists():
+                    <span class="syntax-keyword">raise</span> ValueError(<span class="syntax-string">&quot;checkpoint exists; choose a new path&quot;</span>)
+                path.parent.mkdir(parents=<span class="syntax-keyword">True</span>, exist_ok=<span class="syntax-keyword">True</span>)
+                save_checkpoint(path, model, tokenizer, optimizer, <span class="syntax-number">20</span>,
+                                {<span class="syntax-string">&quot;purpose&quot;</span>: <span class="syntax-string">&quot;milestone fixture; not a resumable corpus training run&quot;</span>},
+                                torch.Generator().manual_seed(<span class="syntax-number">43</span>), report[<span class="syntax-string">&quot;validation_loss&quot;</span>])
+                restored, restored_tokenizer, payload = load_checkpoint(path)
+                report[<span class="syntax-string">&quot;checkpoint_roundtrip_equal&quot;</span>] = all(
+                    torch.equal(value, restored.state_dict()[key]) <span class="syntax-keyword">for</span> key, value <span class="syntax-keyword">in</span> model.state_dict().items())
+                report[<span class="syntax-string">&quot;checkpoint&quot;</span>] = str(path) <span class="syntax-keyword">if</span> checkpoint <span class="syntax-keyword">is</span> <span class="syntax-keyword">not</span> <span class="syntax-keyword">None</span> <span class="syntax-keyword">else</span> <span class="syntax-string">&quot;temporary file tested and removed&quot;</span>
+                model = restored
+                tokenizer = restored_tokenizer
+        <span class="syntax-keyword">if</span> number &gt;= <span class="syntax-number">17</span>:
+            model.eval()
+            torch.manual_seed(<span class="syntax-number">42</span>)
+            prompt = ids[:, :<span class="syntax-number">3</span>]
+            generated = model.generate(prompt, <span class="syntax-number">4</span>, greedy=<span class="syntax-keyword">True</span>)
+            report[<span class="syntax-string">&quot;generated_ids&quot;</span>] = generated[<span class="syntax-number">0</span>].tolist()
+            report[<span class="syntax-string">&quot;generated_text&quot;</span>] = tokenizer.decode(generated[<span class="syntax-number">0</span>].tolist())
+        <span class="syntax-keyword">if</span> number &gt;= <span class="syntax-number">18</span>:
+            logits = model(ids)[<span class="syntax-number">0</span>][:, -<span class="syntax-number">1</span>].detach()
+            options = {<span class="syntax-string">&quot;temperature&quot;</span>: <span class="syntax-number">0.5</span> <span class="syntax-keyword">if</span> number == <span class="syntax-number">19</span> <span class="syntax-keyword">else</span> <span class="syntax-number">1.0</span>,
+                       <span class="syntax-string">&quot;top_k&quot;</span>: <span class="syntax-number">3</span> <span class="syntax-keyword">if</span> number == <span class="syntax-number">20</span> <span class="syntax-keyword">else</span> <span class="syntax-keyword">None</span>,
+                       <span class="syntax-string">&quot;top_p&quot;</span>: <span class="syntax-number">0.7</span> <span class="syntax-keyword">if</span> number &gt;= <span class="syntax-number">21</span> <span class="syntax-keyword">else</span> <span class="syntax-keyword">None</span>}
+            distribution = sampling_distribution(logits, **options)
+            report.update(sampling_options=options, logits=logits[<span class="syntax-number">0</span>].tolist(),
+                          sampling_probabilities=distribution[<span class="syntax-number">0</span>].tolist(),
+                          sampled_id=choose_token(logits, **options).item())
+        <span class="syntax-keyword">if</span> number == <span class="syntax-number">22</span>:
+            report[<span class="syntax-string">&quot;next_real_run&quot;</span>] = <span class="syntax-string">&quot;python -m mini_gpt.train --text data/sample.txt --output runs/my-first --steps 100&quot;</span>
+            report[<span class="syntax-string">&quot;parameters&quot;</span>] = sum(parameter.numel() <span class="syntax-keyword">for</span> parameter <span class="syntax-keyword">in</span> model.parameters())
+    report[<span class="syntax-string">&quot;input_shape&quot;</span>] = list(ids.shape)
+    report[<span class="syntax-string">&quot;output_shape&quot;</span>] = list(result.shape)
+    report[<span class="syntax-string">&quot;output&quot;</span>] = result.detach().tolist()
+    <span class="syntax-keyword">return</span> report
+
+
+<span class="syntax-keyword">def</span> main():
+    parser = argparse.ArgumentParser(description=<span class="syntax-string">&quot;Run one concrete Mini-GPT milestone, 0 through 22&quot;</span>)
+    parser.add_argument(<span class="syntax-string">&quot;--stage&quot;</span>, type=int, choices=range(<span class="syntax-number">23</span>), required=<span class="syntax-keyword">True</span>)
+    parser.add_argument(<span class="syntax-string">&quot;--output&quot;</span>, help=<span class="syntax-string">&quot;optional new JSON output path&quot;</span>)
+    parser.add_argument(<span class="syntax-string">&quot;--checkpoint&quot;</span>, help=<span class="syntax-string">&quot;optional new checkpoint path, milestones 16 and later&quot;</span>)
+    args = parser.parse_args()
+    <span class="syntax-keyword">if</span> args.output <span class="syntax-keyword">and</span> Path(args.output).exists():
+        <span class="syntax-keyword">raise</span> ValueError(<span class="syntax-string">&quot;output exists; choose a new path&quot;</span>)
+    <span class="syntax-keyword">if</span> args.output <span class="syntax-keyword">and</span> args.checkpoint <span class="syntax-keyword">and</span> Path(args.output).resolve() == Path(args.checkpoint).resolve():
+        <span class="syntax-keyword">raise</span> ValueError(<span class="syntax-string">&quot;JSON output and checkpoint need different paths&quot;</span>)
+    report = run_milestone(args.stage, checkpoint=args.checkpoint)
+    encoded = json.dumps(report, ensure_ascii=<span class="syntax-keyword">False</span>, indent=<span class="syntax-number">2</span>, allow_nan=<span class="syntax-keyword">False</span>)
+    <span class="syntax-keyword">if</span> args.output:
+        Path(args.output).parent.mkdir(parents=<span class="syntax-keyword">True</span>, exist_ok=<span class="syntax-keyword">True</span>)
+        <span class="syntax-keyword">with</span> Path(args.output).open(<span class="syntax-string">&quot;x&quot;</span>, encoding=<span class="syntax-string">&quot;utf-8&quot;</span>) <span class="syntax-keyword">as</span> stream:
+            stream.write(encoded)
+    print(encoded)
+
+
+<span class="syntax-keyword">if</span> __name__ == <span class="syntax-string">&quot;__main__&quot;</span>:
+    <span class="syntax-keyword">from</span> .console <span class="syntax-keyword">import</span> configure_console
+    configure_console()
+    main()</code></pre><nav class="pager learning-continuation" aria-label="ادامهٔ مسیر یادگیری"><div class="next-step"><p class="eyebrow">گام بعد <span></span></p><p class="next-context">جدول‌های عددی و <bdi dir="ltr">Derivative</bdi>‌ها را به یک ابزار بسپاریم، بی‌آنکه معنای آن‌ها را فراموش کنیم.</p><a rel="next" data-next-step href="../../part-03/chapter-01/13-torch.html" data-book-link data-unit="13-torch">کد را در یک مسئله دنبال کنید: <bdi dir="ltr">PyTorch</bdi> چرا به کارمان می‌آید؟</a></div><div class="nearby-steps"><a data-return-section href="../index.html" data-book-link>همهٔ فایل‌های مرجع</a></div></nav></div><div class="reading-finish"><a href="../../journal.html" data-book-link>ثبت در دفتر آزمایش</a></div><details class="progress-panel"><summary>پیشرفت مسیر <span data-progress-count>0 / 86</span></summary><div class="progress-tools"><progress value="0" max="86" aria-label="درس‌ها و ایستگاه‌های انجام‌شده"></progress><button type="button" data-export>خروجی پیشرفت</button><label class="import-label">ورود پیشرفت <input type="file" accept=".json,application/json" data-import></label></div><details data-export-preview hidden><summary>نسخهٔ متنی پیشرفت؛ اگر دانلود انجام نشد، این JSON را کپی و در فایل نگه دارید</summary><pre><code data-export-code></code></pre></details><p class="progress-note">علامت انجام فقط با انتخاب شما ثبت می‌شود. برای نگهداری مطمئن یا انتقال به مرورگر دیگر، خروجی پیشرفت بگیرید. دفتر آزمایش جداست.</p><p class="status" role="status" aria-live="polite" data-status></p></details><footer class="footer"><span>از یک <a class="term-link" id="term-ref-token-1" data-term="token" href="../../glossary/token.html?return=..%2Fcode%2Fmini_gpt%2Fmilestones.py.html%23term-ref-token-1" title="توضیح Token"><bdi dir="ltr">Token</bdi></a>، تا یک مدل.</span><a href="../../guide.html" data-book-link>راهنما</a> · <a href="../../api.html" data-book-link>کد و منابع</a></footer></main></div>
+<noscript><p>خواندن و ناوبری بدون JavaScript هم کار می‌کند؛ کپی خودکار و ثبت پیشرفت به آن نیاز دارند.</p></noscript></body></html>
