@@ -1,4 +1,167 @@
-# Curriculum, editorial and laboratory review — 2026-09-21
+# Current learning and terminology audit — 2026-09-22
+
+This pass continued the existing project. It did not restart the book or replace
+its Mini-GPT implementation. All 76 lessons were reviewed. Thirty-six lesson
+records changed; 40 already-strong records were retained. The comparison against
+the pre-pass snapshot preserves every lesson ID/order/path, all 76 executable
+lesson examples, all 34 formula blocks, and every original answer/self-check.
+
+## What learners now receive
+
+- 76 dedicated lesson notebooks, from article reading time through RAG.
+- All 12 earlier notebooks retained and extended as optional synthesis reviews.
+  Their 47 original code cells remain verbatim.
+- 88 notebooks, 1,698 cells: 751 code and 947 Markdown.
+- Two learner tasks per notebook (implementation and repair), predictions,
+  an independent one-factor experiment, a deliberate failure, checks, reflection,
+  and an explicit connection to the corresponding Mini-GPT stage.
+- Student stubs are valid Python and report INCOMPLETE. Reference definitions
+  are on separate HTML answer pages and in author-only exercise specifications;
+  no notebook silently fills in a learner answer.
+- Forty primary notebooks directly import actual mini_gpt modules; earlier
+  prerequisites use small standalone Python/PyTorch examples. SFT, LoRA, DPO,
+  RAG and cache examples are explicitly bounded teaching models, not advertised
+  as production capabilities of the training CLI.
+- Review caught near-complete answers in neighboring demonstrations. Eight
+  notebooks were adjusted and re-executed after the full execution pass.
+
+The original registry is extended, not duplicated: notebook metadata and
+book_src/laboratories.py feed the lesson callouts, full notebooks.html index,
+launcher routing, and window.BOOK.laboratories in dist/assets/manifest.js.
+A primary entry records stable lesson ID, HTML path, notebook path, learning goal
+and project stage. Build-time checks reject missing or duplicate primary mappings.
+
+The dedicated callout appears immediately after the lesson explanation. The
+first lesson now starts with a concrete article-card problem, a three-row
+dataset and coefficients 1/2/3 before naming Model, Parameter, Target and Loss.
+
+## One environment and one daily command
+
+Install requirements-notebooks.txt in the project .venv once. Then run
+`python run.py` in that environment (or
+`.\\.venv\\Scripts\\python.exe run.py` without activation).
+
+- Book: http://127.0.0.1:8000/
+- Learning desk: http://127.0.0.1:8000/start.html
+- Laboratory index: http://127.0.0.1:8000/notebooks.html
+- Jupyter: http://127.0.0.1:8888/lab, authenticated by a new private token per run.
+
+The launcher builds missing/stale HTML, starts both local-only services with its
+exact Python, registers only the project kernel for that session, and opens the
+desk. It does not regenerate notebooks or overwrite learner implementations.
+It refuses occupied ports instead of killing existing processes. Ctrl+C has an
+owned-process cleanup path; authenticated Jupyter shutdown closes its kernels,
+and an unexpected Jupyter exit also closes the book server.
+
+The learning-project ZIP now includes source/build files, model, data, all
+notebooks and setup documentation. Windows 10/11 instructions describe one
+installation and one launch, with explicit-interpreter commands that do not
+require changing PowerShell execution policy. Private directories and personal
+unmapped notebooks are not public course assets.
+
+## Terminology: 224 concepts audited
+
+The inventory is in the existing glossary system:
+`terminology_inventory()`, `USAGE_DECISIONS`, `USAGE_SOURCES` and
+`CORRECTED_CONCEPTS` in book_src/glossary.py. It records the current English
+identity, aliases, usage context, A–G category, chosen form, confidence and
+evidence where a usage decision was uncertain.
+
+There are **20 concept-level corrections** (not a count of repeated string
+substitutions), plus a renderer policy preserving **16 conventional Persian
+mathematical/educational names**. First-introduction Persian glosses now survive
+normalization. Code identifiers, formulas, URLs and API spellings are protected.
+
+| Previous wording / ambiguity | Decision |
+| --- | --- |
+| یادگیری با هدف مرجع | Supervised learning (یادگیری نظارت‌شده) |
+| descriptive self-supervision label | Self-supervised learning (یادگیری خودنظارتی) |
+| تنظیم تکمیلی | Fine-Tuning (تنظیم دقیق); SFT uses تنظیم دقیق نظارت‌شده; PEFT explanation aligned |
+| Inference as prediction alone | Use of a fixed-parameter model; preserve Prediction as a separate term |
+| One-hot as تک‌روشن | Retain One-hot and explain one component is 1, all others 0 |
+| Gradient as generic derivative/error | Keep Gradient/گرادیان; distinguish scalar derivatives and Gradient flow |
+| Gradient clipping gloss | Describe norm clipping accurately; do not imply component-wise clipping |
+| Autograd recording gradients | Recording operations/the graph; backward computes gradients |
+| Q/K/V as learned transformations | Computed outputs of learned Projection parameters |
+| position ID as added scalar | Learned position vector; ID sequences already have order |
+| buffer as immutable data | Non-parameter Tensor/state; buffers need not be immutable |
+| independent FFN per position | The same shared-weight FFN applied separately |
+| bare Head as output layer | Language-model head versus Attention Head |
+| generic error as Loss | Name Cross-Entropy/Loss where that actual metric is meant |
+| Softmax subtraction wording | Subtract the maximum from scores, not scores from the maximum |
+| literal Pre-Norm captions | Pre-Norm plus the explanation of where normalization occurs |
+
+The main English-first vocabulary remains Tensor, Token, Tokenizer, Embedding,
+Attention, Transformer, Gradient, Loss, Optimizer, Logits, Softmax, Checkpoint and
+Context Window where it helps readers connect to code and outside courses.
+Conventional Persian terms such as شبکهٔ عصبی، بردار، ماتریس، مشتق، ضرب داخلی
+and قاعدهٔ زنجیره‌ای are not forcibly Anglicized. English and Persian remain
+paired when useful: Attention/توجه, Encoder/رمزگذار, Decoder/رمزگشا and
+Residual Connection/اتصال باقی‌مانده. Descriptions are not presented as invented
+formal Persian terminology.
+
+Usage evidence includes independent authored educational material, not search
+result counts: [university ML/NLP assignment](https://dsp-lab.ir/wp-content/uploads/2025/11/ML4NLP-HW1-1404-1.pdf),
+[Datayad's supervised-learning lesson](https://datayad.com/supervised-machine-learning/),
+[Howsam's LLM course](https://howsam.org/downloads/implementing-chatgpt-from-scratch-with-pytorch/),
+[Tehran Data's LLM curriculum](https://tehrandata.org/courses/llm/) and
+[AvalAI's fine-tuning documentation](https://docs.avalai.org/fa/guides/fine-tuning).
+These establish usage; unrelated technical claims on those pages were not copied.
+
+Ambiguous cases were not overclaimed:
+
+- Context Window: پنجرهٔ زمینه / پنجرهٔ بافت vary; evidence for a dominant Persian
+  name is limited. Keep English plus a functional explanation.
+- Pre-Norm: پیش‌نرمال / نرمال‌سازی پیشین have sparse independent usage. Keep
+  Pre-Norm consistently; this is a clarity decision, not a frequency finding.
+- Gate: university دروازه and Howsam گیت/دریچه coexist. Keep Gate and the
+  explanatory دریچه; do not call the existing explanation incorrect.
+- Embedding: تعبیه and vector-oriented descriptions both occur. Keep Embedding
+  and explain the operation; do not equate every Representation with it.
+
+The same prose-only policy applies to notebook Markdown. Legacy glossary aliases
+remain for lookup compatibility, not as recommended new labels. Source review
+also covered all parts, reference pages, visual/UI captions and learner docs.
+Random rereads sampled foundations, Attention, Transformer, Mini-GPT and
+post-training instead of treating grep replacements as an educational review.
+
+## Verification and limits
+
+- All 88 student notebooks executed in fresh kernels; both stubs remained
+  incomplete as intended. All 88 reference-solution executions passed.
+- Eight revised notebooks were then rerun in both modes: 16 further fresh
+  kernels, 144 executed cells including verification assertions, no errors.
+- All 39 model tests, 58 site/launcher/editorial tests and 29 browser-math/journal checks passed.
+- Final reproducible static release: 597 public files in release/book-site.zip.
+  SHA-256: 5b32ecd27cf90526e1631da1c3d66d495f2e41e94764eb95a2aa0e96f7f9a714.
+  Release checks passed; nothing was published.
+- HTML validation: 500 pages, 76 lessons, 36 chapters, 86 progress units,
+  47,273 local links/assets and 80 Python files; no broken targets or duplicate IDs.
+- Live smoke test verified book HTTP, authenticated Jupyter, and exact project
+  interpreter. Browser inspection verified direct lesson-to-notebook opening,
+  rendered Persian text, TODOs and project-kernel selection.
+- Live authenticated shutdown with an active notebook kernel returned 200 and
+  freed both listening ports. The terminal automation did not reliably deliver
+  Ctrl+C, so a physical PowerShell Ctrl+C interaction is not claimed as tested.
+  Lifecycle and failure cleanup also have automated tests.
+- Learner ZIP was extracted under a path with spaces and Persian characters:
+  environment check, actual imported module paths, full build, 88 byte-identical
+  copied notebooks and unchanged source notebooks all passed.
+- Environment: Python 3.11.0, CPU PyTorch 2.14.0+cpu, JupyterLab 4.6.4,
+  matplotlib 3.11.2. No notebook was left unexecuted.
+
+This is an expert educational review, not a beginner usability study. Assertions
+cover representative cases, not every possible learner implementation. A fresh
+Windows 10/11 VM install and GPU execution were not performed; extraction reused
+the verified local .venv. Jupyter return links have valid exact lesson targets. The in-app browser opened
+the returned lesson in a separate book tab; that destination was subsequently
+verified. It did not replace the notebook tab.
+Public hosting was not changed; Jupyter must never be deployed as a public book
+service.
+
+---
+
+# Previous recorded review — 2026-09-21 (historical)
 
 The active course has 76 lessons, 36 chapters, 10 parts and 10 checkpoints:
 86 progress units. The HTML book remains the primary path. Twelve independent

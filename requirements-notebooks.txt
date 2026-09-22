@@ -1,4 +1,4 @@
-# Optional laboratory layer. Reuse the model environment, not a second one.
+# Complete learner environment: model + every laboratory + unified launcher.
 -r requirements.txt
 jupyterlab>=4.4,<5
 matplotlib>=3.9,<4

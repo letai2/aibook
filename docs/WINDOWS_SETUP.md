@@ -1,7 +1,42 @@
 # Windows setup — Persian Mini-GPT book
 
-For Windows 10/11, 64-bit x86. Reading the book is separate from running the model.
+For Windows 10/11, 64-bit x86. Use the unified learning environment below for
+both the book and Jupyter. Reading the static book alone remains possible.
 Commands below are run from the extracted project folder, not from inside a ZIP.
+
+## Recommended first run: book + every notebook
+
+Install Python 3.11+ from the official source described below, extract the whole
+project, and open PowerShell in the folder containing `run.py`.
+
+```powershell
+python -m venv .venv
+.\.venv\Scripts\python.exe -m pip install --upgrade pip
+.\.venv\Scripts\python.exe -m pip install -r requirements-notebooks.txt
+.\.venv\Scripts\python.exe run.py
+```
+
+Reuse `.venv` if it already exists. This is one dependency installation for
+Mini-GPT, Jupyter, and plots; the book builder itself uses the standard library.
+Activation is optional. With the environment activated, daily use is simply
+`python run.py`.
+
+The learning desk opens at http://127.0.0.1:8000/start.html. It links to the book,
+lesson list, laboratories, and setup help. Jupyter runs at
+http://127.0.0.1:8888/lab; use the private tokenized URL printed in the terminal
+or click a lesson's lab button. The launcher chooses its own exact Python as
+the notebook kernel. You do not register kernels or start another process.
+
+Keep the terminal open. Save your notebook, then press Ctrl+C to stop both
+services. The launcher stops only processes it created. If port 8000 or 8888 is
+occupied, stop your older instance and retry; it does not silently switch ports.
+Do not expose either service to a network or share the Jupyter token.
+
+A fresh lab reports INCOMPLETE for its two TODO functions. Implement them,
+rerun their cells and checks, and obtain PASS. This is different from a missing
+package or uncaught exception. See [notebook workflow](NOTEBOOKS.md).
+
+The remaining sections also document optional reading-only and model-only use.
 
 ## 1. Choose what you need
 
@@ -65,8 +100,9 @@ cd /d "C:\Books\MiniGPT"
 ```
 
 The full checkout contains `tools/build_book.py`, `book_src`, `mini_gpt`, `data`, and
-`dist`. The standalone model ZIP contains `mini_gpt`, `tests`, `data`,
-`requirements.txt`, and this guide, but **not** the book/build tools. Download it
+`dist`. The learning-project ZIP also contains `run.py`, `book_src`, `tools`,
+`notebooks`, `mini_gpt`, model tests, data, and these guides. It builds the HTML
+on first launch; a separate book download is no longer required. Download it
 from the book's project page. The static site ZIP has `index.html` at its root;
 do not expect a nested `dist` directory in that ZIP.
 
@@ -208,7 +244,7 @@ was performed. Existing hosting metadata is preserved.
 The audit used an isolated venv on this existing Windows host, Python 3.11.0
 64-bit and official CPU PyTorch 2.14.0+cpu; no global package installation.
 The install, model tests, lesson examples, training/evaluation/generation/inspection
-and resume are exercised as recorded in `EDUCATIONAL_AUDIT.md` in the full checkout.
+and resume are exercised as recorded in `REVIEW.md` in the full checkout.
 The extracted distribution is also checked under a path with spaces and Persian
 characters. This is **not** a clean Windows VM or a Windows 10/11 installer test.
 Browser checks ran over localhost. Direct file:// browser testing was blocked by
@@ -217,6 +253,7 @@ the static relative-path/classic-script design, not a completed browser test.
 No claim is made for every browser or hardware combination.
 
 
-## Optional notebook layer
+## Lesson laboratories
 
-Use the same environment. Follow [Jupyter laboratories](NOTEBOOKS.md) for installation, launch, lesson mapping and clean-kernel execution.
+The 76 dedicated lesson notebooks and 12 review labs share this one environment.
+See [Jupyter laboratories](NOTEBOOKS.md) for mapping, exercises and verification.

@@ -8,25 +8,42 @@ def catalog(root=None):
     root = Path(root) if root is not None else Path(__file__).resolve().parents[1]
     labs = []
     for path in (root / 'notebooks').rglob('*.ipynb'):
+        if '.ipynb_checkpoints' in path.parts:
+            continue
         notebook = json.loads(path.read_text(encoding='utf-8'))
-        metadata = notebook['metadata']['book']
+        if not notebook.get('metadata', {}).get('book'):
+            continue  # Personal notebooks are not authored curriculum assets.
+        metadata = dict(notebook['metadata']['book'])
+        identifier = metadata.pop('id', path.stem)
+        metadata.setdefault('kind', 'review')
         title = re.search(r'<h1>(.*?)</h1>', ''.join(notebook['cells'][0]['source'])).group(1)
-        labs.append(dict(id=path.stem, path=path.relative_to(root).as_posix(),
+        labs.append(dict(id=identifier, path=path.relative_to(root).as_posix(),
                          title=title, **metadata))
-    return sorted(labs, key=lambda lab: lab['id'])
+    return sorted(labs, key=lambda lab: (lab['kind'] != 'lesson', lab.get('lesson_number', 999), lab['id']))
 
 
-INTRO = '''<p class="objective">کتاب مسیر اصلی است؛ اینجا توقف می‌کنیم تا یک ایده را اجرا، دست‌کاری و بررسی کنیم.</p>
-<p>هر دفتر یک پرسش دارد. ابتدا درس‌های مرتبط را بخوانید، نتیجه را پیش‌بینی کنید و سپس Cellها را از بالا به پایین اجرا کنید. دفترها مستقل‌اند؛ لازم نیست <code>Kernel</code> یا Checkpoint دفتر قبلی را نگه دارید. بعد از آزمایش به همان درس برگردید.</p>
-<section class="note"><h2>فایل را دریافت کنید؛ کد در این صفحه اجرا نمی‌شود</h2>
-<p>Jupyter به Python محلی نیاز دارد. برای شروع، بستهٔ کامل پروژه را دریافت و کامل استخراج کنید تا mini_gpt، data و notebooks کنار هم بمانند. دریافت تکی برای جایگزین‌کردن یک دفتر در همان ساختار است، نه اجرای بدون وابستگی.</p>
-<p>[[downloads/mini-gpt-project.zip|دریافت پروژه همراه با همهٔ دفترها]] · [[windows.html|آماده‌کردن Python و محیط در Windows]]</p></section>
-<h2 id="setup">آماده‌کردن Jupyter در همان محیط پروژه</h2>
-<p>اگر محیط کتاب را ساخته‌اید، محیط دیگری نسازید. فرمان‌های زیر از ریشهٔ پروژه و در PowerShell اجرا می‌شوند. requirements-notebooks.txt همان requirements.txt اصلی را وارد می‌کند؛ فقط JupyterLab و Matplotlib برای اجرای دفتر و نمودار اضافه می‌شوند.</p>
-<pre><code>.\\.venv\\Scripts\\python.exe -m pip install --upgrade pip
-.\\.venv\\Scripts\\python.exe -m pip install -r requirements-notebooks.txt
-.\\.venv\\Scripts\\python.exe -m jupyterlab --notebook-dir=. --ip=127.0.0.1</code></pre>
-<p>اگر هنوز محیط ندارید، ابتدا راهنمای Windows بالا را انجام دهید. راهنمای کامل همراه بسته در <code>docs/NOTEBOOKS.md</code> است. از فهرست فایل‌های Jupyter پوشهٔ notebooks را باز کنید و <code>Kernel</code> همان محیط را انتخاب کنید؛ نخستین Cell مسیر مفسر را نشان می‌دهد.</p>
-<p>برای اجرای دوباره از ابتدا، در منوی <code>Kernel</code> گزینهٔ <code>Restart Kernel and Run All Cells</code> را بزنید. در آزمایش‌های خطای عمدی، کد با try/except خطا را می‌گیرد و توضیح می‌دهد. اگر اجرای دفتر با خطای قرمز متوقف شد، پیش از ادامه علت آن را بررسی کنید. دفترها Checkpoint مدل نمی‌خواهند و فایل خروجی نمی‌نویسند. خروجی اجرای خود را در نسخهٔ شخصی نگه دارید؛ پیش از ثبت نسخهٔ تألیفی در Git، گزینهٔ <code>Restart Kernel and Clear Outputs</code> و سپس <code>Save</code> را بزنید.</p>
-<p>لینک بازگشت داخل دفترها به کتابِ محلی روی پورت ۸۰۰۰ است. سرور کتاب HTML را در پنجرهٔ ترمینال جدا اجرا کنید؛ ZIP مستقل مدل، پوشهٔ کتاب را ندارد. همهٔ محاسبات CPU و داده‌های کوچک‌اند. سنجش مدل زبانی، کیفیت یک دستیار عمومی را تضمین نمی‌کند.</p>
-<h2>توقف‌های پیشنهادی در مسیر کتاب</h2>'''
+def lesson_labs(root=None):
+    """One primary notebook per lesson; review notebooks are additional assets."""
+    result = {}
+    for lab in catalog(root):
+        if lab['kind'] == 'lesson':
+            identifier = lab['primary_lesson']
+            if identifier in result or lab['lessons'] != [identifier]:
+                raise ValueError(f'Duplicate/ambiguous primary laboratory: {identifier}')
+            result[identifier] = lab
+    return result
+
+
+INTRO = r'''<p class="objective">هر درس، یک آزمایشگاه: ابتدا ایده را بفهمید؛ سپس خودتان کد بنویسید و نتیجه را بسنجید.</p>
+<p>۷۶ دفتر درس‌به‌درس در مسیر اصلی و ۱۲ دفتر مرور چنددرس داریم. دفتر هر درس مستقل است و ورودی‌ها را خودش می‌سازد؛ لازم نیست Kernel یا Checkpoint جلسهٔ قبل را نگه دارید. دفترهای مرور اختیاری‌اند و پیش‌نیازشان در فهرست آمده است.</p>
+<h2 id="setup">یک نصب، یک فرمان برای کتاب و Jupyter</h2>
+<p>پروژهٔ کامل را دریافت و استخراج کنید؛ <code>run.py</code>، <code>book_src</code>، <code>mini_gpt</code> و <code>notebooks</code> باید کنار هم بمانند. در ریشهٔ پروژه، با همان محیط مجازی این فرمان را اجرا کنید:</p>
+<pre><code>python run.py</code></pre>
+<p>این فرمان کتاب را در صورت نیاز می‌سازد، سرور کتاب و Jupyter را با همان Python شروع می‌کند و [[start.html|میز کار یادگیری]] را باز می‌کند. دکمهٔ هر آزمایشگاه شما را مستقیم به دفتر مربوط می‌برد. از نسخهٔ ایستای سایت، ابتدا باید پروژه را روی رایانهٔ خودتان اجرا کنید.</p>
+<p>[[downloads/mini-gpt-project.zip|دریافت پروژهٔ کامل یادگیری]] · [[windows.html|نصب یک‌باره در Windows]]</p>
+<p>سرورها فقط روی <code>127.0.0.1</code> هستند. نشانی خصوصی Jupyter که ترمینال نشان می‌دهد را به اشتراک نگذارید. ترمینال را باز نگه دارید و پس از ذخیرهٔ کارتان، با Ctrl+C هر دو سرویس را متوقف کنید.</p>
+<h2>تمرین ناتمام، خطای نصب نیست</h2>
+<p>مثال‌ها آمادهٔ اجرا هستند، اما در هر دفتر دو تابع TODO دارید: تمرین و اصلاح خرابی. تا وقتی آن‌ها را ننوشته‌اید، آزمون پیام <code>INCOMPLETE</code> می‌دهد؛ این پیام موفقیت نیست. پس از نوشتن تابع، Cell آن و Cell آزمون را دوباره اجرا کنید. <code>PASS</code> یعنی آزمون‌های مشخص همان تمرین گذشته‌اند. جواب مرجع جدا از دفتر، در صفحهٔ پاسخ درس است.</p>
+<p>پیش از اجرا پیش‌بینی بنویسید، یک عامل را تغییر دهید، خرابی عمدی را بررسی کنید و دلیل اصلاح را توضیح دهید. برای آزمون نهایی از <code>Kernel → Restart Kernel and Run All Cells</code> استفاده کنید. خطای قرمزِ مدیریت‌نشده نیاز به بررسی دارد. همهٔ مثال‌های پیش‌فرض کوچک و CPU هستند.</p>
+<p>دریافت تکی دفتر برای جایگزینی همان فایل در ساختار پروژه است؛ کل وابستگی‌ها را همراه ندارد. راهنمای همراه پروژه: <code>docs/NOTEBOOKS.md</code>.</p>
+<h2>دفترهای درس‌به‌درس و مرور</h2>'''

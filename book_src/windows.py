@@ -2,7 +2,7 @@
 WINDOWS = r'''<p class="objective">برای خواندن کتاب فقط مرورگر لازم است؛ اجرای مدل و ساخت کتاب دو کار جدا هستند.</p>
 <table><tr><th>هدف</th><th>نیاز</th></tr><tr><td>مطالعهٔ کتاب</td><td>مرورگر به‌روز؛ بدون نصب Python، Node یا PyTorch</td></tr><tr><td>پیش‌نمایش localhost</td><td>Python 3.11 یا جدیدتر؛ بدون بستهٔ اضافی</td></tr><tr><td>نسخهٔ شمارشی v0</td><td>فقط Python</td></tr><tr><td>مدل عصبی</td><td>Python 3.11 و PyTorch؛ CPU کافی است</td></tr><tr><td>ساخت و بسته‌بندی برای نویسنده</td><td>Python و Node.js 24 LTS؛ بدون npm install</td></tr></table>
 <h2>۱. فایل درست را استخراج کنید</h2>
-<p>در Windows 10/11، با Extract All کل ZIP را باز کنید. نسخهٔ ایستای کتاب در ریشهٔ خود <code>index.html</code> دارد؛ در مخزن کامل، کتاب در <code>dist</code> است. بستهٔ [[downloads/mini-gpt-project.zip|پروژهٔ قابل دانلود]] شامل <code>mini_gpt</code>، <code>data</code>، آزمون‌های مدل و <code>docs/WINDOWS_SETUP.md</code> است؛ کتاب و ابزار ساخت داخل آن نیست. راهنمای انگلیسیِ کامل با جزئیات نصب و رفع خطا در همان فایل آمده است.</p>
+<p>در Windows 10/11، با Extract All کل ZIP را باز کنید. نسخهٔ ایستای کتاب در ریشهٔ خود <code>index.html</code> دارد؛ در مخزن کامل، کتاب در <code>dist</code> است. بستهٔ [[downloads/mini-gpt-project.zip|پروژهٔ قابل دانلود]] شامل <code>mini_gpt</code>، <code>data</code>، آزمون‌های مدل و <code>docs/WINDOWS_SETUP.md</code> است؛ منبع کتاب، ابزار ساخت، دفترهای Jupyter و <code>run.py</code> هم در آن هستند؛ در اولین اجرا کتاب ساخته می‌شود. راهنمای انگلیسیِ کامل با جزئیات نصب و رفع خطا در همان فایل آمده است.</p>
 <p>می‌توانید index.html را مستقیم باز کنید. قلم، تصویرها و محاسبه‌های مرورگر محلی‌اند. ذخیرهٔ پیشرفت در file:// به مرورگر بستگی دارد؛ برای پیوستگی میان صفحه‌ها، localhost و خروجی JSON توصیه می‌شود.</p>
 <h2>۲. Python را فقط در صورت نیاز نصب کنید</h2>
 <p>از <a href="https://www.python.org/downloads/windows/">منبع رسمی Python</a> و <a href="https://docs.python.org/3/using/windows.html">راهنمای Windows</a> استفاده کنید. با Python Install Manager می‌توانید runtime نسخهٔ 3.11 را نصب کنید: <code>py install 3.11</code>. نصب خود Windows یا Installer در این بازبینی اجرا نشده؛ فرمان‌های پروژه در محیط مجازی تازه روی Windows موجود آزموده می‌شوند. مسیر مدلِ آزموده‌شده ۶۴بیتی x86 است؛ ARM و GPU در این محیط آزموده نشده‌اند.</p>
@@ -17,7 +17,7 @@ python -c "import sys, struct; print(sys.executable); print(struct.calcsize('P')
 <p>از مخزن کامل:</p><pre><code>python -m http.server 8000 --bind 127.0.0.1 --directory dist</code></pre>
 <p>از پوشهٔ ZIP ایستای استخراج‌شده:</p><pre><code>python -m http.server 8000 --bind 127.0.0.1 --directory .</code></pre>
 <p>نشانی <a href="http://127.0.0.1:8000/">http://127.0.0.1:8000/</a> را باز کنید. ترمینال باید باز بماند؛ توقف با Ctrl+C است. این سرور فقط روی رایانهٔ خودتان گوش می‌دهد، نه میزبان عمومی. تغییر پورت یا مرورگر، محل ذخیرهٔ پیشرفت را تغییر می‌دهد؛ پیش از جابه‌جایی خروجی بگیرید.</p>
-<h2>۵. نصب مدل در محیط جدا</h2>
+<h2>۵. اجرای مستقل مدل در همان محیط پروژه</h2>
 <p>از پوشهٔ دارای mini_gpt و data اجرا کنید. دستورهای مسیر صریح در هر دو ترمینال کار می‌کنند و به فعال‌سازی نیاز ندارند. به‌روزرسانی pip مهم است: نسخهٔ قدیمیِ همراه Python این محیط در خواندن اطلاعات یک وابستگی خطا داشت.</p>
 <pre><code>python -m venv .venv
 .\.venv\Scripts\python.exe -m pip install --upgrade pip
@@ -25,7 +25,7 @@ python -c "import sys, struct; print(sys.executable); print(struct.calcsize('P')
 .\.venv\Scripts\python.exe -c "import sys, torch; print(sys.executable); print(torch.__version__)"
 .\.venv\Scripts\python.exe -B -m mini_gpt.smoke_test
 .\.venv\Scripts\python.exe -B -m unittest discover -s tests -v</code></pre>
-<p>نصب اینترنت می‌خواهد، اجرای بعدی محلی است. نیازی به CUDA یا NumPy نداریم؛ هشدار نبود NumPy اختیاری مانع آزمون‌ها نیست. فقط فایل Checkpoint مورد اعتماد خودتان را بارگذاری کنید.</p>
+<p>نصب اینترنت می‌خواهد، اجرای بعدی محلی است. برای مدل، CUDA لازم نیست؛ نصب کامل دفترها وابستگی‌های نمودار، از جمله NumPy، را هم فراهم می‌کند. فقط فایل Checkpoint مورد اعتماد خودتان را بارگذاری کنید.</p>
 <h2>۶. استفاده از فرمان‌های کوتاهِ درس‌ها</h2>
 <p>دستورهای درس‌ها که با python شروع می‌شوند، فرض می‌کنند محیط فعال است. در PowerShell:</p><pre><code>.\.venv\Scripts\Activate.ps1
 python -c "import sys; print(sys.executable)"</code></pre>

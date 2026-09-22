@@ -53,7 +53,7 @@ BRIEFS = {
  '37-ffn': ('network','statement','flow','C|4C|GELU|C','ویژگی‌های هر موقعیت جداگانه پردازش می‌شوند.'),
  '38-residual': ('architecture','question','equation','y = x + F(x)','زیرلایه اصلاحی روی ورودی می‌سازد؛ شکل دو مسیر باید برابر باشد.'),
  '39-layernorm': ('math','workbench','equation','(x − mean) / √(var + ε)','در مدل ما میانگین و واریانس روی محور ویژگی است.'),
- '40-block': ('architecture','diagram','stack','y = x + Attention(LN(x))|out = y + FFN(LN(y))','بلوک پیش‌نرمال: دو زیرلایه و دو مسیر جمع.'),
+ '40-block': ('architecture','diagram','stack','y = x + Attention(LN(x))|out = y + FFN(LN(y))','بلوک Pre-Norm: دو زیرلایه و دو مسیر جمع.'),
  '41-stack': ('architecture','statement','stack','block 1|block 2|block 3','شکل ثابت می‌ماند؛ پارامترهای هر بلوک مستقل‌اند.'),
  '42-families': ('architecture','editorial','compare','دید دوطرفه|دید علّی','تفاوت مسیر اطلاعات، از شباهت نام کلاس‌ها مهم‌تر است.'),
  '43-lm-head': ('model','diagram','flow','(B,T,C)|Linear: C → V|(B,T,V)','برای هر موقعیت، یک امتیاز برای هر نشانهٔ واژگان.'),

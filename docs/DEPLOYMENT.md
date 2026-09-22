@@ -116,7 +116,9 @@ rollback. Restore a saved source revision and rerun release preparation when
 rebuilding an older release; do not mix files from different releases.
 
 
-For the Jupyter layer, install `requirements-notebooks.txt` in that same environment
-and run `python -B -m tools.verify_notebooks`. The release inventory rejects
+For daily local learning, install `requirements-notebooks.txt` in that same environment
+and run `python run.py`; this starts the book and authenticated Jupyter together.
+Use `python -B -m tools.verify_notebooks --mode student` and `--mode solutions`
+for author verification. Jupyter is local-only and is never included as a public server. The release inventory rejects
 unlisted notebooks and notebooks containing executed outputs. Detailed evidence
 and platform limits are in [the current review](REVIEW.md).

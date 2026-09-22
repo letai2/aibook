@@ -15,6 +15,16 @@ from .glossary import TERMS
 ALIASES = {}
 PATTERN = None
 
+# These are established Persian mathematical/educational names, not awkward
+# localizations. Keep them when an author deliberately uses them. English names
+# remain the glossary identities and are retained when written in English.
+CONVENTIONAL_PERSIAN = {
+    'neural-network', 'vector', 'matrix', 'dot-product', 'matrix-multiplication',
+    'transpose', 'derivative', 'partial-derivative', 'chain-rule',
+    'computational-graph', 'corpus', 'subword', 'data-leakage', 'overfitting',
+    'underfitting', 'distributed-training',
+}
+
 
 def configure_terms():
     global PATTERN
@@ -55,7 +65,6 @@ PHRASES = {
     'هیچ پارامتری': 'هیچ Parameter',
     'جدول پارامتری': 'جدول Parameterها',
     'تبدیل‌های پارامتری': 'تبدیل‌های دارای Parameter',
-    'ضرب‌های ماتریسی': 'عملیات Matrix multiplication',
     'مبتنی بر توجهی': 'مبتنی بر Attention',
     'پرسش، کلید، مقدار': 'Query، Key، Value',
     'هر سطر یک پرسش و هر ستون یک کلید است': 'هر سطر یک Query و هر ستون یک Key است',
@@ -85,21 +94,25 @@ def protected(match, text):
 
 
 def canonical_label(match):
+    slug = ALIASES[match.group().casefold()]
+    if slug in CONVENTIONAL_PERSIAN and re.search(r'[\u0600-\u06ff]', match.group()):
+        return match.group()
     # Canonical abbreviations remain recognizable alongside their full names.
     if re.fullmatch(r'[A-Z][A-Z0-9]{1,7}', match.group()):
         return match.group()
     return TERMS[ALIASES[match.group().casefold()]].name
 
 
-def normalize_text(text):
+def normalize_text(text, *, definition=False):
     text = PHRASE_PATTERN.sub(lambda m: PHRASES[m.group()], text)
     text = re.sub(r'(?<!\w)توجهی(?!\w)', 'مبتنی بر Attention', text)
-    text = PATTERN.sub(lambda m: m.group() if protected(m, text) else canonical_label(m), text)
+    text = PATTERN.sub(lambda m: m.group() if protected(m, text) or
+                      (definition and re.search(r'[\u0600-\u06ff]', m.group())) else canonical_label(m), text)
     return re.sub(r'(?<=[A-Za-z])ٔ', '', text)
 
 
 def clean_definition(match):
-    text = normalize_text(match[1])
+    text = normalize_text(match[1], definition=True)
     # Remove only the now-redundant translated label, not its explanation.
     for term in TERMS.values():
         text = text.replace(f'{term.name} یا {term.name}', term.name)
@@ -141,11 +154,12 @@ class ProseTerms(HTMLParser):
         if any(item[1] for item in self.stack):
             self.parts.append(text)
             return
-        text = normalize_text(text)
+        definition = any(item[0] == 'dfn' for item in self.stack)
+        text = normalize_text(text, definition=definition)
         if any(item[2] for item in self.stack):
             if not any(item[0] in {'title','bdi','select','option'} for item in self.stack):
                 text = PATTERN.sub(lambda m: m.group() if protected(m,text) else
-                                   '<bdi dir="ltr">'+html.escape(m.group())+'</bdi>', text)
+                                   '<bdi dir="'+('rtl' if re.search(r'[\u0600-\u06ff]',m.group()) else 'ltr')+'">'+html.escape(m.group())+'</bdi>', text)
             self.parts.append(text)
             return
 
@@ -155,10 +169,12 @@ class ProseTerms(HTMLParser):
                 return match.group()
             self.counts[slug] = self.counts.get(slug, 0) + 1
             anchor = f'term-ref-{slug}-{self.counts[slug]}'
+            shown = match.group() if definition else canonical_label(match)
+            direction = 'rtl' if re.search(r'[\u0600-\u06ff]',shown) else 'ltr'
             # One useful entry point per concept, plus its explicit definition.
             # Keep the old occurrence anchors so saved glossary returns survive.
             if self.counts[slug] > 1 and not any(item[0] == 'dfn' for item in self.stack):
-                return f'<bdi dir="ltr" id="{anchor}">{html.escape(canonical_label(match))}</bdi>'
+                return f'<bdi dir="{direction}" id="{anchor}">{html.escape(shown)}</bdi>'
             target = f'glossary/{slug}.html'
             href = posixpath.relpath(target, posixpath.dirname(self.current) or '.')
             origin = posixpath.relpath(self.current, 'glossary') + '#' + anchor
@@ -166,9 +182,9 @@ class ProseTerms(HTMLParser):
                 query = ''  # Related concepts inherit the original reading context in JS.
             else:
                 query = '?return=' + quote(origin, safe='')
-            label = html.escape(canonical_label(match))
+            label = html.escape(shown)
             return (f'<a class="term-link" id="{anchor}" data-term="{slug}" '
-                    f'href="{href}{query}" title="توضیح {label}"><bdi dir="ltr">{label}</bdi></a>')
+                    f'href="{href}{query}" title="توضیح {label}"><bdi dir="{direction}">{label}</bdi></a>')
 
         self.parts.append(PATTERN.sub(annotate, text))
 
@@ -189,6 +205,19 @@ def annotate_html(source, current, own_term=None):
     # A definition's original gloss remains unless it is a duplicate label.
     source = re.sub(r'<dfn>([^<]+)</dfn>', clean_definition, source)
     parser = ProseTerms(current, own_term)
+    parser.feed(source)
+    parser.close()
+    return ''.join(parser.parts)
+
+
+def normalize_html(source):
+    """Use the same prose policy in notebook HTML, without site-relative links."""
+    class NotebookProse(ProseTerms):
+        def handle_data(self, text):
+            if not any(item[1] for item in self.stack):
+                text = normalize_text(text, definition=any(item[0] == 'dfn' for item in self.stack))
+            self.parts.append(text)
+    parser = NotebookProse('notebooks.html')
     parser.feed(source)
     parser.close()
     return ''.join(parser.parts)

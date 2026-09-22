@@ -145,10 +145,39 @@ class EditorialTests(unittest.TestCase):
         code = '<dfn>Tensor</dfn> works with <code>torch.tensor([1.0])</code>. Another sentence.'
         self.assertEqual(definition_sentence(code,'Tensor'), '<dfn>Tensor</dfn> works with <code>torch.tensor([1.0])</code>.')
 
+    def test_conventional_persian_and_first_introduction_glosses_survive(self):
+        from book_src.terminology import normalize_html
+        self.assertEqual(normalize_text('شبکهٔ عصبی، بردار، ماتریس و مشتق'),
+                         'شبکهٔ عصبی، بردار، ماتریس و مشتق')
+        source = '<p><dfn>Loss (زیان)</dfn> با خطای Python یکی نیست.</p>'
+        parser = Links()
+        parser.feed(annotate_html(source,'index.html'))
+        self.assertIn('Loss (زیان)', ''.join(parser.text))
+        self.assertIn('خطای Python', ''.join(parser.text))
+        code = '<code>embedding.weight[ids]</code><pre>loss = x\n# گرادیان</pre>'
+        self.assertIn(code,normalize_html('<p>تنسور</p>'+code))
+        self.assertIn('Tensor',normalize_html('<p>تنسور</p>'))
+
+    def test_terminology_inventory_covers_actual_concepts_and_evidence(self):
+        from book_src.glossary import terminology_inventory, CORRECTED_CONCEPTS
+        audit = terminology_inventory()
+        self.assertEqual(set(audit),set(book.TERMS))
+        self.assertEqual(len(CORRECTED_CONCEPTS),20)
+        self.assertTrue(CORRECTED_CONCEPTS <= audit.keys())
+        self.assertEqual(audit['context-window']['category'],'E')
+        for slug in ('supervised-learning','self-supervised-learning','fine-tuning','sft'):
+            self.assertGreaterEqual(len(audit[slug]['evidence']),2)
+        for phrase in ('یادگیری نظارت‌شده','یادگیری خودنظارتی'):
+            self.assertIn(phrase, book.BY_ID['01-learning'].body)
+        self.assertNotIn('یادگیری با هدف مرجع',book.BY_ID['01-learning'].body)
+
     def test_all_executable_examples_still_match_original_source(self):
         for lesson in book.LESSONS:
             if lesson.code:
-                self.assertEqual(''.join(self.pages['answers/'+lesson.id+'.html'].code),lesson.code.strip(),lesson.id)
+                html = (self.root/'answers'/f'{lesson.id}.html').read_text(encoding='utf-8')
+                reference = Links()
+                reference.feed(re.search(r'<pre\b[^>]*>.*?</pre>',html,re.S)[0])
+                self.assertEqual(''.join(reference.code),lesson.code.strip(),lesson.id)
         reference = (self.root/'project.html').read_text(encoding='utf-8')
         for command in ('attention','sampling','network','normalization'):
             self.assertIn(f'<code>{command}</code>', reference)

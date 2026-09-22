@@ -14,8 +14,12 @@ from jupyter_client import KernelManager
 from jupyter_client.kernelspec import KernelSpecManager
 
 
-def verify(root: Path, report: Path | None = None, html_output: Path | None = None):
+def verify(root: Path, report: Path | None = None, html_output: Path | None = None,
+           mode='student', selected=None):
     notebooks = sorted((root / 'notebooks').rglob('*.ipynb'))
+    notebooks = [p for p in notebooks if '.ipynb_checkpoints' not in p.parts]
+    if selected:
+        notebooks = [p for p in notebooks if selected in p.as_posix()]
     if not notebooks:
         raise ValueError('No notebooks found')
     results = []
@@ -37,6 +41,24 @@ def verify(root: Path, report: Path | None = None, html_output: Path | None = No
             for cell in notebook.cells:
                 if cell.cell_type == 'code' and (cell.outputs or cell.execution_count is not None):
                     raise ValueError(f'Clear authored outputs before verification: {path}')
+            metadata = notebook.metadata.get('book', {})
+            lesson = metadata.get('primary_lesson')
+            review = metadata.get('exercise_id')
+            if lesson or review:
+                if mode == 'solutions':
+                    from book_src.lab_exercises import exercises
+                    from book_src.lab_exercises.reviews import EXERCISES as reviews
+                    spec = exercises()[lesson] if lesson else reviews[review]
+                    for cell in notebook.cells:
+                        tags = cell.metadata.get('tags', [])
+                        if 'exercise' in tags:
+                            cell.source = spec['solution']
+                        elif 'repair' in tags:
+                            cell.source = spec['fix_solution']
+                expected = mode == 'solutions'
+                notebook.cells.append(nbformat.v4.new_code_cell(
+                    f'assert exercise_complete is {expected!r}, "Main exercise status mismatch"\n'
+                    f'assert repair_complete is {expected!r}, "Repair status mismatch"'))
             started = time.monotonic()
             manager = KernelManager(kernel_name='book-python',
                 kernel_spec_manager=KernelSpecManager(kernel_dirs=[str(kernel_root)]))
@@ -58,7 +80,7 @@ def verify(root: Path, report: Path | None = None, html_output: Path | None = No
                               if output.output_type == 'stream')
             if str(root) not in streams or sys.executable not in streams:
                 raise AssertionError(f'Wrong project root or kernel interpreter: {path}')
-            result = {'path': path.relative_to(root).as_posix(),
+            result = {'path': path.relative_to(root).as_posix(), 'mode': mode,
                       'code_cells': sum(cell.cell_type == 'code' for cell in notebook.cells),
                       'figures': sum('image/png' in output.get('data', {}) for output in outputs),
                       'seconds': round(time.monotonic()-started, 2)}
@@ -67,7 +89,8 @@ def verify(root: Path, report: Path | None = None, html_output: Path | None = No
                 from nbconvert import HTMLExporter
                 rendered, _ = HTMLExporter(template_name='lab').from_notebook_node(notebook)
                 html_output.mkdir(parents=True, exist_ok=True)
-                (html_output/(path.stem+'.html')).write_text(rendered, encoding='utf-8')
+                output_name = metadata.get('id') or review or path.stem
+                (html_output/(output_name+'.html')).write_text(rendered, encoding='utf-8')
             print(json.dumps(result), flush=True)
     payload = {'python': sys.version.split()[0], 'interpreter': sys.executable,
                'root': str(root), 'notebooks': results}
@@ -82,5 +105,7 @@ if __name__ == '__main__':
     parser.add_argument('--root', type=Path, default=Path(__file__).resolve().parents[1])
     parser.add_argument('--report', type=Path)
     parser.add_argument('--html-output', type=Path, help='Optional disposable rendered QA directory.')
+    parser.add_argument('--mode', choices=('student','solutions'), default='student')
+    parser.add_argument('--select', help='Optional path substring for a targeted rerun')
     args = parser.parse_args()
-    verify(args.root.resolve(), args.report, args.html_output)
+    verify(args.root.resolve(), args.report, args.html_output, args.mode, args.select)

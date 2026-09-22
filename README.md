@@ -1,7 +1,8 @@
 # From Python to Mini-GPT
 
 A Persian, beginner-oriented HTML textbook with a transparent PyTorch Mini-GPT
-and 12 focused Jupyter laboratories. The HTML book remains the main learning path.
+with 76 dedicated learner laboratories and 12 optional review notebooks. Each HTML
+lesson leads directly to its coding laboratory.
 
 - [Open the built book](dist/index.html)
 - [Windows installation](docs/WINDOWS_SETUP.md)
@@ -14,13 +15,17 @@ and 12 focused Jupyter laboratories. The HTML book remains the main learning pat
 ## Work from the project root
 
 ```powershell
-python -B -m tools.build_book
-python -B -m tools.validate_book
-python -B -m http.server 8000 --bind 127.0.0.1 --directory dist
+python -m venv .venv
+.\.venv\Scripts\python.exe -m pip install --upgrade pip
+.\.venv\Scripts\python.exe -m pip install -r requirements-notebooks.txt
+.\.venv\Scripts\python.exe run.py
 ```
 
-The static book needs no Python server after deployment. The local server is
-recommended for browser testing and notebook return links. To build a verified
+Reuse an existing environment instead of recreating it. After activation, daily use
+is **`python run.py`**. It builds HTML when needed and starts both the book
+(http://127.0.0.1:8000/) and authenticated JupyterLab (http://127.0.0.1:8888/lab).
+The learning desk opens automatically; each lesson button opens its exact notebook.
+Ctrl+C stops both owned services. The static book remains readable without Python. To build a verified
 release, install the model dependencies, ensure Node.js is available, then run:
 
 ```powershell
@@ -31,7 +36,9 @@ python -B -m tools.prepare_release
 The release command builds in staging, checks site/editorial rules and browser
 logic, validates links, and packages only public files. To execute the Jupyter
 labs as well, install `requirements-notebooks.txt` in the same environment and
-run `python -B -m tools.verify_notebooks`.
+run `python -B -m tools.verify_notebooks --mode student` and then
+`python -B -m tools.verify_notebooks --mode solutions`. Student checks report
+unfinished TODOs explicitly; separate reference checks must pass.
 
 ## Project map
 

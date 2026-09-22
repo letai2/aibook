@@ -155,7 +155,7 @@ TERMS = {
   'معماری، Vocabulary، Step، وضعیت RNG و Optimizer باید سازگار باشند. فایل ناشناس را صرفاً به‌دلیل پسوندش قابل اعتماد ندانید.',
   'ادامهٔ چهار Step با دو Step دیگر در آزمون کنترل‌شدهٔ CPU با اجرای شش Step مقایسه می‌شود.',
   'checkpoint.py قرارداد best.pt و last.pt را بررسی می‌کند؛ اولی بهترین ارزیابی و دومی آخرین وضعیت است.', 'parameter optimizer tokenizer training', '50-checkpoint 51-resume 52-first-run'),
- 'fine-tuning': Term('Fine-Tuning','fine tuning|تنظیم تکمیلی|تنظیم دقیق',
+ 'fine-tuning': Term('Fine-Tuning','fine tuning|تنظیم تکمیلی|تنظیم دقیق|فاین‌تیونینگ',
   'ادامهٔ آموزش یک مدل از وزن‌های ازپیش‌آموخته، با داده یا هدفی متناسب با کاربرد تازه است.',
   'به‌جای شروع از عددهای تصادفی، از توانایی قبلی استفاده می‌کنیم؛ دادهٔ تازه می‌تواند رفتار مدل را تغییر دهد، نه اینکه بی‌خطایی را تضمین کند.',
   'همه یا بخشی از Parameterها به‌روزرسانی می‌شوند. SFT یک نوع Fine-Tuning با پاسخ مرجع است؛ LoRA روش محدودکردن Parameterهای قابل آموزش است.',
@@ -164,7 +164,7 @@ TERMS = {
  'inference': Term('Inference','اینفرنس',
   'استفاده از مدل آماده برای محاسبهٔ خروجی با Parameterهای ثابت است.',
   'یادگیری و استفاده دو کار متفاوت‌اند؛ ممکن است مدل بدون هیچ به‌روزرسانی وزن، بارها خروجی تازه بسازد.',
-  'eval رفتار Layerهایی مثل Dropout را عوض می‌کند. no_grad یا inference_mode ثبت Gradient را کنترل می‌کند؛ این دو تصمیم یکی نیستند.',
+  'eval رفتار Layerهایی مثل Dropout را عوض می‌کند. no_grad یا inference_mode ثبت گراف Autograd را کنترل می‌کند؛ این دو تصمیم یکی نیستند.',
   'یک Prompt می‌دهیم، Logits آخرین موقعیت را می‌گیریم و Token بعدی را انتخاب می‌کنیم.',
   'generate.py مدل را از Checkpoint می‌خواند و با قاعدهٔ Sampling خروجی می‌سازد.', 'checkpoint sampling logits dropout', '01-model 54-generate 55-temperature'),
  'sampling': Term('Sampling','نمونه‌گیری|نمونه گیری|نمونه‌برداری',
@@ -235,7 +235,7 @@ TERMS = {
   'وزن Attention پس از Dropout الزاماً مجموع یک ندارد؛ بازرس وزن پیش از آن را نشان می‌دهد.', 'layer attention training inference', '34-causal-test 40-block 48-evaluate'),
  'positional-embedding': Term('Positional Embedding','نمایش برداری موقعیت',
   'بردار قابل یادگیری‌ای است که شمارهٔ موقعیت را به ویژگی‌های ورودی اضافه می‌کند.',
-  'اگر فقط IDها را ببینیم، ترتیب به‌خودی‌خود مشخص نیست؛ موقعیت اطلاعات تازه‌ای دربارهٔ جای Token می‌دهد.',
+  'جدول Token Embedding برای یک ID، مستقل از محل وقوعش، همان بردار را برمی‌گرداند؛ Positional Embedding اطلاعات جایگاه را به این بردار اضافه می‌کند؛ موقعیت اطلاعات تازه‌ای دربارهٔ جای Token می‌دهد.',
   'برای هر t یک بردار Cتایی برداشته می‌شود و با Token Embedding جمع می‌شود؛ محور تازه‌ای ساخته نمی‌شود.',
   '<code>x[:, t, :] = token_embedding + position_embedding[t]</code>.',
   'اندازهٔ جدول موقعیت با <code>context_length</code> محدود است؛ این قرارداد با Context Window هماهنگ می‌شود.', 'embedding token context-window', '26-positions 40-block 57-prompts'),
@@ -287,7 +287,7 @@ TERMS = {
   'K و V تازه به مقدارهای ذخیره‌شده افزوده می‌شوند؛ Query فعلی با کل زمینهٔ مجاز کار می‌کند. مدیریت موقعیت و محدودیت پنجره ضروری است.',
   'پس از چهار Token، تولید Token پنجم می‌تواند K/V چهار موقعیت قبل را دوباره مصرف کند.',
   'Mini-GPT پایه Cache ندارد؛ این درس یک توسعهٔ بعدی و محدودیت‌های آن را توضیح می‌دهد.', 'key value attention context-window inference', '54-generate 64-cache'),
- 'sft': Term('SFT','Supervised fine-tuning|تنظیم تکمیلی با پاسخ مرجع|تنظیم نظارت‌شده',
+ 'sft': Term('SFT','Supervised fine-tuning|تنظیم تکمیلی با پاسخ مرجع|تنظیم دقیق نظارت‌شده',
   'Fine-Tuning نظارت‌شده با نمونه‌هایی است که پاسخ مطلوب را مشخص می‌کنند.',
   'مدل از مثال‌های دستور و پاسخ می‌آموزد چگونه پاسخ بدهد؛ کیفیت و تنوع این مثال‌ها اهمیت دارد.',
   'در قرارداد رایج، Loss فقط روی Tokenهای پاسخ محاسبه می‌شود. Mask هدف با Causal Mask مسیر Attention فرق دارد.',
@@ -326,7 +326,86 @@ TERMS = {
 }
 
 SUPPLEMENTAL = set()
+# Usage audit, 2026-09-22. These sources establish Persian usage, not the
+# correctness of every technical claim on their pages. Explanatory glosses are
+# descriptions, not claims that a Persian phrase is the community's sole name.
+USAGE_SOURCES = {
+    'university': 'https://dsp-lab.ir/wp-content/uploads/2025/11/ML4NLP-HW1-1404-1.pdf',
+    'datayad': 'https://datayad.com/supervised-machine-learning/',
+    'howsam-llm': 'https://howsam.org/downloads/implementing-chatgpt-from-scratch-with-pytorch/',
+    'tehrandata': 'https://tehrandata.org/courses/llm/',
+    'avalai': 'https://docs.avalai.org/fa/guides/fine-tuning',
+    'gradient': 'https://howsam.org/gradient-descent/',
+    'university-ann': 'https://dsp-lab.ir/wp-content/uploads/2023/03/ML4NLP-Lecture6-ANN-RNN.pdf',
+    'university-gate': 'https://dsp-lab.ir/wp-content/uploads/2022/01/ML4NLP-Lecture5-ANN.pdf',
+    'howsam-gate': 'https://howsam.org/lstm-neural-network/',
+    'residual-course': 'https://aminmazi.ir/learn/gpt-course/',
+    'residual-guide': 'https://bardia.ai/ai-course/',
+}
+# category: A established Persian, B English-first, C both, D replaced literal,
+# E ambiguous usage, F corrected meaning, G context-sensitive technical wording.
+USAGE_DECISIONS = {
+    'supervised-learning': ('D', 'Supervised learning (یادگیری نظارت‌شده)', 'high',
+        ('university','datayad'), 'Replace یادگیری با هدف مرجع; it was a description, not the conventional name.'),
+    'self-supervised-learning': ('C', 'Self-supervised learning (یادگیری خودنظارتی)', 'high',
+        ('university','howsam-llm'), 'Use the recognizable name; automatic targets are still targets.'),
+    'fine-tuning': ('D', 'Fine-Tuning (تنظیم دقیق)', 'high',
+        ('tehrandata','avalai'), 'Replace تنظیم تکمیلی as the introductory label; retain English in later prose.'),
+    'sft': ('D', 'SFT (تنظیم دقیق نظارت‌شده)', 'high',
+        ('university','avalai','tehrandata'), 'Keep SFT and explain supervised fine-tuning, not an invented task family.'),
+    'gradient': ('C', 'Gradient (گرادیان)', 'high',
+        ('gradient','university-ann'), 'Keep Gradient/گرادیان distinct from a scalar derivative.'),
+    'embedding': ('C', 'Embedding with a functional Persian explanation', 'high',
+        ('university-ann','tehrandata'), 'تعبیه and بردار تعبیه occur; the English label avoids implying every representation is an Embedding.'),
+    'attention': ('C', 'Attention (توجه)', 'high',
+        ('university-ann','tehrandata'), 'Keep the conventional gloss; distinguish numerical Attention from human attention.'),
+    'encoder': ('C', 'Encoder (رمزگذار)', 'high',
+        ('university-ann','tehrandata'), 'Both occur; distinguish a network from tokenizer encoding.'),
+    'decoder': ('C', 'Decoder (رمزگشا)', 'high',
+        ('university-ann','tehrandata'), 'Both occur; do not remove a conventional Persian gloss.'),
+    'gate': ('C', 'Gate with explanatory دریچه', 'medium',
+        ('university-gate','howsam-gate'), 'دروازه, گیت and explanatory دریچه coexist; retain the English identity.'),
+    'residual-connection': ('C', 'Residual Connection (اتصال باقی‌مانده)', 'medium',
+        ('residual-course','residual-guide'), 'The Persian gloss has independent authored usage; keep it.'),
+    'context-window': ('E', 'Context Window with a functional Persian explanation', 'medium',
+        (), 'پنجرهٔ زمینه and پنجرهٔ بافت vary; evidence did not justify claiming one dominant Persian term.'),
+    'pre-norm': ('E', 'Pre-Norm', 'medium',
+        (), 'Sparse independent Persian usage; explain normalization before each sublayer, not an invented formal translation.'),
+}
+
+# Count concept-level corrections, not individual string replacements or the
+# 16 conventional Persian names restored by the prose renderer.
+CORRECTED_CONCEPTS = {
+    'supervised-learning', 'self-supervised-learning', 'fine-tuning', 'sft',
+    'parameter-efficient-fine-tuning', 'inference', 'one-hot', 'gradient-clipping',
+    'gradient', 'autograd', 'positional-embedding', 'buffer',
+    'feed-forward-network', 'query', 'key', 'value', 'loss', 'softmax',
+    'pre-norm', 'language-model-head',
+}
+
+
+def terminology_inventory():
+    """Call after extend_from_lessons: inventory every actual glossary concept."""
+    from .terminology import CONVENTIONAL_PERSIAN
+    inventory = {}
+    english_first = {'tensor','token','tokenizer','transformer','batch','epoch',
+                     'logits','softmax','dropout','checkpoint','optimizer','backpropagation'}
+    for slug, term in TERMS.items():
+        category, canonical, confidence, sources, reason = USAGE_DECISIONS.get(slug,
+            ('A' if slug in CONVENTIONAL_PERSIAN else 'F' if slug in CORRECTED_CONCEPTS
+             else 'B' if slug in english_first else 'G', term.name,
+             'high' if slug in CONVENTIONAL_PERSIAN else 'context-reviewed', (),
+             'Preserve established Persian wording.' if slug in CONVENTIONAL_PERSIAN else
+             'Retain the English identity and its context-specific explanation; no frequency claim.'))
+        inventory[slug] = dict(english=term.name, aliases=term.aliases,
+            usage=term.meaning, category=category, canonical=canonical,
+            confidence=confidence, evidence=[USAGE_SOURCES[key] for key in sources],
+            reason=reason, corrected=slug in CORRECTED_CONCEPTS)
+    return inventory
+
 EDITORIAL_ALIASES = {
+    'supervised-learning':'یادگیری نظارت‌شده|یادگیری نظارت شده|یادگیری با ناظر',
+    'self-supervised-learning':'یادگیری خودنظارتی|یادگیری خودنظارت‌شده|یادگیری خودناظر',
     'scalar':'اسکالر', 'vector':'بردار', 'matrix':'ماتریس',
     'dot-product':'ضرب داخلی', 'matrix-multiplication':'ضرب ماتریسی',
     'transpose':'ترانهاده', 'derivative':'مشتق', 'partial-derivative':'مشتق جزئی',

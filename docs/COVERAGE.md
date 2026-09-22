@@ -1,4 +1,18 @@
-# Lesson-by-lesson educational audit — 2026-09-21
+# Current lesson review — 2026-09-22
+
+All 76 lessons received a problem-first and terminology review in the current
+pass. Thirty-six records changed and 40 were retained in full; the unchanged
+records were reviewed, not skipped. IDs/order/paths, all 76 code examples and
+all 34 formula blocks remain unchanged. Each lesson now has its own notebook
+at `notebooks/lessons/<stable-id>/lab.ipynb`; the live laboratory index includes
+the goal and project stage. Twelve earlier labs remain optional reviews.
+
+The [current review report](REVIEW.md) records the new launcher, 88-notebook
+execution evidence, terminology inventory and limitations. The table below is
+the earlier prerequisite audit, retained as historical context rather than
+presented as the disposition of this later pass.
+
+## Earlier lesson-by-lesson educational audit — 2026-09-21
 
 Audience: a capable Python programmer with no assumed DL, PyTorch, probability
 or calculus background. Every lesson's source, rendered lesson/answer, exercise,

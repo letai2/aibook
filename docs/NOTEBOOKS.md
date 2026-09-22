@@ -1,150 +1,136 @@
-# Jupyter laboratories
+# Lesson laboratories
 
-The HTML book is the primary course. These 12 focused notebooks are optional
-experimental stops, not replacements for lessons. Read the linked prerequisites,
-predict the result, run, inspect, change one factor, explain, and return to the book.
+The 76 lessons each have a dedicated learner notebook. The original 12 notebooks
+remain as optional, broader review laboratories. HTML explains the idea; the
+notebook is where you predict, write code, run, inspect, change one factor,
+diagnose a deliberate bug, and write a repair.
 
-## Windows: one environment for the model and notebooks
+## Install once; launch with one command
 
-Use 64-bit Python 3.11 for the tested CPU path. Open PowerShell in the **project
-root** (the directory containing `mini_gpt`, `data`, and `requirements.txt`).
-If `.venv` already exists for this project, reuse it and skip its creation.
-Do not recreate an existing environment just to add Jupyter.
+Use one Python 3.11+ environment for the book, notebooks, and Mini-GPT.
+From the complete project folder in PowerShell:
 
 ```powershell
-python --version
 python -m venv .venv
-.\.venv\Scripts\Activate.ps1
-python -m pip install --upgrade pip
-python -m pip install torch==2.14.0 --index-url https://download.pytorch.org/whl/cpu
-python -m pip install -r requirements-notebooks.txt
-python -m jupyterlab --notebook-dir=. --ip=127.0.0.1
-```
-
-The Torch command is the tested Windows CPU installation. If the project
-environment already has a supported Torch installation, keep it; the notebook
-requirements reuse `requirements.txt` rather than replacing it. See
-[Windows setup](WINDOWS_SETUP.md) for installation, Python selection, CMD, and
-platform-specific details.
-
-If PowerShell blocks activation, **do not change machine execution policy**.
-Use the interpreter explicitly:
-
-```powershell
 .\.venv\Scripts\python.exe -m pip install --upgrade pip
-.\.venv\Scripts\python.exe -m pip install torch==2.14.0 --index-url https://download.pytorch.org/whl/cpu
 .\.venv\Scripts\python.exe -m pip install -r requirements-notebooks.txt
-.\.venv\Scripts\python.exe -m jupyterlab --notebook-dir=. --ip=127.0.0.1
+.\.venv\Scripts\python.exe run.py
 ```
 
-Open the authenticated local URL Jupyter prints. Keep its token private. Do not
-disable authentication or bind to a public interface. In the file browser, open
-`notebooks/` and choose a notebook. Select the Python kernel belonging to this
-environment; its first cell prints `sys.executable` so you can verify that choice.
-If the matching kernel is missing, stop the incorrectly launched server and launch
-Jupyter with the explicit environment interpreter. If needed, register a distinctly
-named kernel **inside this project environment**, then select it:
+If the environment already exists, reuse it. If activated, the daily command is:
 
 ```powershell
-.\.venv\Scripts\python.exe -m ipykernel install --prefix .venv --name mini-gpt-book --display-name "Mini-GPT (.venv)"
+python run.py
 ```
 
-Stop the server with Ctrl+C when finished, then confirm shutdown if prompted.
+The launcher builds stale/missing HTML without regenerating notebooks, starts
+both services, and opens the learning desk:
 
-The only direct additions are **JupyterLab** (with its normal kernel/client
-dependencies) and **Matplotlib**, which renders actual matrices, gradients,
-Attention heatmaps, and measured training curves. No GPU, external dataset,
-downloaded checkpoint, network call, or notebook-specific model implementation
-is required after installation.
+- Book: http://127.0.0.1:8000/
+- Learning desk: http://127.0.0.1:8000/start.html
+- JupyterLab: http://127.0.0.1:8888/lab — use the private token URL printed by
+  the launcher, or the lesson's laboratory button.
+- All lesson and review labs: http://127.0.0.1:8000/notebooks.html
 
-## Book links and downloaded projects
+Keep the terminal open. Ctrl+C shuts down both owned services and Jupyter
+kernels; it does not delete saved learner work. Save notebook changes first.
+If either port is occupied, the launcher explains the conflict and stops without
+terminating any existing process. Stop your previous server yourself, then retry.
+Jupyter may open a return link in a separate browser tab; its destination is the exact lesson, not the homepage. Save work before leaving a notebook.
+The fixed book port keeps notebook return links and browser progress consistent.
 
-Each notebook links back to the HTML book at `http://127.0.0.1:8000/`.
-In another PowerShell window, from the full checkout run:
+Both services bind only to 127.0.0.1. Jupyter authentication remains enabled.
+Tokens are generated per launch, are never written into static book files, and
+must not be shared. The local book redirects only known lesson/review mappings,
+not arbitrary paths. This is a personal local environment, not a multi-user or
+production host. Notebook code has the same local permissions as your Python.
+
+## Finding the right lab
+
+Click **آزمایشگاه این جلسه** directly after a lesson's explanation. With the
+launcher running, this opens that exact notebook in Jupyter, using the same
+Python interpreter that launched the book. No second terminal or kernel
+registration is required. The first cell prints the interpreter and project root.
+
+The metadata in each notebook extends the existing laboratory catalog:
+`kind=lesson`, `primary_lesson`, `lesson_number`, `html`, `goal`, and
+`stage` identify its role. A stable lesson ID determines its path:
+
+`01-model → notebooks/lessons/01-model/lab.ipynb`
+
+`65b-lora → notebooks/lessons/65b-lora/lab.ipynb`
+
+The lesson number is displayed separately, so adding a lesson does not rename
+old notebook paths. The build checks a one-to-one mapping. The original notebooks
+keep their existing paths and IDs, with `kind=review`. They do not replace any
+dedicated lesson lab. The generated laboratory index is the complete live map.
+The same records are exported as `window.BOOK.laboratories` in
+`dist/assets/manifest.js`; each primary record carries its stable ID, HTML path,
+notebook path, goal, and Mini-GPT stage. Personal notebooks without course
+metadata are not added to the curriculum or downloadable learning package.
+
+## Student work, examples, and separate answers
+
+Each lesson lab contains two unfinished functions: the main exercise and a repair.
+Both are valid Python returning `None`. A fresh **Restart Kernel and Run All
+Cells** executes the demonstrations and reports **INCOMPLETE** at these checks.
+That is expected and explicitly does not mean the exercise passed.
+
+Replace each TODO with your implementation. Rerun the function cell, then its
+check. Assertions test the function on concrete cases; **PASS** means those
+checks passed, not that arbitrary implementations have been formally verified.
+Variation/debug cells run independently of unfinished learner code.
+
+No learner cell silently inserts a reference solution. Optional answers live on
+the separate HTML answer page, linked only after the exercises. Authoring sources
+contain the reference implementations for maintainer tests, not hidden notebook
+metadata or a student fallback. Do not look there before trying.
+
+Each notebook has a prediction note and a final explanation area. Record what
+you expected, what actually happened, and why the repair changes the result.
+Advanced SFT, LoRA, DPO, RAG and KV-cache experiments are explicitly small teaching
+implementations; they are not claims that the production Mini-GPT implements
+these systems.
+
+## Portability and source hygiene
+
+Extract the **whole** learning-project ZIP. Keep `run.py`, `tools`,
+`book_src`, `mini_gpt`, `notebooks`, `data`, and `docs` together. Unlike
+the older model-only archive, the current download includes book source/build
+files, so the unified launcher also works after extraction. A standalone
+`.ipynb` download is a replacement within that tree, not a complete environment.
+
+Root discovery works from the project root and nested notebook directories,
+including paths containing spaces and Persian characters. Experiments default
+to tiny CPU data and one PyTorch thread. They require no external data/model
+downloads after installation. Temporary checkpoint experiments use private
+temporary directories rather than overwriting `runs`.
+
+Authored notebooks have no saved outputs or execution counts. Keep your personal
+work; do not regenerate authored notebooks over it. The launcher never invokes
+the notebook generator. Maintainers can regenerate reviewed specifications with
+`python -B -m tools.build_notebooks`; this explicit author command **overwrites
+lesson notebooks**, so use it only with intentional source edits and backups.
+
+## Maintainer verification
 
 ```powershell
-python -B -m http.server 8000 --bind 127.0.0.1 --directory dist
+python -B -m tools.build_notebooks --check
+python -B -m tools.verify_notebooks --mode student
+python -B -m tools.verify_notebooks --mode solutions
+python -B -m unittest discover -s tests -v
+python -B -m tools.prepare_release
 ```
 
-If you extracted `book-site.zip`, run the same server **from its extracted
-directory**, without `--directory dist`. The independent
-`mini-gpt-project.zip` contains the model, sample data, notebooks and setup
-guides, but not the HTML book. Obtain the book separately or use the full
-checkout; that distinction is intentional. If port 8000 is already serving
-this book, reuse it.
+Student verification executes authored notebooks unchanged in fresh kernels and
+requires explicit incomplete exercise status. Solution verification replaces only
+tagged TODO cells **in memory**, executes each notebook in another fresh kernel,
+and requires the exercise/repair checks to pass. Neither mode saves output into
+authored notebooks. The report records execution mode, path, cell counts, and
+timings. An uncaught red error is not an expected student experience.
 
-Always extract the **whole** Mini-GPT ZIP. Preserve `mini_gpt/`, `data/`,
-`notebooks/`, and `docs/` as siblings. Notebook root discovery works from
-their nested directories, including paths containing spaces and Persian text.
-A notebook downloaded individually must replace the corresponding file in that
-structure; it is not a standalone copy of all dependencies.
-
-## Learning map
-
-All listed lessons are links from HTML to the appropriate notebook guide.
-Finish the listed prerequisites before running the notebook. The final listed lesson is the ready-to-run boundary; earlier callouts explicitly defer execution.
-
-| Lab | Notebook | Connected lesson IDs |
-| --- | --- | --- |
-| 01 | [از سطر و ستون تا ضرب ماتریسی](../notebooks/mathematics/01_matrix_products.ipynb) | `06-dot`, `07-matmul` |
-| 02 | [از امتیاز تا احتمال و Loss](../notebooks/mathematics/02_probability_loss.ipynb) | `08-probability`, `09-softmax`, `10-entropy` |
-| 03 | [شکل درست، محور درست؟](../notebooks/pytorch/03_tensor_shapes.ipynb) | `13-torch`, `14-index-device`, `15-broadcast`, `16-reshape` |
-| 04 | [Gradient جهت را نشان می‌دهد؛ اندازهٔ گام چه می‌کند؟](../notebooks/pytorch/04_gradients_steps.ipynb) | `11-derivative`, `12-chain`, `12-sgd`, `17-autograd` |
-| 05 | [یک شبکهٔ کوچک واقعاً چه چیزی یاد می‌گیرد؟](../notebooks/pytorch/05_first_network.ipynb) | `18-module`, `19-network` |
-| 06 | [از نویسه تا نمایش یادگرفتنی](../notebooks/nlp/06_tokens_embeddings.ipynb) | `21-tokenizer`, `23-shift`, `25-embedding`, `26-positions` |
-| 07 | [Attention را خانه‌به‌خانه باز کنیم](../notebooks/attention/07_attention_math.ipynb) | `28-qkv`, `29-scores`, `30-scaling`, `31-values`, `33-mask` |
-| 08 | [اگر آینده را باز بگذاریم چه می‌شود؟](../notebooks/attention/08_causal_mask.ipynb) | `33-mask`, `34-causal-test` |
-| 09 | [چند Head، یک خروجی](../notebooks/transformer/09_multi_head.ipynb) | `35-split-heads`, `36-merge-heads` |
-| 10 | [دو جمع در یک بلوک واقعی](../notebooks/transformer/10_block_trace.ipynb) | `37-ffn`, `38-residual`, `39-layernorm`, `40-block`, `41-stack`, `45-trace` |
-| 11 | [یک آموزش کوچک، با شاهد قابل دیدن](../notebooks/mini_gpt/11_train_inspect.ipynb) | `43-lm-head`, `45-trace`, `46-gradient-path`, `47-loop`, `48-evaluate`, `52-first-run`, `53-curves` |
-| 12 | [وزن ثابت، انتخاب متفاوت](../notebooks/mini_gpt/12_sampling.ipynb) | `54-generate`, `55-temperature`, `56-topkp`, `57-prompts` |
-
-## Execution and experiments
-
-Use **Kernel → Restart Kernel and Run All Cells** for a clean run. Every
-notebook is independent, uses fixed CPU seeds, and defines its own state from
-top to bottom. Labs 11 and 12 each train their own small model; neither reads a
-checkpoint from another notebook. Training takes longer than the small arithmetic
-labs. Exact floating-point values and timings can vary across versions/devices.
-
-Expected failures are deliberately caught and explained: mismatched matrix
-dimensions, silent broadcasting, wrong target dtype, missing Autograd graph,
-out-of-range IDs, incompatible C/H, excessive context and invalid temperature.
-An uncaught red error is **not** expected. Read the exception and check the
-environment and folder structure before proceeding.
-
-The Attention sequence exposes embeddings → Q/K/V → raw and scaled scores →
-mask → Softmax → weights → weighted Values. Later notebooks verify the real
-project's multi-head merge/projection, Pre-Norm residual block, complete logits,
-Loss, gradients, parameter updates, train/validation curves and generated text.
-Their explicit miniature arithmetic is labeled separately from the actual
-`mini_gpt` imports.
-
-Plots use English axis labels to keep tensor coordinates unambiguous; explanations
-and exercises are Persian. Attention heatmaps use Query rows and Key columns; other matrix plots label their own axes.
-The small corpus's held-out tail is not an independent real-world benchmark.
-Neither falling Loss nor attractive samples establish an intelligent or reliable
-assistant.
-
-## Keep source notebooks clean
-
-Authored notebooks have empty outputs and null execution counts. Running them
-does not write model checkpoints, datasets or images into the project. Jupyter
-may create `.ipynb_checkpoints`; Git ignores these. Save useful observations in
-your own working copy or learning log. Before contributing source notebooks,
-restart the kernel, clear all outputs and save. Do not delete useful personal
-experiments merely to make Git quiet.
-
-From the full checkout, maintainers can verify all notebooks in fresh kernels:
-
-```powershell
-.\.venv\Scripts\python.exe -B -m tools.verify_notebooks
-```
-
-This executes each notebook in its own nested directory with the exact invoked
-Python interpreter; it never saves executed outputs into authored files.
-Maintainer tooling is not included in the independent model ZIP.
-
-Implementation references: [JupyterLab installation](https://jupyterlab.readthedocs.io/en/stable/getting_started/installation.html),
-[nbclient execution](https://nbclient.readthedocs.io/en/latest/client.html), and
-[Matplotlib installation](https://matplotlib.org/stable/install/index.html).
+See [Windows setup](WINDOWS_SETUP.md) for Python selection and activation
+troubleshooting. Implementation references:
+[Jupyter authentication](https://jupyter-server.readthedocs.io/en/latest/operators/security.html),
+[kernel specifications](https://jupyter-client.readthedocs.io/en/stable/kernels.html),
+and [nbclient execution](https://nbclient.readthedocs.io/en/latest/client.html).

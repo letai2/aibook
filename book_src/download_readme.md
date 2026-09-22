@@ -1,20 +1,31 @@
-# پروژهٔ مستقل Mini-GPT
+# Persian AI Book — complete local learning project
 
-این ZIP پروژهٔ اجرایی همراه کتاب فارسی است، نه خود کتاب یا ابزار ساخت آن.
-همهٔ فایل‌ها را استخراج کنید و ترمینال را در پوشه‌ای باز کنید که `mini_gpt` و
-`data` کنار هم هستند.
+This download contains the book source, 76 dedicated lesson notebooks, 12 optional
+review notebooks, the actual Mini-GPT, tiny sample data, model tests, and setup guides.
+Extract the whole ZIP before running anything.
 
-- نصب Windows، فعال‌سازی محیط و اولین اجرای CPU: [WINDOWS_SETUP.md](docs/WINDOWS_SETUP.md)
-- راهنمای فارسی مدل، آموزش، ارزیابی، تولید و بازرسی: [mini_gpt/README.md](mini_gpt/README.md)
-- نسخه‌ها و ۲۳ مرحلهٔ آموزشی: [mini_gpt/stages/README.md](mini_gpt/stages/README.md)
-- ثبت آزمایش‌ها: [mini_gpt/learning-log.md](mini_gpt/learning-log.md)
+## Windows: install once
 
-نسخهٔ شمارشی v0 فقط Python می‌خواهد. مدل عصبی در محیط جدا با PyTorch اجرا
-می‌شود؛ GPU لازم نیست. بسته شامل دادهٔ نمونه و آزمون‌های مدل است. آزمون
-مثال‌های کتاب در این بسته رد می‌شود، چون `book_src` همراه آن نیست؛ این آزمون
-در مخزن کامل کتاب اجرا می‌شود. به هیچ Checkpoint ناشناخته اعتماد نکنید.
+```powershell
+python -m venv .venv
+.\.venv\Scripts\python.exe -m pip install --upgrade pip
+.\.venv\Scripts\python.exe -m pip install -r requirements-notebooks.txt
+.\.venv\Scripts\python.exe run.py
+```
 
+Daily use, with the environment activated: `python run.py`.
 
-## آزمایشگاه Jupyter
+Book: http://127.0.0.1:8000/
+Learning desk: http://127.0.0.1:8000/start.html
+Jupyter: http://127.0.0.1:8888/lab (use the private token URL or a book lab button).
 
-پوشهٔ notebooks شامل ۱۲ دفتر مستقل است که از همین Mini-GPT استفاده می‌کنند. [نصب و نقشهٔ درس‌ها](docs/NOTEBOOKS.md) را بخوانید. فایل requirements-notebooks.txt وابستگی‌های پایه را وارد می‌کند؛ محیط جداگانه نسازید. کتاب HTML و ابزار ساخت در این ZIP نیستند؛ برای لینک‌های بازگشت، کتاب را جداگانه روی پورت ۸۰۰۰ سرو کنید.
+The launcher builds HTML locally, starts both servers on loopback, and stops its
+children on Ctrl+C. Save notebook work first. It never fills in your TODOs or
+regenerates your notebooks. Read docs/WINDOWS_SETUP.md and docs/NOTEBOOKS.md.
+
+No GPU, account, external dataset, or downloaded checkpoint is needed. Internet
+is required for initial package installation. Do not expose Jupyter publicly.
+The model is educational, not a capable general-purpose assistant.
+
+The author-only release/test infrastructure is not part of this learner ZIP.
+Model tests and the local book builder are included.

@@ -21,6 +21,7 @@ from book_src.experience import (INLINE_LABS, JOURNAL, MODE_LABELS, lab_page,
                                  lesson_mode, pipeline, stage_for)
 from book_src.visuals import BRIEFS, opening
 from book_src.laboratories import catalog as notebook_catalog, INTRO as NOTEBOOK_INTRO
+from book_src.curriculum import LESSONS, BY_ID, CHAPTERS, PATHS
 
 LABS = notebook_catalog()
 from book_src.glossary import TERMS, SUPPLEMENTAL, extend_from_lessons
@@ -32,21 +33,8 @@ ROOT = Path(__file__).resolve().parents[1]
 ASSET_VERSION = hashlib.sha256(b''.join(p.read_bytes() for p in sorted((ROOT/'book_src').rglob('*'))
     if p.is_file() and p.suffix in {'.py','.css','.js'}) + (ROOT/'data/inspection-sample.json').read_bytes()).hexdigest()[:12]
 OUT = ROOT / "dist"
-LESSONS = [lesson for part in range(1, 11)
-           for lesson in importlib.import_module(f"book_src.part{part:02}").LESSONS]
 extend_from_lessons(LESSONS)
 configure_terms()
-BY_ID = {lesson.id: lesson for lesson in LESSONS}
-CHAPTERS = {}
-PATHS = {}
-for lesson in LESSONS:
-    key = (lesson.part, lesson.chapter)
-    if key not in CHAPTERS:
-        number = len([k for k in CHAPTERS if k[0] == lesson.part]) + 1
-        CHAPTERS[key] = (f"part-{lesson.part:02}/chapter-{number:02}/index.html", [])
-    chapter_path, chapter_lessons = CHAPTERS[key]
-    chapter_lessons.append(lesson)
-    PATHS[lesson.id] = str(Path(chapter_path).with_name(lesson.id + ".html")).replace("\\", "/")
 UNITS = []
 for part in range(1, 11):
     UNITS.extend((l.id, PATHS[l.id], l.title) for l in LESSONS if l.part == part)
@@ -164,7 +152,7 @@ def page(current, title, body, *, part=0, crumbs=(), unit="", kind="reference", 
 <script src="{relative(current, 'assets/manifest.js')+'?v='+ASSET_VERSION}" defer></script><script src="{relative(current, 'assets/book.js')+'?v='+ASSET_VERSION}" defer></script>{scripts}</head>
 <body data-page-kind="{kind}" data-theme="{theme}" data-mode="{mode}" data-unit-id="{escaped(unit)}" data-root="{relative(current,'index.html')}"><a class="skip" href="#main">رفتن به متن</a>
 <header class="topbar"><a class="brand" href="{relative(current,'index.html')}" data-book-link>از <bdi dir="ltr">Python</bdi> تا <bdi dir="ltr" class="nowrap">Mini-GPT</bdi></a>
-<div class="header-actions">{sidebar(current,part)}<details class="book-tools"><summary>میز کار</summary><nav class="toplinks" aria-label="فضاهای کتاب">{link(current,'guide.html','راهنمای آغاز')}{link(current,'lab.html','آزمایشگاه')}<a href="{journal_target}" data-book-link>دفتر آزمایش</a>{link(current,'project.html','پروژه')}{link(current,'glossary.html','واژه‌ها')}{link(current,'api.html','مرجع کد')}</nav></details></div></header>
+<div class="header-actions">{sidebar(current,part)}<details class="book-tools"><summary>میز کار</summary><nav class="toplinks" aria-label="فضاهای کتاب">{link(current,'guide.html','راهنمای آغاز')}{link(current,'lab.html','بازرس مدل')}{link(current,'notebooks.html','آزمایشگاه‌های Jupyter')}<a href="{journal_target}" data-book-link>دفتر آزمایش</a>{link(current,'project.html','پروژه')}{link(current,'glossary.html','واژه‌ها')}{link(current,'api.html','مرجع کد')}</nav></details></div></header>
 <div class="layout"><main id="main"><nav class="breadcrumbs" aria-label="مسیر صفحه">{' <span aria-hidden="true">/</span> '.join(trail)}</nav>
 {masthead}{context}<div class="page-content">{body}</div><div class="reading-finish">{completion}<a href="{journal_target}" data-book-link>ثبت در دفتر آزمایش</a></div>{progress}<footer class="footer"><span>از یک نشانه، تا یک مدل.</span>{link(current,'guide.html','راهنما')} · {link(current,'api.html','کد و منابع')}</footer></main></div>
 <noscript><p>خواندن و ناوبری بدون JavaScript هم کار می‌کند؛ کپی خودکار و ثبت پیشرفت به آن نیاز دارند.</p></noscript></body></html>'''
@@ -232,11 +220,23 @@ def code_block(code, language='python'):
 
 
 def render_lessons():
+    primary = {lab['primary_lesson']: lab for lab in LABS if lab['kind'] == 'lesson'}
+    if (set(primary) != set(BY_ID) or len(primary) != sum(lab['kind'] == 'lesson' for lab in LABS)
+            or any(lab['lessons'] != [identifier] or lab['html'] != PATHS[identifier]
+                   for identifier, lab in primary.items())):
+        raise ValueError('Each lesson needs exactly one correctly mapped primary notebook')
     for lesson in LESSONS:
         path = PATHS[lesson.id]
         chapter_path, _ = CHAPTERS[(lesson.part, lesson.chapter)]
         crumbs = [(f"part-{lesson.part:02}/index.html", f"بخش {lesson.part}"), (chapter_path, lesson.chapter)]
         body = '<article class="lesson-prose">' + lesson.body + '</article>'
+        if lesson.id in primary:
+            lab = primary[lesson.id]
+            body += ('<aside class="notebook-link lesson-lab" aria-label="آزمایشگاه این جلسه">'
+                     '<span class="eyebrow">نیمهٔ عملی همین درس · شما کد می‌نویسید</span>'
+                     '<h2>آزمایشگاه این جلسه</h2><p>'+lab['goal']+'</p><p>'+lab['transition']+'</p>'
+                     '<p>'+link(path, 'launch.html?lesson='+lesson.id, 'باز کردن آزمایشگاه Jupyter ←')+
+                     ' · '+link(path, 'notebooks.html#'+lab['id'], 'راهنما و دریافت دفتر')+'</p></aside>')
         if lesson.id in INLINE_LABS:
             body += INLINE_LABS[lesson.id]()
         body += f'<section class="practice"><div class="practice-heading"><p class="eyebrow">از خواندن به آزمودن</p><h2>حالا نوبت شماست.</h2><ol class="experiment-steps"><li>پیش‌بینی</li><li>اجرا</li><li>مشاهده</li><li>توضیح</li></ol></div><div class="practice-work"><section class="task"><h3>مسئلهٔ این درس</h3><p>{lesson.task}</p>'
@@ -246,11 +246,11 @@ def render_lessons():
         if lesson.review:
             body += f'<p class="note">{lesson.review}</p>'
         for lab in LABS:
-            if lesson.id in lab['lessons']:
+            if lab['kind'] == 'review' and lesson.id in lab['lessons']:
                 ready = lab['lessons'][-1]
                 timing = ('اکنون می‌توانید این ایده را در دفتر مستقل آزمایش کنید.' if lesson.id == ready else
                           'این آزمایش را پس از '+lesson_link(path,ready)+' اجرا کنید؛ فعلاً مسیر اصلی کتاب را ادامه دهید.')
-                body += '<aside class="notebook-link"><span class="eyebrow">آزمایشگاه Jupyter · فعالیت تکمیلی</span><h2>' + link(path, 'notebooks.html#'+lab['id'], lab['title']) + '</h2><p>'+lab['goal']+'</p><p>'+timing+'</p></aside>'
+                body += '<aside class="notebook-link"><span class="eyebrow">آزمایشگاه مرور چند درس · اختیاری</span><h2>' + link(path, 'notebooks.html#'+lab['id'], lab['title']) + '</h2><p>'+lab['goal']+'</p><p>'+timing+'</p></aside>'
         body += pager(path, lesson.id)
         page(path, lesson.title, body, part=lesson.part, crumbs=crumbs, unit=lesson.id, kind="lesson")
         answer_path = f"answers/{lesson.id}.html"
@@ -261,6 +261,11 @@ def render_lessons():
         if lesson.source:
             source_path = "code/" + lesson.source + ".html"
             answer += f'<p>قطعهٔ مرتبط: {link(answer_path,source_path,lesson.source)}. فایل نهایی بخش‌های جلسه‌های بعد را هم دارد؛ خواندن کامل آن اکنون پیش‌نیاز نیست.</p>'
+        if lesson.id in primary:
+            from book_src.lab_exercises import exercises
+            spec = exercises()[lesson.id]
+            answer += '<section id="lab-solution"><h2>راه‌حل مرجع آزمایشگاه</h2><p>ابتدا TODOها را خودتان کامل کنید. این تعریف‌ها جایگزین تابع‌های ناتمام همان دفتر می‌شوند؛ مثال و ورودی‌ها در دفتر هستند.</p>'
+            answer += '<h3>تمرین</h3>'+code_block(spec['solution'])+'<h3>اصلاح خرابی</h3>'+code_block(spec['fix_solution'])+'</section>'
         answer += f'<p>{lesson_link(answer_path,lesson.id)} · {link(answer_path,"project.html","دریافت پروژه و دستور اجرا")}</p>'
         answer += pager(answer_path, lesson.id)
         page(answer_path, "پاسخ: " + lesson.title, answer, part=lesson.part, crumbs=crumbs, kind='answer')
@@ -306,7 +311,7 @@ def render_structure():
         page(answer_path,f"راهنمای ایستگاه {n}",f'<p>{answer}</p><p>{criterion}</p><p>{link(answer_path,cp_path,"بازگشت به تکلیف")}</p>'+pager(answer_path,f'checkpoint-{n:02}'),part=n,kind='answer')
     intro = f'''<div class="home-opening"><p class="objective">جعبه را باز کنیم.<br>از اولین حدس تا مدلی که خودمان می‌سازیم.</p><p>برای کسی که Python می‌نویسد و می‌خواهد بفهمد پشت ادامهٔ یک جمله چه اتفاقی می‌افتد. عددها را دنبال می‌کنیم، کد می‌سازیم، گاهی عمداً خرابش می‌کنیم و برای هر نتیجه شاهد می‌آوریم.</p><div class="book-stats"><span><b>{len(LESSONS)}</b>درس</span><span><b>۱۰</b>ایستگاه عملی</span><span><b>۲۳</b>مرحلهٔ ساخت</span><span><b>۱</b>پروژهٔ زنده</span></div></div>'''
     intro += f'<p>{link("index.html","guide.html","از اینجا آغاز کنید: روش کار و نصب")} · {lesson_link("index.html","01-model")} · {link("index.html","project.html","نقشهٔ نسخه‌های پروژه")}</p>'
-    intro += '<p>'+link("index.html","notebooks.html","۱۲ آزمایشگاه Jupyter همراه مسیر یادگیری")+'</p>'
+    intro += '<p>'+link("index.html","notebooks.html",f"{len(LESSONS)} آزمایشگاه درس‌به‌درس + ۱۲ دفتر مرور")+' · '+link('index.html','start.html','شروع محیط کتاب و Jupyter')+'</p>'
     intro += '<p><a data-resume hidden>ادامه از آخرین درس</a></p>'
     intro += '<div class="three-spaces"><section><span>۰۱ / بخوان و بساز</span><h2>مسیر مطالعه</h2><p>ریاضی و PyTorch از نخستین نیاز معرفی می‌شوند. پاسخ‌ها جدا هستند تا جا برای فکرکردن بماند.</p></section><section><span>۰۲ / دست‌کاری کن</span><h2>'+link('index.html','lab.html','آزمایشگاه')+'</h2><p>پوشش را بردار، دما را تغییر بده، و اعداد واقعیِ مدل خودت را باز کن.</p></section><section><span>۰۳ / شاهد نگه دار</span><h2>'+link('index.html','journal.html','دفتر آزمایش')+'</h2><p>حدس، تنظیمات، خطا و کشف را ثبت کن؛ محلی، قابل خروجی، بدون حساب.</p></section></div>'
     intro += '<h2 id="route">اطلس مسیر یادگیری</h2><p>دانش قبلی یادگیری عمیق لازم نیست. برای چند هفته کار همراه با تمرین برنامه بریزید؛ معیار عبور، توان توضیح و تغییر کد است.</p><div class="route-grid">' + ''.join(toc) + '</div>'
@@ -353,8 +358,25 @@ def render_references():
     render_glossary()
     notebook_body = NOTEBOOK_INTRO
     for lab in LABS:
-        notebook_body += '<section class="notebook-link" id="'+lab['id']+'"><h2>'+lab['id'][:2]+' · '+lab['title']+'</h2><p>'+lab['goal']+'</p><p>درس‌های مرتبط، به ترتیب مطالعه: '+ ' · '.join(lesson_link('notebooks.html', identifier) for identifier in lab['lessons'])+'</p><p><a download href="'+lab['path']+'">دریافت این دفتر (.ipynb)</a> · <a href="#setup">روش بازکردن و اجرا</a></p></section>'
-    page('notebooks.html','آزمایشگاه‌های Jupyter در مسیر کتاب',resolve(notebook_body,'notebooks.html')+continuation('notebooks.html',('07-matmul',PATHS['07-matmul'],'نخستین آزمایش: ضرب ماتریسی'),BY_ID['07-matmul'].objective,parent=('index.html#route','مسیر اصلی کتاب')),kind='laboratory')
+        label = ('درس '+str(lab['lesson_number'])+' · دفتر تمرین' if lab['kind'] == 'lesson' else 'مرور چند درس · اختیاری')
+        target = 'launch.html?lesson='+lab['primary_lesson'] if lab['kind'] == 'lesson' else 'launch.html?review='+lab['id']
+        notebook_body += '<section class="notebook-link" id="'+lab['id']+'"><p class="eyebrow">'+label+'</p><h2>'+lab['title']+'</h2><p>'+lab['goal']+'</p><p>درس‌های مرتبط، به ترتیب مطالعه: '+ ' · '.join(lesson_link('notebooks.html', identifier) for identifier in lab['lessons'])+'</p><p>'+link('notebooks.html',target,'باز کردن آزمایشگاه Jupyter ←')+' · <a download href="'+lab['path']+'">دریافت این دفتر (.ipynb)</a> · <a href="#setup">روش بازکردن و اجرا</a></p></section>'
+    from book_src.lab_exercises.reviews import EXERCISES as review_specs
+    for lab in LABS:
+        if lab['kind'] != 'review':
+            continue
+        spec = review_specs[lab['id']]
+        target = 'answers/lab-'+lab['id']+'.html'
+        content = '<p class="answers-warning">ابتدا دو تابع TODO دفتر مرور را خودتان کامل کنید؛ این پاسخ‌ها جایگزین همان تابع‌ها هستند.</p>'
+        content += '<h2>تمرین</h2><p>'+spec['task']+'</p>'+code_block(spec['solution'])
+        content += '<h2>اصلاح خرابی</h2><p>'+spec['debug']+'</p>'+code_block(spec['fix_solution'])
+        content += continuation(target,(lab['lessons'][-1],PATHS[lab['lessons'][-1]],'بازگشت به درس مرتبط'),spec['goal'],parent=('notebooks.html#'+lab['id'],'دفتر مرور'))
+        page(target,'پاسخ دفتر مرور: '+lab['title'],content,kind='answer')
+    page('notebooks.html','آزمایشگاه‌های Jupyter در مسیر کتاب',resolve(notebook_body,'notebooks.html')+continuation('notebooks.html',('01-model',PATHS['01-model'],'نخستین آزمایش: زمان خواندن'),BY_ID['01-model'].objective,parent=('index.html#route','مسیر اصلی کتاب')),kind='laboratory')
+    start = '<p class="objective">یک درس بخوانید، همان ایده را در Python بسازید و نتیجه را به کتاب برگردانید.</p><div class="three-spaces"><section><h2>'+link('start.html','index.html','📖 باز کردن کتاب')+'</h2><p>'+lesson_link('start.html','01-model')+'</p></section><section><h2>'+link('start.html','launch.html','🧪 باز کردن Jupyter')+'</h2><p>'+link('start.html','launch.html?lesson=01-model','اولین آزمایشگاه: زمان خواندن')+'</p></section><section><h2>'+link('start.html','notebooks.html','فهرست آزمایشگاه‌ها')+'</h2><p>'+link('start.html','index.html#route','فهرست درس‌ها')+'</p></section></div><p>'+link('start.html','windows.html','نصب و راهنمای شروع')+'</p><p>این صفحه با <code>python run.py</code> به هر دو سرویس محلی وصل می‌شود. تا پایان کار، ترمینال را باز نگه دارید. برای خروج، Ctrl+C هر دو سرویس را متوقف می‌کند.</p>'
+    page('start.html','میز کار یادگیری',start)
+    launch = '<p class="objective">برای نوشتن و اجرای Python، محیط محلی را باز کنید.</p><p>این نسخهٔ ایستا خودش Jupyter اجرا نمی‌کند. پروژهٔ کامل را استخراج کنید، وابستگی‌ها را یک بار نصب کنید و از ریشهٔ پروژه فرمان زیر را اجرا کنید.</p><pre><code>python run.py</code></pre><p>سپس کتاب را روی <a href="http://127.0.0.1:8000/start.html">میز کار محلی</a> باز کنید و دکمهٔ آزمایشگاه همان درس را بزنید؛ دفتر درست مستقیم باز می‌شود.</p><p>'+link('launch.html','windows.html','نصب یک‌باره در Windows')+' · '+link('launch.html','downloads/mini-gpt-project.zip','دریافت پروژهٔ کامل یادگیری')+' · '+link('launch.html','notebooks.html','فهرست همهٔ دفترها')+'</p>'
+    page('launch.html','باز کردن آزمایشگاه محلی',launch)
     from book_src.references import GUIDE, PROJECT, API
     for path, title, body in [("guide.html","چطور با این کتاب کار کنیم؟",GUIDE),
                               ("project.html","پروژه‌ای که همراه شما رشد می‌کند",PROJECT),
@@ -417,13 +439,15 @@ def main(output=None):
         BY_ID['01-model'].objective, parent=('guide.html', 'راهنمای مسیر'))
     page('windows.html', 'نصب و اجرای کتاب در Windows', windows_body)
     manifest = {'edition':3,'units':[{'id':i,'path':p,'title':normalize_text(t)} for i,p,t in UNITS],
+                'laboratories':LABS,
                 'concepts':{term.name:slug for slug,term in TERMS.items()},
                 'pages':sorted(p.relative_to(OUT).as_posix() for p in OUT.rglob('*.html'))}
     (assets/'manifest.js').write_text('window.BOOK = '+json.dumps(manifest,ensure_ascii=False)+';\n',encoding='utf-8')
     (OUT/'downloads').mkdir(exist_ok=True)
-    packaged = [ROOT/name for name in ('requirements.txt','requirements-notebooks.txt','docs/WINDOWS_SETUP.md','docs/NOTEBOOKS.md')]
-    for directory in ('mini_gpt','data','notebooks'):
-        packaged.extend(p for p in (ROOT/directory).rglob('*') if p.is_file() and p.suffix in ('.py','.md','.txt','.ipynb') and '.ipynb_checkpoints' not in p.parts)
+    packaged = [ROOT/name for name in ('run.py','requirements.txt','requirements-notebooks.txt','docs/WINDOWS_SETUP.md','docs/NOTEBOOKS.md','tools/__init__.py','tools/build_book.py','tools/learning_server.py')]
+    for directory in ('mini_gpt','data','notebooks','book_src'):
+        packaged.extend(p for p in (ROOT/directory).rglob('*') if p.is_file() and p.suffix in ('.py','.md','.txt','.ipynb','.json','.css','.js','.woff2') and '.ipynb_checkpoints' not in p.parts and '__pycache__' not in p.parts
+                        and (directory != 'notebooks' or p.relative_to(ROOT).as_posix() in {lab['path'] for lab in LABS}))
     packaged.extend((ROOT/'tests').glob('test_*.py'))
     with zipfile.ZipFile(OUT/'downloads'/'mini-gpt-project.zip','w',zipfile.ZIP_DEFLATED) as archive:
         readme = zipfile.ZipInfo('README.md', date_time=(2026,9,19,0,0,0))
