@@ -1,0 +1,271 @@
+<!doctype html>
+<html lang="fa" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>mini_gpt/instruction.py | از Python تا Mini-GPT</title><meta name="description" content="کتاب فارسیِ ساخت تدریجی یک مدل زبان؛ درس، آزمایش، کد و خودسنجی.">
+<link rel="stylesheet" href="../../assets/book.css?v=d3be336a7feb">
+<link rel="preload" href="../../assets/fonts/Vazirmatn.woff2" as="font" type="font/woff2" crossorigin>
+<script src="../../assets/manifest.js?v=d3be336a7feb" defer></script><script src="../../assets/book.js?v=d3be336a7feb" defer></script><script src="../../assets/experience.js?v=d3be336a7feb" defer></script></head>
+<body data-page-kind="reference" data-theme="model" data-mode="reference" data-unit-id="" data-root="../../index.html"><a class="skip" href="#main">رفتن به متن</a>
+<header class="topbar"><a class="brand" href="../../index.html" data-book-link>از <bdi dir="ltr">Python</bdi> تا <bdi dir="ltr" class="nowrap">Mini-GPT</bdi></a>
+<div class="header-actions"><nav class="atlas" aria-label="اطلس مسیر"><details><summary>فهرست درس‌ها</summary><div class="atlas-content"><label>پیداکردن درس <input type="search" data-lesson-search placeholder="مثلاً بلوک یا mask"></label><div data-search-results aria-live="polite"></div><div class="atlas-grid"><details><summary>بخش 1 · مسئله را با Python لمس کنیم</summary><a href="../../part-01/index.html" data-book-link>صفحهٔ بخش</a><ol><li><a href="../../part-01/chapter-01/index.html" data-book-link>مسئلهٔ یادگیری</a></li><li><a href="../../part-01/chapter-02/index.html" data-book-link>متن به <bdi dir="ltr">Token</bdi></a></li><li><a href="../../part-01/chapter-03/index.html" data-book-link>اولین ادامه‌دهنده</a></li><li><a href="../../part-01/chapter-04/index.html" data-book-link>شواهد یادگیری</a></li><li><a href="../../part-01/checkpoint.html" data-book-link data-unit="checkpoint-01">ایستگاه عملی</a></li></ol></details><details><summary>بخش 2 · عدد، احتمال و تغییر</summary><a href="../../part-02/index.html" data-book-link>صفحهٔ بخش</a><ol><li><a href="../../part-02/chapter-01/index.html" data-book-link>ساختار عددها</a></li><li><a href="../../part-02/chapter-02/index.html" data-book-link>ترکیب عددها</a></li><li><a href="../../part-02/chapter-03/index.html" data-book-link>از شمارش تا اطمینان</a></li><li><a href="../../part-02/chapter-04/index.html" data-book-link>سنجش پیش‌بینی</a></li><li><a href="../../part-02/chapter-05/index.html" data-book-link>تغییر <bdi dir="ltr">Parameter</bdi></a></li><li><a href="../../part-02/chapter-06/index.html" data-book-link>از محاسبه تا شبکه</a></li><li><a href="../../part-02/checkpoint.html" data-book-link data-unit="checkpoint-02">ایستگاه عملی</a></li></ol></details><details><summary>بخش 3 · ابزار محاسبه و اولین شبکه</summary><a href="../../part-03/index.html" data-book-link>صفحهٔ بخش</a><ol><li><a href="../../part-03/chapter-01/index.html" data-book-link>آشنایی با ابزار</a></li><li><a href="../../part-03/chapter-02/index.html" data-book-link>حساب محورها</a></li><li><a href="../../part-03/chapter-03/index.html" data-book-link>اولین یادگیری عصبی</a></li><li><a href="../../part-03/chapter-04/index.html" data-book-link>گردش داده</a></li><li><a href="../../part-03/checkpoint.html" data-book-link data-unit="checkpoint-03">ایستگاه عملی</a></li></ol></details><details><summary>بخش 4 · متن و نمایش یادگرفتنی</summary><a href="../../part-04/index.html" data-book-link>صفحهٔ بخش</a><ol><li><a href="../../part-04/chapter-01/index.html" data-book-link>متن قابل اعتماد</a></li><li><a href="../../part-04/chapter-02/index.html" data-book-link>نمونهٔ آموزش</a></li><li><a href="../../part-04/chapter-03/index.html" data-book-link>نمایش یادگرفتنی</a></li><li><a href="../../part-04/checkpoint.html" data-book-link data-unit="checkpoint-04">ایستگاه عملی</a></li></ol></details><details><summary>بخش 5 · Single-Head <bdi dir="ltr">Attention</bdi></summary><a href="../../part-05/index.html" data-book-link>صفحهٔ بخش</a><ol><li><a href="../../part-05/chapter-01/index.html" data-book-link>پرسش و اطلاعات</a></li><li><a href="../../part-05/chapter-02/index.html" data-book-link><bdi dir="ltr">Attention</bdi> با عدد</a></li><li><a href="../../part-05/chapter-03/index.html" data-book-link>محدودیت اطلاعات</a></li><li><a href="../../part-05/checkpoint.html" data-book-link data-unit="checkpoint-05">ایستگاه عملی</a></li></ol></details><details><summary>بخش 6 · از چند <bdi dir="ltr">Head</bdi> تا بلوک</summary><a href="../../part-06/index.html" data-book-link>صفحهٔ بخش</a><ol><li><a href="../../part-06/chapter-01/index.html" data-book-link>چند نگاه هم‌زمان</a></li><li><a href="../../part-06/chapter-02/index.html" data-book-link>پردازش هر موقعیت</a></li><li><a href="../../part-06/chapter-03/index.html" data-book-link>پایداری بلوک</a></li><li><a href="../../part-06/chapter-04/index.html" data-book-link>مونتاژ معماری</a></li><li><a href="../../part-06/checkpoint.html" data-book-link data-unit="checkpoint-06">ایستگاه عملی</a></li></ol></details><details><summary>بخش 7 · <bdi dir="rtl">مدل زبانی</bdi> کامل</summary><a href="../../part-07/index.html" data-book-link>صفحهٔ بخش</a><ol><li><a href="../../part-07/chapter-01/index.html" data-book-link>از نمایش به پیش‌بینی</a></li><li><a href="../../part-07/chapter-02/index.html" data-book-link>ردیابی کل مدل</a></li><li><a href="../../part-07/checkpoint.html" data-book-link data-unit="checkpoint-07">ایستگاه عملی</a></li></ol></details><details><summary>بخش 8 · زندگی روزمرهٔ آموزش</summary><a href="../../part-08/index.html" data-book-link>صفحهٔ بخش</a><ol><li><a href="../../part-08/chapter-01/index.html" data-book-link>آموزش روزمره</a></li><li><a href="../../part-08/chapter-02/index.html" data-book-link>ذخیره و ادامه</a></li><li><a href="../../part-08/chapter-03/index.html" data-book-link>خواندن نتیجه</a></li><li><a href="../../part-08/checkpoint.html" data-book-link data-unit="checkpoint-08">ایستگاه عملی</a></li></ol></details><details><summary>بخش 9 · تولید، خرابی و آزمایش</summary><a href="../../part-09/index.html" data-book-link>صفحهٔ بخش</a><ol><li><a href="../../part-09/chapter-01/index.html" data-book-link>یک <bdi dir="ltr">Token</bdi> در هر گام</a></li><li><a href="../../part-09/chapter-02/index.html" data-book-link>کنترل انتخاب</a></li><li><a href="../../part-09/chapter-03/index.html" data-book-link>حدود تولید</a></li><li><a href="../../part-09/chapter-04/index.html" data-book-link>آزمایش علّی و موقعیتی</a></li><li><a href="../../part-09/chapter-05/index.html" data-book-link>کارگاه خطا</a></li><li><a href="../../part-09/checkpoint.html" data-book-link data-unit="checkpoint-09">ایستگاه عملی</a></li></ol></details><details><summary>بخش 10 · از ادامه‌دهنده به پاسخ‌گو</summary><a href="../../part-10/index.html" data-book-link>صفحهٔ بخش</a><ol><li><a href="../../part-10/chapter-01/index.html" data-book-link>مسیر تغییر رفتار</a></li><li><a href="../../part-10/chapter-02/index.html" data-book-link>از ادامه‌دهنده به دستیار</a></li><li><a href="../../part-10/checkpoint.html" data-book-link data-unit="checkpoint-10">ایستگاه عملی</a></li></ol></details><details><summary>بخش 11 · زمینه و پاسخ مستند</summary><a href="../../part-11/index.html" data-book-link>صفحهٔ بخش</a><ol><li><a href="../../part-11/chapter-01/index.html" data-book-link>ساخت ورودی</a></li><li><a href="../../part-11/chapter-02/index.html" data-book-link>یافتن شاهد</a></li><li><a href="../../part-11/chapter-03/index.html" data-book-link>پاسخ مستند</a></li><li><a href="../../part-11/checkpoint.html" data-book-link data-unit="checkpoint-11">ایستگاه عملی</a></li></ol></details><details><summary>بخش 12 · گفت‌وگو و حافظهٔ بیرونی</summary><a href="../../part-12/index.html" data-book-link>صفحهٔ بخش</a><ol><li><a href="../../part-12/chapter-01/index.html" data-book-link>حافظهٔ گفت‌وگو</a></li><li><a href="../../part-12/chapter-02/index.html" data-book-link>حافظهٔ پایدار</a></li><li><a href="../../part-12/checkpoint.html" data-book-link data-unit="checkpoint-12">ایستگاه عملی</a></li></ol></details><details><summary>بخش 13 · ابزار، حل مسئله و وارسی</summary><a href="../../part-13/index.html" data-book-link>صفحهٔ بخش</a><ol><li><a href="../../part-13/chapter-01/index.html" data-book-link>اجرای کنترل‌شده</a></li><li><a href="../../part-13/chapter-02/index.html" data-book-link>حل و وارسی</a></li><li><a href="../../part-13/checkpoint.html" data-book-link data-unit="checkpoint-13">ایستگاه عملی</a></li></ol></details><details><summary>بخش 14 · مدل درون یک سامانه</summary><a href="../../part-14/index.html" data-book-link>صفحهٔ بخش</a><ol><li><a href="../../part-14/chapter-01/index.html" data-book-link>مدل درون سامانه</a></li><li><a href="../../part-14/chapter-02/index.html" data-book-link>سنجش سامانه</a></li><li><a href="../../part-14/checkpoint.html" data-book-link data-unit="checkpoint-14">ایستگاه عملی</a></li></ol></details><details><summary>بخش 15 · هزینه، اجرا و پروژهٔ یکپارچه</summary><a href="../../part-15/index.html" data-book-link>صفحهٔ بخش</a><ol><li><a href="../../part-15/chapter-01/index.html" data-book-link>حافظه و محاسبه</a></li><li><a href="../../part-15/chapter-02/index.html" data-book-link>هزینهٔ اجرا</a></li><li><a href="../../part-15/chapter-03/index.html" data-book-link>اجرای قابل تکرار</a></li><li><a href="../../part-15/chapter-04/index.html" data-book-link>پروژهٔ یکپارچه</a></li><li><a href="../../part-15/checkpoint.html" data-book-link data-unit="checkpoint-15">ایستگاه عملی</a></li></ol></details></div></div></details></nav><details class="book-tools"><summary>میز کار</summary><nav class="toplinks" aria-label="فضاهای کتاب"><a href="../../guide.html" data-book-link>راهنمای آغاز</a><a href="../../lab.html" data-book-link>بازرس مدل</a><a href="../../notebooks.html" data-book-link>آزمایشگاه‌های Jupyter</a><a href="../../journal.html" data-book-link>دفتر آزمایش</a><a href="../../project.html" data-book-link>پروژه</a><a href="../../glossary.html" data-book-link>واژه‌ها</a><a href="../../api.html" data-book-link>مرجع کد</a></nav></details></div></header>
+<div class="layout"><main id="main"><nav class="breadcrumbs" aria-label="مسیر صفحه"><a href="../../index.html" data-book-link>خانه</a> <span aria-hidden="true">/</span> <span aria-current="page">mini_gpt/instruction.py</span></nav>
+<header class="page-masthead"><p class="eyebrow">از Python تا Mini-GPT</p><h1>mini_gpt/instruction.py</h1></header><div class="page-content"><p>این فایل مرجع است. متن فارسی درون کد ممکن است به‌علت چیدمان چپ‌به‌راست جدا دیده شود؛ نسخهٔ دانلودی <a class="term-link" id="term-ref-utf-8-1" data-term="utf-8" href="../../glossary/utf-8.html?return=..%2Fcode%2Fmini_gpt%2Finstruction.py.html%23term-ref-utf-8-1" title="توضیح UTF-8"><bdi dir="ltr">UTF-8</bdi></a> است.</p><p><a href="../../api.html" data-book-link>توضیح نام‌ها و دستورها</a> · <a href="../../project.html" data-book-link>دریافت همهٔ فایل‌ها</a></p><p>درس‌های مرتبط: <a href="../../part-10/chapter-02/65a-sft-lab.html" data-book-link data-unit="65a-sft-lab">همان Mini-GPT را روی پاسخ‌های مشخص تنظیم کنیم</a></p><pre data-code-language="python"><code><span class="syntax-string">&quot;&quot;&quot;Small, inspectable response-only SFT using the real MiniGPT.
+
+The bundled experiment learns four one-character answers about this course.
+It is a mechanism demonstration, not an instruction-following assistant.
+No downloads, checkpoint prerequisites or filesystem writes are required.
+&quot;&quot;&quot;</span>
+
+<span class="syntax-keyword">from</span> copy <span class="syntax-keyword">import</span> deepcopy
+<span class="syntax-keyword">from</span> dataclasses <span class="syntax-keyword">import</span> asdict, dataclass
+<span class="syntax-keyword">from</span> pathlib <span class="syntax-keyword">import</span> Path
+
+<span class="syntax-keyword">import</span> torch
+<span class="syntax-keyword">from</span> torch.nn <span class="syntax-keyword">import</span> functional <span class="syntax-keyword">as</span> F
+
+<span class="syntax-keyword">from</span> .config <span class="syntax-keyword">import</span> ModelConfig
+<span class="syntax-keyword">from</span> .dataset <span class="syntax-keyword">import</span> NextTokenDataset
+<span class="syntax-keyword">from</span> .model <span class="syntax-keyword">import</span> MiniGPT
+<span class="syntax-keyword">from</span> .tokenizer <span class="syntax-keyword">import</span> CharacterTokenizer
+<span class="syntax-keyword">from</span> .train <span class="syntax-keyword">import</span> random_batch
+
+
+@dataclass(frozen=<span class="syntax-keyword">True</span>)
+<span class="syntax-keyword">class</span> InstructionExample:
+    instruction: str
+    answer: str
+
+
+TRAIN_EXAMPLES = (
+    InstructionExample(<span class="syntax-string">&quot;در آموزش وزن عوض می شود؟&quot;</span>, <span class="syntax-string">&quot;ب&quot;</span>),
+    InstructionExample(<span class="syntax-string">&quot;در تولید وزن عوض می شود؟&quot;</span>, <span class="syntax-string">&quot;ن&quot;</span>),
+    InstructionExample(<span class="syntax-string">&quot;در آموزش هدف داریم؟&quot;</span>, <span class="syntax-string">&quot;ب&quot;</span>),
+    InstructionExample(<span class="syntax-string">&quot;در تولید پاسخ درست تضمین است؟&quot;</span>, <span class="syntax-string">&quot;ن&quot;</span>),
+)
+HELDOUT_EXAMPLES = (
+    InstructionExample(<span class="syntax-string">&quot;آیا در آموزش وزن عوض می شود؟&quot;</span>, <span class="syntax-string">&quot;ب&quot;</span>),
+    InstructionExample(<span class="syntax-string">&quot;آیا در تولید وزن عوض می شود؟&quot;</span>, <span class="syntax-string">&quot;ن&quot;</span>),
+)
+<span class="syntax-comment"># Deliberately no formatted instruction/answer records in this pretraining text.</span>
+PRETRAIN_TEXT = (
+    <span class="syntax-string">&quot;مدل با داده آموزش می بیند. در آموزش وزن تغییر می کند. &quot;</span>
+    <span class="syntax-string">&quot;تولید متن وزن را عوض نمی کند. هدف آموزش با پاسخ درست یکی نیست. &quot;</span>
+    <span class="syntax-string">&quot;آیا داده کافی است؟ باید آزمایش کنیم. ب و ن دو حرف هستند. &quot;</span>
+) * <span class="syntax-number">8</span>
+
+
+<span class="syntax-keyword">def</span> format_prompt(instruction):
+    <span class="syntax-string">&quot;&quot;&quot;A fixed visible format; the toy answer is ب (yes) or ن (no).&quot;&quot;&quot;</span>
+    <span class="syntax-keyword">if</span> <span class="syntax-keyword">not</span> isinstance(instruction, str) <span class="syntax-keyword">or</span> <span class="syntax-keyword">not</span> instruction.strip():
+        <span class="syntax-keyword">raise</span> ValueError(<span class="syntax-string">&quot;instruction must be nonempty text&quot;</span>)
+    <span class="syntax-keyword">return</span> <span class="syntax-string">&quot;پرسش: &quot;</span> + instruction + <span class="syntax-string">&quot;\nپاسخ: &quot;</span>
+
+
+<span class="syntax-keyword">def</span> encode_example(tokenizer, example, context_length):
+    <span class="syntax-string">&quot;&quot;&quot;Return (x, y, response_mask), each with shape (1,T), without padding.
+
+    The mask is aligned to shifted TARGETS. Unknown characters and oversized
+    records are rejected instead of silently erasing the training objective.
+    &quot;&quot;&quot;</span>
+    <span class="syntax-keyword">if</span> <span class="syntax-keyword">not</span> isinstance(example.answer, str) <span class="syntax-keyword">or</span> <span class="syntax-keyword">not</span> example.answer:
+        <span class="syntax-keyword">raise</span> ValueError(<span class="syntax-string">&quot;answer must be nonempty text&quot;</span>)
+    <span class="syntax-keyword">if</span> type(context_length) <span class="syntax-keyword">is</span> <span class="syntax-keyword">not</span> int <span class="syntax-keyword">or</span> context_length &lt; <span class="syntax-number">1</span>:
+        <span class="syntax-keyword">raise</span> ValueError(<span class="syntax-string">&quot;context_length must be a positive integer&quot;</span>)
+    prefix = format_prompt(example.instruction)
+    ids = tokenizer.encode(prefix + example.answer)
+    <span class="syntax-keyword">if</span> <span class="syntax-number">0</span> <span class="syntax-keyword">in</span> ids:
+        <span class="syntax-keyword">raise</span> ValueError(<span class="syntax-string">&quot;example contains characters outside the fixed vocabulary&quot;</span>)
+    <span class="syntax-keyword">if</span> len(ids) - <span class="syntax-number">1</span> &gt; context_length:
+        <span class="syntax-keyword">raise</span> ValueError(<span class="syntax-string">&quot;instruction and answer exceed the training context&quot;</span>)
+    sequence = torch.tensor([ids], dtype=torch.long)
+    <span class="syntax-comment"># Target j is original token j+1; the first answer token starts at len(prefix).</span>
+    mask = torch.arange(len(ids) - <span class="syntax-number">1</span>)[<span class="syntax-keyword">None</span>, :] &gt;= len(prefix) - <span class="syntax-number">1</span>
+    <span class="syntax-keyword">return</span> sequence[:, :-<span class="syntax-number">1</span>], sequence[:, <span class="syntax-number">1</span>:], mask
+
+
+<span class="syntax-keyword">def</span> response_loss(logits, targets, mask):
+    <span class="syntax-string">&quot;&quot;&quot;Token-weighted mean CE over selected response targets only.&quot;&quot;&quot;</span>
+    <span class="syntax-keyword">if</span> logits.ndim != <span class="syntax-number">3</span> <span class="syntax-keyword">or</span> targets.shape != logits.shape[:<span class="syntax-number">2</span>] <span class="syntax-keyword">or</span> mask.shape != targets.shape:
+        <span class="syntax-keyword">raise</span> ValueError(<span class="syntax-string">&quot;expected logits (B,T,V) and targets/mask (B,T)&quot;</span>)
+    <span class="syntax-keyword">if</span> targets.dtype != torch.long <span class="syntax-keyword">or</span> mask.dtype != torch.bool:
+        <span class="syntax-keyword">raise</span> ValueError(<span class="syntax-string">&quot;targets must be long and mask must be bool&quot;</span>)
+    <span class="syntax-keyword">if</span> logits.device != targets.device <span class="syntax-keyword">or</span> logits.device != mask.device:
+        <span class="syntax-keyword">raise</span> ValueError(<span class="syntax-string">&quot;logits, targets and mask must share a device&quot;</span>)
+    <span class="syntax-keyword">if</span> <span class="syntax-keyword">not</span> mask.any().item():
+        <span class="syntax-keyword">raise</span> ValueError(<span class="syntax-string">&quot;response mask selects no targets&quot;</span>)
+    <span class="syntax-keyword">if</span> targets.min().item() &lt; <span class="syntax-number">0</span> <span class="syntax-keyword">or</span> targets.max().item() &gt;= logits.shape[-<span class="syntax-number">1</span>]:
+        <span class="syntax-keyword">raise</span> ValueError(<span class="syntax-string">&quot;all target IDs must belong to the vocabulary&quot;</span>)
+    <span class="syntax-keyword">return</span> F.cross_entropy(logits[mask], targets[mask])
+
+
+<span class="syntax-keyword">def</span> train_response_step(model, optimizer, encoded):
+    <span class="syntax-string">&quot;&quot;&quot;One SFT update. The original MiniGPT.forward loss remains unchanged.&quot;&quot;&quot;</span>
+    model.train()
+    optimizer.zero_grad(set_to_none=<span class="syntax-keyword">True</span>)
+    x, targets, mask = encoded
+    loss = response_loss(model(x)[<span class="syntax-number">0</span>], targets, mask)
+    <span class="syntax-keyword">if</span> <span class="syntax-keyword">not</span> torch.isfinite(loss).item():
+        <span class="syntax-keyword">raise</span> ValueError(<span class="syntax-string">&quot;nonfinite response loss&quot;</span>)
+    loss.backward()
+    torch.nn.utils.clip_grad_norm_(model.parameters(), <span class="syntax-number">1.0</span>, error_if_nonfinite=<span class="syntax-keyword">True</span>)
+    optimizer.step()
+    <span class="syntax-keyword">return</span> loss.item()
+
+
+@torch.no_grad()
+<span class="syntax-keyword">def</span> evaluate_instructions(model, tokenizer, examples, *, answer_tokens=<span class="syntax-number">1</span>):
+    <span class="syntax-string">&quot;&quot;&quot;Measure response CE and greedy exact match for a FIXED answer budget.
+
+    The budget is a task contract, never obtained from each reference answer.
+    This toy model has no EOS. Returned rows are real predictions, including
+    failures. Response CE is token-weighted; exact match is example-weighted.
+    &quot;&quot;&quot;</span>
+    examples = tuple(examples)
+    <span class="syntax-keyword">if</span> <span class="syntax-keyword">not</span> examples <span class="syntax-keyword">or</span> type(answer_tokens) <span class="syntax-keyword">is</span> <span class="syntax-keyword">not</span> int <span class="syntax-keyword">or</span> answer_tokens &lt; <span class="syntax-number">1</span>:
+        <span class="syntax-keyword">raise</span> ValueError(<span class="syntax-string">&quot;provide examples and a positive fixed answer budget&quot;</span>)
+    mode = model.training
+    device = next(model.parameters()).device
+    total_loss, count, rows = <span class="syntax-number">0.0</span>, <span class="syntax-number">0</span>, []
+    model.eval()
+    <span class="syntax-keyword">try</span>:
+        <span class="syntax-keyword">for</span> example <span class="syntax-keyword">in</span> examples:
+            encoded = tuple(t.to(device) <span class="syntax-keyword">for</span> t <span class="syntax-keyword">in</span> encode_example(tokenizer, example, model.config.context_length))
+            x, y, mask = encoded
+            tokens = int(mask.sum().item())
+            total_loss += response_loss(model(x)[<span class="syntax-number">0</span>], y, mask).item() * tokens
+            count += tokens
+            prompt = torch.tensor([tokenizer.encode(format_prompt(example.instruction))], device=device)
+            generated = model.generate(prompt, answer_tokens, greedy=<span class="syntax-keyword">True</span>)
+            prediction = tokenizer.decode(generated[<span class="syntax-number">0</span>, prompt.shape[<span class="syntax-number">1</span>]:].tolist())
+            rows.append({<span class="syntax-string">&quot;instruction&quot;</span>: example.instruction, <span class="syntax-string">&quot;expected&quot;</span>: example.answer,
+                         <span class="syntax-string">&quot;prediction&quot;</span>: prediction, <span class="syntax-string">&quot;correct&quot;</span>: prediction == example.answer})
+    <span class="syntax-keyword">finally</span>:
+        model.train(mode)
+    <span class="syntax-keyword">return</span> {<span class="syntax-string">&quot;response_loss&quot;</span>: total_loss / count,
+            <span class="syntax-string">&quot;exact_match&quot;</span>: sum(row[<span class="syntax-string">&quot;correct&quot;</span>] <span class="syntax-keyword">for</span> row <span class="syntax-keyword">in</span> rows) / len(rows),
+            <span class="syntax-string">&quot;response_tokens&quot;</span>: count, <span class="syntax-string">&quot;examples&quot;</span>: len(rows), <span class="syntax-string">&quot;rows&quot;</span>: rows}
+
+
+@dataclass
+<span class="syntax-keyword">class</span> TinyInstructionExperiment:
+    base: MiniGPT
+    tuned: MiniGPT
+    tokenizer: CharacterTokenizer
+    reports: dict
+    history: list
+    metadata: dict
+
+
+<span class="syntax-keyword">def</span> run_tiny_experiment(*, pretrain_steps=<span class="syntax-number">40</span>, sft_steps=<span class="syntax-number">160</span>, seed=<span class="syntax-number">41</span>,
+                        context_length=<span class="syntax-number">64</span>, extra_pretraining_text=<span class="syntax-string">&quot;&quot;</span>):
+    <span class="syntax-string">&quot;&quot;&quot;CPU-only, deterministic-in-one-environment, independent two-stage run.
+
+    This controls CPU RNG locally and restores it afterwards. Set the caller&#x27;s
+    torch.set_num_threads(1) for the short teaching workload. The held-out set
+    contains unseen prompt WORDING, not new facts or a broad generalization test.
+    &quot;&quot;&quot;</span>
+    <span class="syntax-keyword">for</span> value <span class="syntax-keyword">in</span> (pretrain_steps, sft_steps, seed):
+        <span class="syntax-keyword">if</span> type(value) <span class="syntax-keyword">is</span> <span class="syntax-keyword">not</span> int <span class="syntax-keyword">or</span> value &lt; <span class="syntax-number">0</span>:
+            <span class="syntax-keyword">raise</span> ValueError(<span class="syntax-string">&quot;step counts and seed must be nonnegative integers&quot;</span>)
+    <span class="syntax-keyword">if</span> pretrain_steps &lt; <span class="syntax-number">1</span>:
+        <span class="syntax-keyword">raise</span> ValueError(<span class="syntax-string">&quot;at least one pretraining step is required before Fine-Tuning&quot;</span>)
+    <span class="syntax-keyword">if</span> type(context_length) <span class="syntax-keyword">is</span> <span class="syntax-keyword">not</span> int <span class="syntax-keyword">or</span> context_length &lt; <span class="syntax-number">32</span>:
+        <span class="syntax-keyword">raise</span> ValueError(<span class="syntax-string">&quot;this experiment needs a context_length of at least 32&quot;</span>)
+    <span class="syntax-keyword">if</span> <span class="syntax-keyword">not</span> isinstance(extra_pretraining_text, str):
+        <span class="syntax-keyword">raise</span> ValueError(<span class="syntax-string">&quot;extra_pretraining_text must be a fixed training string&quot;</span>)
+    <span class="syntax-keyword">with</span> torch.random.fork_rng(devices=[]):
+        torch.random.default_generator.manual_seed(seed)
+        <span class="syntax-comment"># Only pretraining text and TRAIN records define the vocabulary.</span>
+        pretraining_text = PRETRAIN_TEXT + extra_pretraining_text
+        vocabulary_text = pretraining_text + <span class="syntax-string">&quot;&quot;</span>.join(format_prompt(e.instruction) + e.answer <span class="syntax-keyword">for</span> e <span class="syntax-keyword">in</span> TRAIN_EXAMPLES)
+        tokenizer = CharacterTokenizer.from_text(vocabulary_text)
+        config = ModelConfig(tokenizer.vocab_size, context_length, <span class="syntax-number">24</span>, <span class="syntax-number">2</span>, <span class="syntax-number">1</span>, <span class="syntax-number">0.0</span>)
+        encoded = [encode_example(tokenizer, example, config.context_length) <span class="syntax-keyword">for</span> example <span class="syntax-keyword">in</span> TRAIN_EXAMPLES]
+        base = MiniGPT(config).cpu()
+        dataset = NextTokenDataset(tokenizer.encode(pretraining_text), <span class="syntax-number">32</span>)
+        batches = torch.Generator().manual_seed(seed + <span class="syntax-number">1</span>)
+        optimizer = torch.optim.AdamW(base.parameters(), lr=<span class="syntax-number">0.003</span>, weight_decay=<span class="syntax-number">0.0</span>)
+        <span class="syntax-keyword">for</span> _ <span class="syntax-keyword">in</span> range(pretrain_steps):
+            x, y = random_batch(dataset, <span class="syntax-number">4</span>, batches)
+            optimizer.zero_grad(set_to_none=<span class="syntax-keyword">True</span>)
+            base(x, y)[<span class="syntax-number">1</span>].backward()
+            torch.nn.utils.clip_grad_norm_(base.parameters(), <span class="syntax-number">1.0</span>, error_if_nonfinite=<span class="syntax-keyword">True</span>)
+            optimizer.step()
+        tuned = deepcopy(base)
+        reports = {<span class="syntax-string">&quot;base_train&quot;</span>: evaluate_instructions(base, tokenizer, TRAIN_EXAMPLES),
+                   <span class="syntax-string">&quot;base_heldout&quot;</span>: evaluate_instructions(base, tokenizer, HELDOUT_EXAMPLES)}
+        optimizer = torch.optim.AdamW(tuned.parameters(), lr=<span class="syntax-number">0.003</span>, weight_decay=<span class="syntax-number">0.0</span>)
+        history = []
+        <span class="syntax-keyword">for</span> step <span class="syntax-keyword">in</span> range(sft_steps):
+            loss = train_response_step(tuned, optimizer, encoded[step % len(encoded)])
+            history.append(loss)
+        reports.update(tuned_train=evaluate_instructions(tuned, tokenizer, TRAIN_EXAMPLES),
+                       tuned_heldout=evaluate_instructions(tuned, tokenizer, HELDOUT_EXAMPLES))
+        metadata = {<span class="syntax-string">&quot;pretrain_steps&quot;</span>: pretrain_steps, <span class="syntax-string">&quot;sft_steps&quot;</span>: sft_steps,
+                    <span class="syntax-string">&quot;context_length&quot;</span>: context_length,
+                    <span class="syntax-string">&quot;largest_training_sequence&quot;</span>: max(<span class="syntax-number">32</span>, max(x.shape[<span class="syntax-number">1</span>] <span class="syntax-keyword">for</span> x, _, _ <span class="syntax-keyword">in</span> encoded) <span class="syntax-keyword">if</span> sft_steps <span class="syntax-keyword">else</span> <span class="syntax-number">0</span>),
+                    <span class="syntax-string">&quot;extra_pretraining_characters&quot;</span>: len(extra_pretraining_text),
+                    <span class="syntax-string">&quot;vocabulary_source&quot;</span>: <span class="syntax-string">&quot;pretraining corpus + TRAIN instruction records only&quot;</span>,
+                    <span class="syntax-string">&quot;training_objective&quot;</span>: <span class="syntax-string">&quot;next-token pretraining, then one-character response-only SFT&quot;</span>}
+        <span class="syntax-keyword">return</span> TinyInstructionExperiment(base, tuned, tokenizer, reports, history, metadata)
+
+
+<span class="syntax-keyword">def</span> run_system_experiment(*, pretrain_steps=<span class="syntax-number">2</span>, sft_steps=<span class="syntax-number">4</span>, context_length=<span class="syntax-number">2048</span>, seed=<span class="syntax-number">41</span>):
+    <span class="syntax-string">&quot;&quot;&quot;Opt-in adapter experiment with a known protocol/serialization vocabulary.
+
+    Capacity is allocated BEFORE training, never resized on an existing model.
+    The fixed ASCII/protocol/course corpus is included in pretraining data, not
+    learned from an evaluation prompt. Short training still visits only early
+    position indices; the large context is NOT evidence of long-context skill.
+    &quot;&quot;&quot;</span>
+    <span class="syntax-keyword">import</span> string
+    <span class="syntax-keyword">from</span> .assistant <span class="syntax-keyword">import</span> PROTOCOL
+    <span class="syntax-keyword">from</span> .retrieval <span class="syntax-keyword">import</span> COURSE_DOCUMENTS
+    training_context = (string.printable + <span class="syntax-string">&quot;\n&quot;</span> + PROTOCOL + <span class="syntax-string">&quot;\n&quot;</span>
+                        + <span class="syntax-string">&quot;\n&quot;</span>.join(document.text <span class="syntax-keyword">for</span> document <span class="syntax-keyword">in</span> COURSE_DOCUMENTS)
+                        + <span class="syntax-string">&quot;\nتوضیح کوتاه\n&quot;</span>)
+    experiment = run_tiny_experiment(pretrain_steps=pretrain_steps, sft_steps=sft_steps,
+                                    seed=seed, context_length=context_length,
+                                    extra_pretraining_text=training_context)
+    experiment.metadata[<span class="syntax-string">&quot;purpose&quot;</span>] = <span class="syntax-string">&quot;actual generation through controller; NOT JSON instruction training&quot;</span>
+    experiment.metadata[<span class="syntax-string">&quot;extra_corpus&quot;</span>] = <span class="syntax-string">&quot;fixed ASCII charset, controller protocol and authored course documents&quot;</span>
+    <span class="syntax-keyword">return</span> experiment
+
+
+<span class="syntax-keyword">def</span> save_instruction_bundle(path, model, tokenizer):
+    <span class="syntax-string">&quot;&quot;&quot;Write a new inference-only bundle; never overwrite an existing file.
+
+    This is NOT train.py&#x27;s resumable checkpoint: no optimizer/RNG/data history.
+    A caller should choose a private trusted directory; this demo is not an
+    atomic production artifact publisher.
+    &quot;&quot;&quot;</span>
+    <span class="syntax-keyword">if</span> model.config.vocab_size != tokenizer.vocab_size:
+        <span class="syntax-keyword">raise</span> ValueError(<span class="syntax-string">&quot;model and tokenizer vocabulary sizes differ&quot;</span>)
+    payload = {<span class="syntax-string">&quot;kind&quot;</span>: <span class="syntax-string">&quot;mini-gpt-instruction-inference-v1&quot;</span>, <span class="syntax-string">&quot;config&quot;</span>: asdict(model.config),
+               <span class="syntax-string">&quot;tokens&quot;</span>: list(tokenizer.id_to_token),
+               <span class="syntax-string">&quot;model&quot;</span>: {name: value.detach().cpu().clone() <span class="syntax-keyword">for</span> name, value <span class="syntax-keyword">in</span> model.state_dict().items()}}
+    <span class="syntax-keyword">with</span> Path(path).open(<span class="syntax-string">&quot;xb&quot;</span>) <span class="syntax-keyword">as</span> stream:
+        torch.save(payload, stream)
+
+
+<span class="syntax-keyword">def</span> load_instruction_bundle(path):
+    <span class="syntax-string">&quot;&quot;&quot;Load only a locally trusted inference bundle, explicitly on CPU.&quot;&quot;&quot;</span>
+    payload = torch.load(path, map_location=<span class="syntax-string">&quot;cpu&quot;</span>, weights_only=<span class="syntax-keyword">True</span>)
+    <span class="syntax-keyword">if</span> payload.get(<span class="syntax-string">&quot;kind&quot;</span>) != <span class="syntax-string">&quot;mini-gpt-instruction-inference-v1&quot;</span>:
+        <span class="syntax-keyword">raise</span> ValueError(<span class="syntax-string">&quot;expected an instruction inference bundle, not a resume checkpoint&quot;</span>)
+    tokenizer = CharacterTokenizer.from_tokens(payload[<span class="syntax-string">&quot;tokens&quot;</span>])
+    config = ModelConfig(**payload[<span class="syntax-string">&quot;config&quot;</span>])
+    <span class="syntax-keyword">if</span> config.vocab_size != tokenizer.vocab_size:
+        <span class="syntax-keyword">raise</span> ValueError(<span class="syntax-string">&quot;model and tokenizer vocabulary sizes differ&quot;</span>)
+    model = MiniGPT(config)
+    model.load_state_dict(payload[<span class="syntax-string">&quot;model&quot;</span>], strict=<span class="syntax-keyword">True</span>)
+    <span class="syntax-keyword">return</span> model.eval(), tokenizer
+
+
+<span class="syntax-keyword">if</span> __name__ == <span class="syntax-string">&quot;__main__&quot;</span>:
+    <span class="syntax-keyword">import</span> json
+    <span class="syntax-keyword">from</span> .console <span class="syntax-keyword">import</span> configure_console
+    configure_console()
+    torch.set_num_threads(<span class="syntax-number">1</span>)
+    experiment = run_tiny_experiment()
+    print(json.dumps(experiment.reports, ensure_ascii=<span class="syntax-keyword">False</span>, indent=<span class="syntax-number">2</span>))</code></pre><nav class="pager learning-continuation" aria-label="ادامهٔ مسیر یادگیری"><div class="next-step"><p class="eyebrow">گام بعد <span></span></p><p class="next-context">از یک مدل پیش‌آموزش‌دیده کپی می‌گیریم، فقط پاسخ را در <bdi dir="ltr">Loss</bdi> حساب می‌کنیم و نتیجه را روی عبارت‌های دیده‌نشده می‌سنجیم.</p><a rel="next" data-next-step href="../../part-10/chapter-02/65a-sft-lab.html" data-book-link data-unit="65a-sft-lab">کد را در یک مسئله دنبال کنید: همان Mini-GPT را روی پاسخ‌های مشخص تنظیم کنیم</a></div><div class="nearby-steps"><a data-return-section href="../index.html" data-book-link>همهٔ فایل‌های مرجع</a></div></nav></div><div class="reading-finish"><a href="../../journal.html" data-book-link>ثبت در دفتر آزمایش</a></div><details class="progress-panel"><summary>پیشرفت مسیر <span data-progress-count>0 / 107</span></summary><div class="progress-tools"><progress value="0" max="107" aria-label="درس‌ها و ایستگاه‌های انجام‌شده"></progress><button type="button" data-export>خروجی پیشرفت</button><label class="import-label">ورود پیشرفت <input type="file" accept=".json,application/json" data-import></label></div><details data-export-preview hidden><summary>نسخهٔ متنی پیشرفت؛ اگر دانلود انجام نشد، این <bdi dir="ltr">JSON</bdi> را کپی و در فایل نگه دارید</summary><pre><code data-export-code></code></pre></details><p class="progress-note">علامت انجام فقط با انتخاب شما ثبت می‌شود. برای نگهداری مطمئن یا انتقال به مرورگر دیگر، خروجی پیشرفت بگیرید. دفتر آزمایش جداست.</p><p class="status" role="status" aria-live="polite" data-status></p></details><footer class="footer"><span>از یک <a class="term-link" id="term-ref-token-1" data-term="token" href="../../glossary/token.html?return=..%2Fcode%2Fmini_gpt%2Finstruction.py.html%23term-ref-token-1" title="توضیح Token"><bdi dir="ltr">Token</bdi></a>، تا یک مدل؛ از مدل، تا یک سامانه.</span><a href="../../guide.html" data-book-link>راهنما</a> · <a href="../../api.html" data-book-link>کد و منابع</a></footer></main></div>
+<noscript><p>خواندن و ناوبری بدون JavaScript هم کار می‌کند؛ کپی خودکار و ثبت پیشرفت به آن نیاز دارند.</p></noscript></body></html>

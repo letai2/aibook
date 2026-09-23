@@ -10,10 +10,11 @@ from pathlib import Path
 
 from book_src.curriculum import LESSONS, PATHS
 from book_src.experience import stage_for
+from book_src.learning_time import estimate, duration
 from book_src.lab_exercises import exercises
 from book_src.lab_exercises.reviews import EXERCISES as REVIEWS
 from book_src.glossary import extend_from_lessons
-from book_src.terminology import configure_terms, normalize_html
+from book_src.terminology import configure_terms, normalize_html, inline_code_html, typography_html
 
 ROOT = Path(__file__).resolve().parents[1]
 REQUIRED = {'title', 'goal', 'prerequisite', 'predict', 'setup', 'task', 'starter',
@@ -44,8 +45,11 @@ def cell(kind, source, identifier, tags=()):
     return value
 
 def prose(title, body):
-    body = re.sub(r'`([^`]+)`', lambda m: '<code dir="ltr">'+html.escape(m[1])+'</code>', body)
     return f'<div dir="rtl">\n<h2>{title}</h2>\n<p>{body}</p>\n</div>'
+
+def render_markdown(source):
+    """One policy for headers, exercises, reflection and preserved review cells."""
+    return typography_html(normalize_html(inline_code_html(source)), notebook=True)
 
 def make_notebook(lesson, number, spec):
     if set(spec) != REQUIRED or not all(isinstance(v, str) and v.strip() for v in spec.values()):
@@ -57,6 +61,7 @@ def make_notebook(lesson, number, spec):
 <p>درس {number} از {len(LESSONS)} · {html.escape(lesson.title)} · <code dir="ltr">{lesson.id}</code></p>
 <p><a href="http://127.0.0.1:8000/{PATHS[lesson.id]}">📖 بازگشت به همین درس</a></p>
 <p>{spec['goal']}</p><p>پیش‌نیاز: {spec['prerequisite']}</p>
+<p>زمان یادگیری درس همراه با همین دفتر: حدود {duration(estimate(lesson)['minutes'])}. زمان دفتر دوباره به زمان درس اضافه نمی‌شود؛ نصب و تمرین اختیاری جداست.</p>
 <p>این دفتر نیمهٔ عملی درس است. مثال‌ها آمادهٔ اجرا هستند؛ دو Cell با برچسب TODO را خودتان کامل کنید. پیام INCOMPLETE یعنی هنوز چیزی ننوشته‌اید، نه اینکه پاسخ درست است. جواب مرجع در این دفتر پنهان نشده است.</p>
 <p>از بالا به پایین اجرا کنید. پس از تغییر هر تابع، Cell آن و سپس Cell آزمون را دوباره اجرا کنید. برای بررسی نهایی، از منوی <code>Kernel → Restart Kernel and Run All Cells</code> استفاده کنید.</p>
 </div>'''
@@ -81,7 +86,7 @@ def make_notebook(lesson, number, spec):
     stage, stage_title = stage_for(lesson.id)
     for entry in cells:
         if entry['cell_type'] == 'markdown':
-            source = normalize_html(''.join(entry['source']))
+            source = render_markdown(''.join(entry['source']))
             entry['source'] = source.replace('<a href="http://127.0.0.1:8000/', '<a target="_self" href="http://127.0.0.1:8000/').splitlines(keepends=True)
     return path, {'cells': cells, 'metadata': {
         'kernelspec': {'display_name': 'AI Book (project Python)', 'language': 'python', 'name': 'aibook'},
@@ -110,7 +115,7 @@ def upgrade_review(path, notebook, spec):
         entry['metadata']['book_review_extension'] = True
     for entry in original+cells:
         if entry['cell_type'] == 'markdown':
-            source = normalize_html(''.join(entry['source']))
+            source = render_markdown(''.join(entry['source']))
             entry['source'] = source.replace('<a href="http://127.0.0.1:8000/', '<a target="_self" href="http://127.0.0.1:8000/').splitlines(keepends=True)
     notebook['cells'] = original+cells
     metadata.update(kind='review', exercise_id=identifier)

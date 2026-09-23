@@ -1,5 +1,6 @@
 """Notebook metadata is the single source for laboratory/lesson connections."""
 import json
+import html
 from pathlib import Path
 import re
 
@@ -16,7 +17,8 @@ def catalog(root=None):
         metadata = dict(notebook['metadata']['book'])
         identifier = metadata.pop('id', path.stem)
         metadata.setdefault('kind', 'review')
-        title = re.search(r'<h1>(.*?)</h1>', ''.join(notebook['cells'][0]['source'])).group(1)
+        heading = re.search(r'<h1\b[^>]*>(.*?)</h1>', ''.join(notebook['cells'][0]['source']), re.S).group(1)
+        title = html.unescape(re.sub(r'<[^>]+>', '', heading))
         labs.append(dict(id=identifier, path=path.relative_to(root).as_posix(),
                          title=title, **metadata))
     return sorted(labs, key=lambda lab: (lab['kind'] != 'lesson', lab.get('lesson_number', 999), lab['id']))
@@ -35,7 +37,7 @@ def lesson_labs(root=None):
 
 
 INTRO = r'''<p class="objective">هر درس، یک آزمایشگاه: ابتدا ایده را بفهمید؛ سپس خودتان کد بنویسید و نتیجه را بسنجید.</p>
-<p>۷۶ دفتر درس‌به‌درس در مسیر اصلی و ۱۲ دفتر مرور چنددرس داریم. دفتر هر درس مستقل است و ورودی‌ها را خودش می‌سازد؛ لازم نیست Kernel یا Checkpoint جلسهٔ قبل را نگه دارید. دفترهای مرور اختیاری‌اند و پیش‌نیازشان در فهرست آمده است.</p>
+<p>{lesson_count} دفتر درس‌به‌درس در مسیر اصلی و ۱۲ دفتر مرور چنددرس داریم. دفتر هر درس مستقل است و ورودی‌ها را خودش می‌سازد؛ لازم نیست Kernel یا Checkpoint جلسهٔ قبل را نگه دارید. دفترهای مرور اختیاری‌اند و پیش‌نیازشان در فهرست آمده است.</p>
 <h2 id="setup">یک نصب، یک فرمان برای کتاب و Jupyter</h2>
 <p>پروژهٔ کامل را دریافت و استخراج کنید؛ <code>run.py</code>، <code>book_src</code>، <code>mini_gpt</code> و <code>notebooks</code> باید کنار هم بمانند. در ریشهٔ پروژه، با همان محیط مجازی این فرمان را اجرا کنید:</p>
 <pre><code>python run.py</code></pre>

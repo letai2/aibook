@@ -33,7 +33,7 @@ body{font-family:Vazirmatn,Tahoma,sans-serif;font-size:18px;line-height:2.1}h1,h
 /* English concepts sit quietly inside flowing Persian prose. */
 a.term-link{color:inherit;text-decoration:none;border-bottom:1px dotted #8c98a8;font-weight:500;cursor:pointer}
 a.term-link:hover,a.term-link:focus-visible{color:var(--accent);border-bottom-style:solid;background:var(--tint)}
-a.term-link bdi{font-size:.96em;line-height:inherit;overflow-wrap:anywhere}
+a.term-link bdi{font-size:.96em;line-height:inherit;overflow-wrap:normal;word-break:normal}
 a.term-link:target{background:var(--tint);outline:2px solid var(--accent);outline-offset:4px}
 dfn{font-weight:600;color:inherit}
 .learning-continuation{display:block;margin-top:4.5rem;border-top:1px solid var(--accent);padding-top:2rem}
@@ -58,3 +58,18 @@ body[data-page-kind=glossary] h1{direction:ltr;text-align:right;font-size:clamp(
 /* A secondary laboratory stop; the main lesson pager stays unchanged. */
 .notebook-link{margin-block:2rem;padding:1.3rem;border:1px solid var(--line,#d8d4ca);border-inline-start:4px solid var(--accent,#7b5238);border-radius:12px;background:var(--paper,#fffdf8)}
 .notebook-link h2{font-size:1.3rem;margin-block:.4rem .8rem}.notebook-link p:last-child{margin-bottom:0}
+
+/* Flowing prose: emphasis stays inline; only short notation/lead labels group. */
+.lesson-prose p,.note,.notebook-link p,.glossary-article p{ text-wrap:pretty }
+.lesson-prose :is(strong,b,em,mark,dfn),.note :is(strong,b,em,mark),.notebook-link p :is(strong,b,em,mark){display:inline;white-space:normal}
+.lesson-prose mark,.note mark{box-decoration-break:clone;-webkit-box-decoration-break:clone;padding-inline:.12em}
+.inline-math{unicode-bidi:isolate;direction:ltr;overflow-wrap:normal}
+.phrase-lead{display:inline}
+
+/* Quiet workload metadata beside the reading flow, never a deadline badge. */
+.learning-time{max-width:760px;margin:0 auto 2rem;border-block:1px solid var(--line);padding:.7rem 0;color:var(--muted);font-size:14px}
+.learning-time>p{margin:.35rem 0}.learning-time>p:first-child{color:var(--ink)}
+.learning-time summary{font-size:13px}.learning-time dl{margin:.5rem 0}
+.learning-time dl>div{display:flex;justify-content:space-between;gap:1rem;padding:.2rem 0;flex-wrap:wrap}
+.learning-time dd{margin:0}.learning-time .time-caveat{font-size:12px;line-height:1.9}
+.learning-time bdi{white-space:nowrap}

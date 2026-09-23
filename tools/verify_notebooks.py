@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 from pathlib import Path
 import sys
@@ -81,6 +82,7 @@ def verify(root: Path, report: Path | None = None, html_output: Path | None = No
             if str(root) not in streams or sys.executable not in streams:
                 raise AssertionError(f'Wrong project root or kernel interpreter: {path}')
             result = {'path': path.relative_to(root).as_posix(), 'mode': mode,
+                      'notebook_sha256': hashlib.sha256(path.read_bytes()).hexdigest(),
                       'code_cells': sum(cell.cell_type == 'code' for cell in notebook.cells),
                       'figures': sum('image/png' in output.get('data', {}) for output in outputs),
                       'seconds': round(time.monotonic()-started, 2)}

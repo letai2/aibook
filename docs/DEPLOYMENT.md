@@ -16,7 +16,8 @@ python -B -m tools.prepare_release
 ```
 
 This builds into a new temporary directory, validates every page/link, checks
-JavaScript syntax, runs 29 JavaScript and 36 release/design/editorial tests, refreshes `dist`, and creates:
+JavaScript syntax, checks generated notebook/curriculum inventories, runs 29 JavaScript
+and 70 site/launcher/release/editorial tests, refreshes `dist`, and creates:
 
 - `release/book-site.zip`: only the public site, with `index.html` at its root.
 - `release/manifest.json`: exact public file list, sizes and SHA-256 hashes.
@@ -100,7 +101,7 @@ has not been verified. Install CUDA-specific builds only for a matching device.
 After publishing, verify the homepage, a direct nested lesson URL, lab, journal,
 downloadable project, browser console and mobile layout on the actual HTTPS URL.
 Also check a glossary round-trip, glossary search, a lesson/checkpoint transition,
-and the locally served Persian font. Editorial review details are in `EDITORIAL_REVIEW.md`.
+and the locally served Persian font. Editorial review details are in [REVIEW.md](REVIEW.md).
 Verify that a genuinely missing path returns 404. Export/import a disposable
 learner record before changing the origin of an existing site.
 

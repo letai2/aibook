@@ -1,9 +1,16 @@
 # Lesson laboratories
 
-The 76 lessons each have a dedicated learner notebook. The original 12 notebooks
+The 92 lessons each have a dedicated learner notebook. The original 12 notebooks
 remain as optional, broader review laboratories. HTML explains the idea; the
 notebook is where you predict, write code, run, inspect, change one factor,
 diagnose a deliberate bug, and write a repair.
+
+The complete 104-notebook set now includes response-only SFT, context budgeting,
+retrieval, memory, tool validation, reasoning/verification, bounded control,
+system evaluation and deployment-cost experiments. These remain small offline
+CPU laboratories. No framework, remote model or API key is required. Existing
+notebook paths and all previous lesson URLs remain stable. Learning-time ranges
+in the book already include the corresponding lab; do not add them twice.
 
 ## Install once; launch with one command
 
@@ -113,6 +120,26 @@ the notebook generator. Maintainers can regenerate reviewed specifications with
 lesson notebooks**, so use it only with intentional source edits and backups.
 
 ## Maintainer verification
+
+Persian Markdown is formatted centrally by `render_markdown` in
+`tools/build_notebooks.py`, using the shared protected-aware rules in
+`book_src/terminology.py`. Persian headings, paragraphs and lists receive RTL
+alignment; code and formulas retain LTR layout. English-only paragraphs and
+table cells have their own direction. No global notebook stylesheet is injected.
+Jupyter strips logical border/padding properties, so the formatter uses
+direction-scoped physical equivalents for lists and blockquotes.
+
+In prose specifications, put literal Python identifiers, signatures, comparisons,
+shapes and paths in backticks. The formatter protects these before terminology
+normalization, including `<` comparisons and escaped entities. Do not rely on
+bare function text being recognized as code. Existing `<code>`, `<pre>`, formula,
+script and style subtrees are protected. Short Persian labels may stay with one
+following word; long sentences and inline code can still wrap naturally.
+
+The author checks cover all 1107 Markdown cells, repeat-render stability, API
+case preservation, short math groups, mixed tables and protected content. Browser
+QA should also inspect actual Jupyter output: successful source CSS assertions
+do not prove that its sanitizer retained a property.
 
 ```powershell
 python -B -m tools.build_notebooks --check

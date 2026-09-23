@@ -22,10 +22,12 @@ from book_src.experience import (INLINE_LABS, JOURNAL, MODE_LABELS, lab_page,
 from book_src.visuals import BRIEFS, opening
 from book_src.laboratories import catalog as notebook_catalog, INTRO as NOTEBOOK_INTRO
 from book_src.curriculum import LESSONS, BY_ID, CHAPTERS, PATHS
+from book_src.learning_time import estimate_panel, METHOD as TIME_METHOD
 
 LABS = notebook_catalog()
 from book_src.glossary import TERMS, SUPPLEMENTAL, extend_from_lessons
-from book_src.terminology import annotate_html, normalize_text, configure_terms
+from book_src.terminology import (annotate_html, normalize_text, configure_terms,
+                                  inline_code_html, typography_html)
 from book_src.windows import WINDOWS
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -36,7 +38,7 @@ OUT = ROOT / "dist"
 extend_from_lessons(LESSONS)
 configure_terms()
 UNITS = []
-for part in range(1, 11):
+for part in range(1, len(PARTS) + 1):
     UNITS.extend((l.id, PATHS[l.id], l.title) for l in LESSONS if l.part == part)
     UNITS.append((f"checkpoint-{part:02}", f"part-{part:02}/checkpoint.html", f"ایستگاه عملی {part}"))
 
@@ -126,11 +128,9 @@ def page(current, title, body, *, part=0, crumbs=(), unit="", kind="reference", 
                 '<p class="status" role="status" aria-live="polite" data-status></p></details>')
     completion = (f'<button class="done-button" data-complete="{escaped(unit)}" aria-pressed="false">'
                   'تمرین و خودسنجی را انجام دادم</button>') if unit else ""
-    body = resolve(body, current)
+    body = inline_code_html(resolve(body, current))
     body = re.sub(r"<table>(.*?)</table>", r'<div class="table-wrap"><table>\1</table></div>', body, flags=re.S)
-    direction = MathDirection()
-    direction.feed(body)
-    body = ''.join(direction.parts)
+    body = typography_html(body)
     mode = lesson_mode(unit) if kind == 'lesson' else kind
     stage, stage_title = stage_for(unit) if kind == 'lesson' else (None, '')
     order = next((i+1 for i,l in enumerate(LESSONS) if l.id == unit), None)
@@ -138,6 +138,19 @@ def page(current, title, body, *, part=0, crumbs=(), unit="", kind="reference", 
     context = (f'<details class="lesson-context"><summary>جای این درس در پروژه <span>{stage_label}</span></summary><div><p>{MODE_LABELS[mode]} · شناسهٔ ثابت: <bdi dir="ltr">{unit}</bdi></p>{link(current,"project.html","بازگشت به نقشهٔ ساخت")}</div></details>') if kind == 'lesson' else ''
     theme = BRIEFS[unit][0] if kind == 'lesson' else {1:'foundations',2:'math',3:'code',4:'language',5:'attention',6:'architecture',7:'model',8:'training',9:'debug',10:'research'}.get(part,'model')
     masthead = opening(BY_ID[unit], order, len(LESSONS)) if kind == 'lesson' else f'<header class="page-masthead"><p class="eyebrow">از Python تا Mini-GPT</p><h1>{display_title(title)}</h1></header>'
+    time_panel = ''
+    if kind == 'lesson':
+        time_panel = estimate_panel([BY_ID[unit]], detailed=True)
+    elif kind == 'part':
+        time_panel = estimate_panel([l for l in LESSONS if l.part == part], checkpoints=[part])
+    elif kind == 'chapter':
+        chapter_lessons = next(ls for path, ls in CHAPTERS.values() if path == current)
+        time_panel = estimate_panel(chapter_lessons)
+    elif kind == 'checkpoint':
+        time_panel = estimate_panel([], checkpoints=[part])
+    elif current == 'index.html':
+        time_panel = estimate_panel(LESSONS, checkpoints=range(1, len(PARTS)+1))
+    time_panel = typography_html(resolve(time_panel, current))
     journal_target = relative(current, 'journal.html') + (f'?lesson={unit}' if unit else '')
     scripts = '<script src="'+relative(current,'assets/experience.js')+'?v='+ASSET_VERSION+'" defer></script>'
     if current == 'lab.html':
@@ -154,7 +167,7 @@ def page(current, title, body, *, part=0, crumbs=(), unit="", kind="reference", 
 <header class="topbar"><a class="brand" href="{relative(current,'index.html')}" data-book-link>از <bdi dir="ltr">Python</bdi> تا <bdi dir="ltr" class="nowrap">Mini-GPT</bdi></a>
 <div class="header-actions">{sidebar(current,part)}<details class="book-tools"><summary>میز کار</summary><nav class="toplinks" aria-label="فضاهای کتاب">{link(current,'guide.html','راهنمای آغاز')}{link(current,'lab.html','بازرس مدل')}{link(current,'notebooks.html','آزمایشگاه‌های Jupyter')}<a href="{journal_target}" data-book-link>دفتر آزمایش</a>{link(current,'project.html','پروژه')}{link(current,'glossary.html','واژه‌ها')}{link(current,'api.html','مرجع کد')}</nav></details></div></header>
 <div class="layout"><main id="main"><nav class="breadcrumbs" aria-label="مسیر صفحه">{' <span aria-hidden="true">/</span> '.join(trail)}</nav>
-{masthead}{context}<div class="page-content">{body}</div><div class="reading-finish">{completion}<a href="{journal_target}" data-book-link>ثبت در دفتر آزمایش</a></div>{progress}<footer class="footer"><span>از یک نشانه، تا یک مدل.</span>{link(current,'guide.html','راهنما')} · {link(current,'api.html','کد و منابع')}</footer></main></div>
+{masthead}{time_panel}{context}<div class="page-content">{body}</div><div class="reading-finish">{completion}<a href="{journal_target}" data-book-link>ثبت در دفتر آزمایش</a></div>{progress}<footer class="footer"><span>از یک نشانه، تا یک مدل؛ از مدل، تا یک سامانه.</span>{link(current,'guide.html','راهنما')} · {link(current,'api.html','کد و منابع')}</footer></main></div>
 <noscript><p>خواندن و ناوبری بدون JavaScript هم کار می‌کند؛ کپی خودکار و ثبت پیشرفت به آن نیاز دارند.</p></noscript></body></html>'''
     document = annotate_html(document, current, own_term)
     destination = OUT / current
@@ -275,7 +288,7 @@ def render_structure():
     toc = []
     for n, ((part_title, description), checkpoint) in enumerate(zip(PARTS, CHECKPOINTS), 1):
         path = f"part-{n:02}/index.html"
-        part_body = f'<p class="objective">{description}</p><p>هر درس یک نشست ۳۰ تا ۹۰ دقیقه‌ای پیشنهادی است؛ زمان تمرین ممکن است بیشتر شود. پس از کار عملی، یک روز فاصله بدهید و دوباره توضیح دهید.</p>'
+        part_body = f'<p class="objective">{description}</p><p>زمان هر درس شامل کار دفتر هم هست. درس طولانی را در دو نشست انجام دهید؛ پس از کار عملی، یک روز فاصله بدهید و دوباره توضیح دهید.</p>'
         home_section = f'<details class="toc-part"><summary>بخش {n} · {part_title}</summary><p class="meta">{description}</p><p>{link("index.html",path,"ورود به این بخش")}</p>'
         for (part, title), (chapter_path, lessons) in CHAPTERS.items():
             if part != n:
@@ -290,12 +303,12 @@ def render_structure():
             chapter_body += '<p>کار چهارسطحیِ مفهومی، محاسباتی، ساخت و پژوهش با معیار تحویل مشخص در ' + link(chapter_path,f"part-{n:02}/checkpoint.html","ایستگاه این بخش") + ' منتظر شماست؛ پس از درس‌های بخش سراغ آن بروید.</p>'
             start = lessons[0]
             chapter_body += continuation(chapter_path, (start.id, PATHS[start.id], 'شروع فصل: '+start.title),
-                                        start.objective, parent=(path, 'بازگشت به بخش'), position=f'بخش {n} از ۱۰')
+                                        start.objective, parent=(path, 'بازگشت به بخش'), position=f'بخش {n} از {len(PARTS)}')
             page(chapter_path,title,chapter_body,part=n,crumbs=[(path,f"بخش {n}")],kind="chapter")
         part_body += '<h2>پیش از بخش بعد</h2>' + link(path,f"part-{n:02}/checkpoint.html",checkpoint[0],f"checkpoint-{n:02}")
         start = next(l for l in LESSONS if l.part == n)
         part_body += continuation(path, (start.id, PATHS[start.id], 'شروع این بخش: '+start.title),
-                                  start.objective, parent=('index.html#route','نقشهٔ کامل مسیر'), position=f'بخش {n} از ۱۰')
+                                  start.objective, parent=('index.html#route','نقشهٔ کامل مسیر'), position=f'بخش {n} از {len(PARTS)}')
         page(path, f"بخش {n} · {part_title}",part_body,part=n,kind="part")
         home_section += f'<p>{link("index.html",f"part-{n:02}/checkpoint.html",checkpoint[0],f"checkpoint-{n:02}")}</p></details>'
         toc.append(home_section)
@@ -309,12 +322,12 @@ def render_structure():
         page(cp_path, f"ایستگاه {n} · {cp_title}",cp_body,part=n,crumbs=[(path,f"بخش {n}")],unit=f"checkpoint-{n:02}",kind="checkpoint")
         answer_path = f"answers/checkpoint-{n:02}.html"
         page(answer_path,f"راهنمای ایستگاه {n}",f'<p>{answer}</p><p>{criterion}</p><p>{link(answer_path,cp_path,"بازگشت به تکلیف")}</p>'+pager(answer_path,f'checkpoint-{n:02}'),part=n,kind='answer')
-    intro = f'''<div class="home-opening"><p class="objective">جعبه را باز کنیم.<br>از اولین حدس تا مدلی که خودمان می‌سازیم.</p><p>برای کسی که Python می‌نویسد و می‌خواهد بفهمد پشت ادامهٔ یک جمله چه اتفاقی می‌افتد. عددها را دنبال می‌کنیم، کد می‌سازیم، گاهی عمداً خرابش می‌کنیم و برای هر نتیجه شاهد می‌آوریم.</p><div class="book-stats"><span><b>{len(LESSONS)}</b>درس</span><span><b>۱۰</b>ایستگاه عملی</span><span><b>۲۳</b>مرحلهٔ ساخت</span><span><b>۱</b>پروژهٔ زنده</span></div></div>'''
+    intro = f'''<div class="home-opening"><p class="objective">جعبه را باز کنیم.<br>از اولین حدس تا مدل و سامانه‌ای که خودمان می‌سازیم.</p><p>برای کسی که Python می‌نویسد و می‌خواهد بفهمد پشت ادامهٔ یک جمله و پاسخ یک دستیار چه اتفاقی می‌افتد. عددها را دنبال می‌کنیم، کد می‌سازیم، گاهی عمداً خرابش می‌کنیم و برای هر نتیجه شاهد می‌آوریم.</p><div class="book-stats"><span><b>{len(LESSONS)}</b>درس</span><span><b>{len(PARTS)}</b>ایستگاه عملی</span><span><b>۲۳</b>مرحلهٔ هستهٔ مدل</span><span><b>۱</b>پروژهٔ پیوسته</span></div></div>'''
     intro += f'<p>{link("index.html","guide.html","از اینجا آغاز کنید: روش کار و نصب")} · {lesson_link("index.html","01-model")} · {link("index.html","project.html","نقشهٔ نسخه‌های پروژه")}</p>'
     intro += '<p>'+link("index.html","notebooks.html",f"{len(LESSONS)} آزمایشگاه درس‌به‌درس + ۱۲ دفتر مرور")+' · '+link('index.html','start.html','شروع محیط کتاب و Jupyter')+'</p>'
     intro += '<p><a data-resume hidden>ادامه از آخرین درس</a></p>'
-    intro += '<div class="three-spaces"><section><span>۰۱ / بخوان و بساز</span><h2>مسیر مطالعه</h2><p>ریاضی و PyTorch از نخستین نیاز معرفی می‌شوند. پاسخ‌ها جدا هستند تا جا برای فکرکردن بماند.</p></section><section><span>۰۲ / دست‌کاری کن</span><h2>'+link('index.html','lab.html','آزمایشگاه')+'</h2><p>پوشش را بردار، دما را تغییر بده، و اعداد واقعیِ مدل خودت را باز کن.</p></section><section><span>۰۳ / شاهد نگه دار</span><h2>'+link('index.html','journal.html','دفتر آزمایش')+'</h2><p>حدس، تنظیمات، خطا و کشف را ثبت کن؛ محلی، قابل خروجی، بدون حساب.</p></section></div>'
-    intro += '<h2 id="route">اطلس مسیر یادگیری</h2><p>دانش قبلی یادگیری عمیق لازم نیست. برای چند هفته کار همراه با تمرین برنامه بریزید؛ معیار عبور، توان توضیح و تغییر کد است.</p><div class="route-grid">' + ''.join(toc) + '</div>'
+    intro += '<div class="three-spaces"><section><span>۰۱ / بخوان و بساز</span><h2>مسیر مطالعه</h2><p>ریاضی و PyTorch از نخستین نیاز معرفی می‌شوند. پاسخ‌ها جدا هستند تا جا برای فکرکردن بماند.</p></section><section><span>۰۲ / دست‌کاری کن</span><h2>'+link('index.html','lab.html','آزمایشگاه')+'</h2><p>Mask را خاموش کنید، دما را تغییر دهید و عددهای واقعیِ مدل خودتان را بررسی کنید.</p></section><section><span>۰۳ / شاهد نگه دار</span><h2>'+link('index.html','journal.html','دفتر آزمایش')+'</h2><p>حدس، تنظیمات، خطا و کشف را ثبت کنید؛ محلی، قابل خروجی، بدون حساب.</p></section></div>'
+    intro += '<h2 id="route">اطلس مسیر یادگیری</h2><p>دانش قبلی یادگیری عمیق لازم نیست. بر اساس زمان بخش‌ها و فرصت هفتگی خود برنامه بریزید؛ معیار عبور، توان توضیح و تغییر کد است.</p><div class="route-grid">' + ''.join(toc) + '</div>'
     intro += '<details class="model-map-disclosure"><summary>نمای کامل مسیر یک نشانه در GPT</summary>'+pipeline()+'</details>'
     page("index.html","از Python تا ساخت Mini-GPT",intro,kind="home")
 
@@ -356,7 +369,16 @@ def render_glossary():
 
 def render_references():
     render_glossary()
-    notebook_body = NOTEBOOK_INTRO
+    notebook_body = NOTEBOOK_INTRO.replace('{lesson_count}', str(len(LESSONS)))
+    time_body = TIME_METHOD + estimate_panel(LESSONS, checkpoints=range(1, len(PARTS)+1))
+    time_body += '<h2>برنامهٔ بخش‌به‌بخش</h2>'
+    for part, (title, _) in enumerate(PARTS, 1):
+        time_body += '<h3>'+link('learning-time.html', f'part-{part:02}/index.html', title)+'</h3>'
+        time_body += estimate_panel([l for l in LESSONS if l.part == part], checkpoints=[part])
+    time_body += continuation('learning-time.html', ('01-model', PATHS['01-model'], 'آغاز مسیر'),
+                              'زمان واقعی سه درس اول را ثبت کنید و برنامه را با تجربهٔ خود تنظیم کنید.',
+                              parent=('guide.html', 'راهنمای مطالعه'))
+    page('learning-time.html', 'زمان یادگیری، نه فقط زمان خواندن', time_body)
     for lab in LABS:
         label = ('درس '+str(lab['lesson_number'])+' · دفتر تمرین' if lab['kind'] == 'lesson' else 'مرور چند درس · اختیاری')
         target = 'launch.html?lesson='+lab['primary_lesson'] if lab['kind'] == 'lesson' else 'launch.html?review='+lab['id']
@@ -444,7 +466,7 @@ def main(output=None):
                 'pages':sorted(p.relative_to(OUT).as_posix() for p in OUT.rglob('*.html'))}
     (assets/'manifest.js').write_text('window.BOOK = '+json.dumps(manifest,ensure_ascii=False)+';\n',encoding='utf-8')
     (OUT/'downloads').mkdir(exist_ok=True)
-    packaged = [ROOT/name for name in ('run.py','requirements.txt','requirements-notebooks.txt','docs/WINDOWS_SETUP.md','docs/NOTEBOOKS.md','tools/__init__.py','tools/build_book.py','tools/learning_server.py')]
+    packaged = [ROOT/name for name in ('run.py','requirements.txt','requirements-notebooks.txt','docs/WINDOWS_SETUP.md','docs/NOTEBOOKS.md','docs/LEARNING_TIME.md','tools/__init__.py','tools/build_book.py','tools/learning_server.py')]
     for directory in ('mini_gpt','data','notebooks','book_src'):
         packaged.extend(p for p in (ROOT/directory).rglob('*') if p.is_file() and p.suffix in ('.py','.md','.txt','.ipynb','.json','.css','.js','.woff2') and '.ipynb_checkpoints' not in p.parts and '__pycache__' not in p.parts
                         and (directory != 'notebooks' or p.relative_to(ROOT).as_posix() in {lab['path'] for lab in LABS}))

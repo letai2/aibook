@@ -1,28 +1,16 @@
-# Current lesson review — 2026-09-22
+# Current complete learning-journey audit — 2026-09-23
 
-All 76 lessons received a problem-first and terminology review in the current
-pass. Thirty-six records changed and 40 were retained in full; the unchanged
-records were reviewed, not skipped. IDs/order/paths, all 76 code examples and
-all 34 formula blocks remain unchanged. Each lesson now has its own notebook
-at `notebooks/lessons/<stable-id>/lab.ipynb`; the live laboratory index includes
-the goal and project stage. Twelve earlier labs remain optional reviews.
+All 92 current lessons and 104 mapped notebooks were reviewed. Before extension,
+all 76 lessons and 88 notebooks were reread across three complementary audits;
+builders, mappings, glossary, project code and tests were inspected centrally.
+This is an editorial/code review, not a learner-outcome study. The current full
+report is [REVIEW.md](REVIEW.md); historical reports remain below it.
 
-The [current review report](REVIEW.md) records the new launcher, 88-notebook
-execution evidence, terminology inventory and limitations. The table below is
-the earlier prerequisite audit, retained as historical context rather than
-presented as the disposition of this later pass.
-
-## Earlier lesson-by-lesson educational audit — 2026-09-21
-
-Audience: a capable Python programmer with no assumed DL, PyTorch, probability
-or calculus background. Every lesson's source, rendered lesson/answer, exercise,
-project connection and associated visual brief was reviewed. Three independent
-read-only reviews covered parts 1–3, 4–7 and 8–10; implementation and integration
-were done in the main workspace. This is an editorial judgment, not a learner study.
-
-“Retained” means the existing explanation and exercise met the stated entry
-contract; it does not mean the lesson was skipped. Prerequisites below name the
-knowledge actually needed, rather than merely the preceding lesson number.
+The first69 lessons keep their previous content/order. The former advanced ending
+is extended, with all76 lesson IDs/URLs preserved. Sixteen new lessons have
+independent TODO/repair labs; scale/cache move after system construction and RAG
+after context budgeting. Exact counts and estimates are in
+[JOURNEY_INVENTORY.md](JOURNEY_INVENTORY.md).
 
 | Lesson | Entry knowledge supplied earlier | Audit disposition |
 | --- | --- | --- |
@@ -95,36 +83,33 @@ knowledge actually needed, rather than merely the preceding lesson number.
 | `60-bug-clinic` | dtype, shapes, Cross-Entropy | Added actual failing/fixed class-axis example; repaired symptom terminology. |
 | `61-one-batch` | Training loop and debugging | Clarified zero-Dropout condition behind fixed-Loss experiment. |
 | `62-journal` | Reproducible experiments | Retained consolidation, prediction/observation and restrained claims. |
-| `62b-lifecycle` | Complete Mini-GPT, training, generation, evidence limits | Added required architecture/base/foundation/product map; SFT/preference alternatives, LoRA/RAG distinction. |
-| `63-scale` | Model parameter/activation costs | Explicitly signposted optional scope; no cluster prerequisite. |
-| `64-cache` | Autoregression, Q/K/V and positions | Clarified old/new T and fixed Quantization gloss. |
-| `65-sft` | Shifted targets and Cross-Entropy | Added exact separator/first-answer Loss-mask alignment. |
+| `62b-lifecycle` | Complete Mini-GPT, training, generation, evidence limits | Retained core explanation and lab; updated limits and continuation to the actual SFT helper and system path. |
+| `65-sft` | Shifted targets and Cross-Entropy | Retained core explanation and lab; updated limits and continuation to the actual SFT helper and system path. |
+| `65a-sft-lab` | Response mask, shifted Target, real MiniGPT training and held-out evaluation | Added a worked, executable system-stage lesson and independent write/vary/debug/repair laboratory; dependency and capability boundaries reviewed. |
 | `65b-lora` | Linear shapes, Gradient, freezing | Retained low-rank arithmetic and initialization caveats. |
-| `66-preference` | SFT and data-dependent objective | Retained introductory, optional preference-learning scope. |
-| `67-rag` | Prompt context and model limitations | Retained toy retrieval; added external-content trust boundary. |
+| `66-preference` | SFT and data-dependent objective | Retained core explanation and lab; updated limits and continuation to the actual SFT helper and system path. |
+| `68-context` | Tokenization, generation, finite Context Window and unchanged inference weights | Added a worked, executable system-stage lesson and independent write/vary/debug/repair laboratory; dependency and capability boundaries reviewed. |
+| `67-rag` | Prompt context and model limitations | Retained lexical example; placed after context budgeting and replaced obsolete final ending with chunk/vector/grounding progression. |
+| `69-chunks` | Context budget, lexical retrieval and source documents | Added a worked, executable system-stage lesson and independent write/vary/debug/repair laboratory; dependency and capability boundaries reviewed. |
+| `70-vectors` | Dot product, normalization, Embedding training, chunk identity | Added a worked, executable system-stage lesson and independent write/vary/debug/repair laboratory; dependency and capability boundaries reviewed. |
+| `71-grounding` | Ranked evidence, source IDs, context omissions and evaluation boundaries | Added a worked, executable system-stage lesson and independent write/vary/debug/repair laboratory; dependency and capability boundaries reviewed. |
+| `72-history` | Context serialization, mandatory question and output reserve | Added a worked, executable system-stage lesson and independent write/vary/debug/repair laboratory; dependency and capability boundaries reviewed. |
+| `73-summary` | Conversation history, finite input budget and missing information | Added a worked, executable system-stage lesson and independent write/vary/debug/repair laboratory; dependency and capability boundaries reviewed. |
+| `74-memory` | History, lossy summary, retrieval, JSON and explicit caller authorization | Added a worked, executable system-stage lesson and independent write/vary/debug/repair laboratory; dependency and capability boundaries reviewed. |
+| `75-tools` | Context/evidence/memory boundary, Python functions and dictionaries | Added a worked, executable system-stage lesson and independent write/vary/debug/repair laboratory; dependency and capability boundaries reviewed. |
+| `76-reasoning` | Validated tool calls, arithmetic, independent evidence | Added a worked, executable system-stage lesson and independent write/vary/debug/repair laboratory; dependency and capability boundaries reviewed. |
+| `77-candidates` | Step verification, sampling, evaluation split and training objectives | Added a worked, executable system-stage lesson and independent write/vary/debug/repair laboratory; dependency and capability boundaries reviewed. |
+| `80-controller` | Context, retrieval, memory, tool validation and verifier scope | Added a worked, executable system-stage lesson and independent write/vary/debug/repair laboratory; dependency and capability boundaries reviewed. |
+| `81-system-eval` | Bounded controller, component contracts, held-out/regression evaluation | Added a worked, executable system-stage lesson and independent write/vary/debug/repair laboratory; dependency and capability boundaries reviewed. |
+| `63-scale` | Model parameter/activation costs | Retained existing explanation and lab; relocated after model-plus-system construction so costs have a concrete target. |
+| `64-cache` | Autoregression, Q/K/V and positions | Retained existing explanation and lab; relocated after model-plus-system construction so costs have a concrete target. |
+| `82-performance` | Integrated system, scaling/cache estimates and fixed-workload measurement | Added a worked, executable system-stage lesson and independent write/vary/debug/repair laboratory; dependency and capability boundaries reviewed. |
+| `83-deployment` | Input/output limits, measured costs and local controller boundary | Added a worked, executable system-stage lesson and independent write/vary/debug/repair laboratory; dependency and capability boundaries reviewed. |
+| `84-capstone` | All model/system components, evaluation, performance and deployment limits | Added a worked, executable system-stage lesson and independent write/vary/debug/repair laboratory; dependency and capability boundaries reviewed. |
 
-## Chapters, checkpoints and references
-
-All 36 chapter indexes inherit the reviewed lesson order. The only new chapter
-is appended to part 2, preserving prior chapter and lesson URLs. All 10 part
-introductions and checkpoint tasks/answers were checked against their entry
-lessons. Their calculations remain consistent: shifted windows, Attention
-weights, 7104 Parameters, weighted Loss 1.4, Top-p normalization, KV bytes and
-LoRA counts. Checkpoint 8 now follows actual training/resume command scaffolding.
-
-All 84 learning units and all chapter/part/answer/concept/reference continuations
-are checked automatically. Diagrams distinguish explanatory fixtures from real
-checkpoint data. Glossary inspection uncovered API-name errors and orphaned
-examples; key entries now have authored numerical examples, and source-derived
-entries include question plus answer and expandable complete lesson context.
-The canonicalization layer is tested not to alter formulas, code or API spelling.
-
-The Mini-GPT implementation was reviewed across tokenizer/data contracts,
-attention, block assembly, model output, training, checkpoint/resume, evaluation,
-Sampling, inspection and stages. No architecture change was needed: the fixes
-are explicit independent-Test evaluation, UTF-8 CLI boundaries, milestone
-probability labeling and the educational examples. Full test and packaging
-evidence is in [REVIEW.md](REVIEW.md).
-
-
-Second review: all 76 lessons were read across three specialist passes. Current changes add Regression/Classification, fixed-context MLP, Cross-attention dimensions, the training-to-assistant map, precise mean-Loss/SFT-mask interpretation, and selective glossary links. All 12 laboratories were reviewed cell by cell against their connected lessons. See [Jupyter mapping](NOTEBOOKS.md) and [current review evidence](REVIEW.md).
+Every lesson uses the shared Persian/English typography pipeline. All have an
+explicit learning-time profile. Two early review extensions no longer import
+PyTorch unnecessarily. No existing model architecture or core training/generation
+algorithm was rewritten for this extension. New runtime helpers live beside the
+model and expose their limitations. Automated validation evidence and remaining
+weaknesses are recorded in the current review, not implied by this audit table.

@@ -1,7 +1,8 @@
 # Persian AI Book — complete local learning project
 
-This download contains the book source, 76 dedicated lesson notebooks, 12 optional
-review notebooks, the actual Mini-GPT, tiny sample data, model tests, and setup guides.
+This download contains the book source, 92 dedicated lesson notebooks, 12 optional
+review notebooks, the actual Mini-GPT and offline system modules, tiny sample data,
+model/system tests, and setup guides.
 Extract the whole ZIP before running anything.
 
 ## Windows: install once

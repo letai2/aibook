@@ -73,7 +73,7 @@ class EditorialTests(unittest.TestCase):
 
     def test_chapters_parts_answers_and_major_references_have_a_next_step(self):
         paths = [p for p,_ in book.CHAPTERS.values()]
-        paths += [f'part-{n:02}/index.html' for n in range(1,11)]
+        paths += [f'part-{n:02}/index.html' for n in range(1,len(book.PARTS)+1)]
         paths += [p for p in self.pages if p.startswith(('answers/','glossary/','code/'))]
         paths += ['guide.html','windows.html','project.html','api.html','lab.html','journal.html','glossary.html']
         for path in paths:
@@ -123,6 +123,11 @@ class EditorialTests(unittest.TestCase):
         self.assertIn('data-term="self-attention"',rendered)
         self.assertEqual(normalize_text('خودتوجهی'),'Self-Attention')
         self.assertEqual(normalize_text('توجه کنید؛ نشانهٔ کیفیت نیست؛ پیام خطا'),'توجه کنید؛ نشانهٔ کیفیت نیست؛ پیام خطا')
+        self.assertEqual(normalize_text('نشانهٔ بهترشدن متن نیست'),'نشانهٔ بهترشدن متن نیست')
+        self.assertEqual(normalize_text('پوشش سؤال، پوشش متن‌های تازه و پوشش همهٔ موضوع‌ها'),
+                         'پوشش سؤال، پوشش متن‌های تازه و پوشش همهٔ موضوع‌ها')
+        self.assertEqual(normalize_text('شکل پوشش؛ توجه تک‌سر؛ توجه چندسر'),
+                         'شکل Mask؛ Single-Head Attention؛ Multi-Head Attention')
         self.assertNotIn('Tokenٔ',normalize_text('نشانهٔ بعدی'))
         self.assertEqual(normalize_text('پارامترهایش'), 'Parameterهایش')
         self.assertEqual(normalize_text('مدل دوپارامتری'), 'مدل با دو Parameter')
@@ -159,11 +164,14 @@ class EditorialTests(unittest.TestCase):
         self.assertIn('Tensor',normalize_html('<p>تنسور</p>'))
 
     def test_terminology_inventory_covers_actual_concepts_and_evidence(self):
-        from book_src.glossary import terminology_inventory, CORRECTED_CONCEPTS
+        from book_src.glossary import terminology_inventory, CORRECTED_CONCEPTS, FINAL_TERM_REVIEW
         audit = terminology_inventory()
         self.assertEqual(set(audit),set(book.TERMS))
         self.assertEqual(len(CORRECTED_CONCEPTS),20)
         self.assertTrue(CORRECTED_CONCEPTS <= audit.keys())
+        self.assertEqual(len(FINAL_TERM_REVIEW),60)
+        self.assertTrue(FINAL_TERM_REVIEW.keys() <= audit.keys())
+        self.assertTrue(all(audit[key]['final_review'] for key in FINAL_TERM_REVIEW))
         self.assertEqual(audit['context-window']['category'],'E')
         for slug in ('supervised-learning','self-supervised-learning','fine-tuning','sft'):
             self.assertGreaterEqual(len(audit[slug]['evidence']),2)
@@ -193,6 +201,93 @@ class EditorialTests(unittest.TestCase):
             (path/'private-notes.txt').write_text('not public')
             with self.assertRaisesRegex(ValueError,'Unexpected font/license'):
                 inventory(path)
+
+    def test_notebook_typography_aligns_prose_without_changing_code_or_math(self):
+        from tools.build_notebooks import render_markdown
+        source = ('<div dir="rtl"><h1>عنوان Tensor</h1><p>تابع `encode(value, vocabulary)` را بنویسید.</p>'
+                  '<ul><li>یک مورد</li></ul><blockquote><p>یادداشت</p></blockquote>'
+                  '<p>English only paragraph.</p><pre><code>loss = value\n# نویسه</code></pre>'
+                  '<div class="math">x = y + 1</div></div>')
+        rendered = render_markdown(source)
+        self.assertIn('<h1 style="text-align:right">',rendered)
+        self.assertIn('<p style="text-align:right">',rendered)
+        self.assertIn('encode(value, vocabulary)</code>',rendered)
+        self.assertIn('loss = value\n# نویسه',rendered)
+        self.assertRegex(rendered,r'<p[^>]*text-align:left[^>]*dir="ltr"')
+        self.assertIn('direction:ltr;text-align:left;unicode-bidi:isolate',rendered)
+        self.assertIn('border-right:3px',rendered)
+        self.assertIn('border-left:0',rendered)
+        self.assertIn('padding-right:1.5em;padding-left:0',rendered)
+        self.assertEqual(render_markdown(rendered),rendered)
+
+    def test_notebook_table_cells_use_content_direction(self):
+        from tools.build_notebooks import render_markdown
+        rendered = render_markdown('<div dir="rtl"><table><tr><th>نام</th><th>Score</th></tr>'
+                                   '<tr><td>نمونه</td><td>0.25</td></tr></table></div>')
+        self.assertIn('<th dir="rtl" style="text-align:right">نام</th>',rendered)
+        self.assertIn('<td dir="ltr" style="text-align:left">0.25</td>',rendered)
+        self.assertEqual(render_markdown(rendered),rendered)
+
+    def test_short_math_and_label_groups_do_not_force_whole_sentences(self):
+        from book_src.terminology import typography_html
+        source = '<p>نکته مهم: مدل هنوز چیزی یاد نگرفته است. شکل (B,T,C) است.</p>'
+        rendered = typography_html(source)
+        self.assertIn('white-space:nowrap">نکته مهم: مدل</span> هنوز',rendered)
+        self.assertIn('class="inline-math" style="white-space:nowrap">(B,T,C)</bdi>',rendered)
+        self.assertIn('>[1,0]·[0,1]=0</bdi>',typography_html('<p>حاصل [1,0]·[0,1]=0 است.</p>'))
+        long_math = '['+','.join(str(n) for n in range(30))+']'
+        self.assertNotIn('nowrap',typography_html('<p>'+long_math+'</p>'))
+        formula = '<div class="math">QKᵀ = [[1,0],[1,1]]<br>O = AV</div>'
+        self.assertEqual(typography_html(formula),formula)
+        self.assertEqual(typography_html(rendered),rendered)
+
+    def test_shared_backticks_cover_headers_and_html_prose(self):
+        from tools.build_notebooks import make_notebook
+        from book_src.lab_exercises import exercises
+        from book_src.terminology import inline_code_html
+        spec = dict(exercises()['02-token'], prerequisite="`reduction='none'` و `encode(value, vocabulary)`")
+        _, notebook = make_notebook(book.BY_ID['02-token'],3,spec)
+        header = ''.join(notebook['cells'][0]['source'])
+        self.assertIn('encode(value, vocabulary)</code>',header)
+        self.assertNotIn('Reduction',header)
+        self.assertIn('reduction=',header)
+        rendered = annotate_html(inline_code_html('<p>`project(x, weight, bias)`</p>'),'index.html')
+        self.assertIn('project(x, weight, bias)</code>',rendered)
+
+    def test_every_notebook_markdown_cell_uses_the_shared_typography_policy(self):
+        import json
+        from tools.build_notebooks import render_markdown
+        count = 0
+        for lab in book.LABS:
+            notebook = json.loads((book.ROOT/lab['path']).read_text(encoding='utf-8'))
+            for cell in notebook['cells']:
+                if cell['cell_type'] != 'markdown':
+                    continue
+                count += 1
+                source = ''.join(cell['source'])
+                self.assertEqual(render_markdown(source),source,(lab['id'],cell['id']))
+                self.assertIn('text-align:right',source,(lab['id'],cell['id']))
+        self.assertEqual(count,10*len(book.LESSONS)+187)
+
+    def test_inline_comparisons_entities_and_protected_subtrees(self):
+        from book_src.terminology import inline_code_html, typography_html
+        from tools.build_notebooks import render_markdown
+        source = '<p>شرط `0<p<=1` و `1<=k<=V` و `value &lt; target` و `<|unk|>`.</p>'
+        rendered = render_markdown('<div dir="rtl">'+source+'</div>')
+        for code in ('0&lt;p&lt;=1','1&lt;=k&lt;=V','value &lt; target','&lt;|unk|&gt;'):
+            self.assertIn('>'+code+'</code>',rendered)
+        self.assertNotIn('`',rendered)
+        self.assertEqual(render_markdown(rendered),rendered)
+        opaque = ('<!-- `weight` [1,2] --><script>const x = `value`;</script>'
+                  '<style>/* `loss` */</style><pre>`value &lt; target`</pre>'
+                  '<div class="math">`weight` [1,2]</div><code>`loss`</code>')
+        self.assertEqual(inline_code_html(opaque),opaque)
+        self.assertEqual(typography_html(opaque),opaque)
+        self.assertEqual(inline_code_html('<p title="`weight`">یک ` نشانه</p>'),
+                         '<p title="`weight`">یک ` نشانه</p>')
+        table = render_markdown('<table><tr><td dir="rtl" style="color:red;text-align:center">12</td></tr></table>')
+        self.assertIn('dir="rtl" style="color:red;text-align:right"',table)
+        self.assertEqual(render_markdown(table),table)
 
 
 if __name__ == '__main__':

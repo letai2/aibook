@@ -1,13 +1,16 @@
 # From Python to Mini-GPT
 
 A Persian, beginner-oriented HTML textbook with a transparent PyTorch Mini-GPT
-with 76 dedicated learner laboratories and 12 optional review notebooks. Each HTML
-lesson leads directly to its coding laboratory.
+with 92 dedicated learner laboratories and 12 optional review notebooks. Each HTML
+lesson leads directly to its coding laboratory. The 15-part path now continues
+through response-only SFT, context/retrieval, memory, tools, verification and a
+bounded offline model-plus-system project.
 
 - [Open the built book](dist/index.html)
 - [Windows installation](docs/WINDOWS_SETUP.md)
 - [Jupyter setup and lesson-to-notebook map](docs/NOTEBOOKS.md)
 - [Current review and verification](docs/REVIEW.md)
+- [Learning-time assumptions](docs/LEARNING_TIME.md)
 - [Curriculum](docs/CURRICULUM.md) and [review coverage](docs/COVERAGE.md)
 - [Model commands](mini_gpt/README.md)
 - [Deployment](docs/DEPLOYMENT.md)
@@ -58,3 +61,6 @@ unfinished TODOs explicitly; separate reference checks must pass.
 No cloud account, GPU, remote dataset or downloaded model is needed for the
 learning path. Existing run data and historical recovery snapshots are retained.
 Deployment publication is separate from producing a verified local release.
+The system's scripted fixtures test component integration, not learned model
+capability. Real Mini-GPT generation is available separately and can fail its
+output contract; it never silently falls back to a canned answer.

@@ -7,9 +7,9 @@ the learner notebook builder must never insert them into starter notebooks.
 EXERCISES = {
     "47-loop": {
         "title": "وزن واقعاً تغییر کرد؟",
-        "goal": "یک گام آموزش را بنویسید و تغییر وزن را از صرف محاسبهٔ مشتق جدا کنید.",
-        "prerequisite": "forward، backward و Optimizer؛ ورودی و Target با شکل (B,T).",
-        "predict": "اگر backward اجرا شود ولی step اجرا نشود، کدام عددها تغییر می‌کنند؟",
+        "goal": "یک گام آموزش را بنویسید و تغییر وزن را از صرف محاسبهٔ Gradient جدا کنید.",
+        "prerequisite": "`forward`، `backward` و Optimizer؛ ورودی و Target با شکل `(B,T)`.",
+        "predict": "اگر `backward` اجرا شود ولی `step` اجرا نشود، کدام عددها تغییر می‌کنند؟",
         "setup": """import torch
 from mini_gpt.config import ModelConfig
 from mini_gpt.model import MiniGPT
@@ -24,7 +24,7 @@ model = make_model()
 print('input / targets:', x.tolist(), y.tolist())
 print('initial loss:', model(x,y)[1].item())
 """,
-        "task": "تابع update_step(model, optimizer, x, y) را بنویسید: حالت آموزش، پاک‌کردن مشتق قبلی، محاسبهٔ Loss، backward و step. مقدار Loss پیش از تغییر وزن را به‌صورت float برگردانید.",
+        "task": "تابع `update_step(model, optimizer, x, y)` را بنویسید: حالت آموزش، پاک‌کردن Gradientهای قبلی، محاسبهٔ Loss، `backward` و `step`. مقدار Loss پیش از تغییر وزن را به‌صورت `float` برگردانید.",
         "starter": """def update_step(model, optimizer, x, y):
     # TODO: یک گام آموزش
     return None
@@ -69,7 +69,7 @@ print('PASS' if exercise_complete else 'INCOMPLETE: update_step')
     optimizer.step()
     print(rate, (trial.token_embedding.weight.detach()-before).norm().item())
 """,
-        "debug": "دو بار مشتق یک عبارت را گرفته‌ایم، بی‌آنکه مشتق قبلی پاک شود. gradient_once(parameter) را تعمیر کنید: مشتق (parameter-3)**2 را مستقل از فراخوانی‌های قبلی برگرداند و وزن را تغییر ندهد.",
+        "debug": "دو بار Gradient یک عبارت را محاسبه کرده‌ایم، بی‌آنکه Gradient قبلی پاک شود. `gradient_once(parameter)` را اصلاح کنید: مشتق `(parameter-3)**2` را مستقل از فراخوانی‌های قبلی برگرداند و وزن را تغییر ندهد.",
         "bug_code": """w = torch.nn.Parameter(torch.tensor(1.0))
 for _ in range(2):
     ((w-3)**2).backward()
@@ -97,14 +97,14 @@ print('PASS' if repair_complete else 'INCOMPLETE: gradient_once')
     ((parameter-3)**2).backward()
     return parameter.grad.detach().clone()
 """,
-        "connection": "مدل، MiniGPT واقعی است؛ حلقهٔ کوتاه این دفتر همان عملیات مرکزی mini_gpt/train.py را بدون گزارش و ذخیره اجرا می‌کند.",
-        "takeaway": "کدام آزمون نشان داد که دو گام مستقل نوشته‌اید، نه دو backward با مشتق انباشته؟",
+        "connection": "مدل، `MiniGPT` واقعی است؛ حلقهٔ کوتاه این دفتر همان عملیات مرکزی `mini_gpt/train.py` را بدون گزارش و ذخیره اجرا می‌کند.",
+        "takeaway": "کدام آزمون نشان داد که دو گام مستقل نوشته‌اید، نه دو `backward` با Gradient انباشته؟",
     },
     "48-evaluate": {
         "title": "دستهٔ آخر نباید امتیاز اضافی بگیرد",
-        "goal": "میانگین را بر تعداد Targetها وزن دهید و آن را با evaluate واقعی مقایسه کنید.",
-        "prerequisite": "Loss میانگین هر Batch و حالت eval/no_grad.",
-        "predict": "میانگین خطاهای ۱ و ۳، با تعداد هدف‌های ۸ و ۲، باید به کدام مقدار نزدیک‌تر باشد؟",
+        "goal": "میانگین را با توجه به تعداد Targetها حساب کنید و آن را با `evaluate` واقعی مقایسه کنید.",
+        "prerequisite": "Loss میانگین هر Batch و حالت `eval`/`no_grad`.",
+        "predict": "میانگین Lossهای ۱ و ۳، با تعداد هدف‌های ۸ و ۲، باید به کدام مقدار نزدیک‌تر باشد؟",
         "setup": """import math
 import torch
 from torch.utils.data import DataLoader
@@ -118,7 +118,7 @@ model = MiniGPT(ModelConfig(12,4,8,2,1,0.2))
 data = NextTokenDataset([1,2,3,4,5,6,7,8],3)
 print('windows:', len(data), 'real evaluation:', evaluate(model, DataLoader(data,batch_size=2), 'cpu'))
 """,
-        "task": "weighted_mean(losses, counts) میانگین Loss هر دسته و تعداد Targetهایش را می‌گیرد و میانگین کل را برمی‌گرداند. ورودی تمرین فهرست‌های هم‌اندازه و ناتهی با counts مثبت است.",
+        "task": "`weighted_mean(losses, counts)` میانگین Loss هر دسته و تعداد Targetهایش را می‌گیرد و میانگین کل را برمی‌گرداند. ورودی تمرین فهرست‌های هم‌اندازه و غیرخالی با `counts` مثبت است.",
         "starter": """def weighted_mean(losses, counts):
     # TODO: هر Target سهم برابر دارد
     return None
@@ -144,13 +144,13 @@ print('PASS' if exercise_complete else 'INCOMPLETE: weighted_mean')
         "solution": """def weighted_mean(losses, counts):
     return sum(loss*count for loss,count in zip(losses,counts))/sum(counts)
 """,
-        "vary": "فقط batch_size ارزیابی را عوض کنید. چرا Loss کل باید تقریباً ثابت بماند؟",
+        "vary": "فقط `batch_size` ارزیابی را عوض کنید. چرا Loss کل باید تقریباً ثابت بماند؟",
         "vary_code": """before = {name:value.clone() for name,value in model.state_dict().items()}
 for size in (1,2,3):
     print(size, evaluate(model,DataLoader(data,batch_size=size),'cpu'))
 assert all(torch.equal(before[name],value) for name,value in model.state_dict().items())
 """,
-        "debug": "میانگین Perplexity دسته‌ها با exp میانگین Loss یکی نیست. perplexity_from_batches(losses, counts) را با میانگینِ وزن‌دار Loss تعمیر کنید.",
+        "debug": "میانگین Perplexity دسته‌ها با `exp` میانگین Loss یکی نیست. `perplexity_from_batches(losses, counts)` را با میانگینِ وزن‌دار Loss اصلاح کنید.",
         "bug_code": """wrong = (8*math.exp(1.0)+2*math.exp(3.0))/10
 print('wrong mean of perplexities:', wrong)
 print('exp of mean loss:', math.exp(1.4))
@@ -173,14 +173,14 @@ print('PASS' if repair_complete else 'INCOMPLETE: perplexity_from_batches')
     mean_loss = sum(loss*count for loss,count in zip(losses,counts))/sum(counts)
     return math.exp(mean_loss)
 """,
-        "connection": "evaluate پروژه دقیقاً از targets.numel() برای وزن‌دهی استفاده می‌کند. پنجره‌ها هم‌پوشان‌اند؛ این عدد را با سنجش تک‌گذری یک متن دیگر یکی ندانید.",
-        "takeaway": "برابری نتیجه با چند batch_size کدام خطای پیاده‌سازی را آشکار می‌کند و چه چیزی دربارهٔ کیفیت زبان نمی‌گوید؟",
+        "connection": "`evaluate` پروژه دقیقاً از `targets.numel()` برای وزن‌دهی استفاده می‌کند. پنجره‌ها هم‌پوشان‌اند؛ این عدد را با سنجش تک‌گذری یک متن دیگر یکی ندانید.",
+        "takeaway": "برابری نتیجه با چند `batch_size` کدام خطای پیاده‌سازی را آشکار می‌کند و چه چیزی دربارهٔ کیفیت زبان نمی‌گوید؟",
     },
     "49-rate": {
-        "title": "جهت مشتق را نگه دارید، اندازه‌اش را محدود کنید",
+        "title": "جهت Gradient را نگه دارید، اندازه‌اش را محدود کنید",
         "goal": "محدودسازی Norm را از بریدن جداگانهٔ مؤلفه‌ها و از اندازهٔ نهایی update جدا کنید.",
-        "prerequisite": "بردار، Norm و ترتیب backward تا optimizer.step.",
-        "predict": "بردار [3,4] با سقف Norm برابر ۱، به [1,1] تبدیل می‌شود یا برداری هم‌جهت با خودش؟",
+        "prerequisite": "بردار، Norm و ترتیب `backward` تا `optimizer.step`.",
+        "predict": "بردار `[3,4]` با سقف Norm برابر ۱، به `[1,1]` تبدیل می‌شود یا برداری هم‌جهت با خودش؟",
         "setup": """import torch
 from mini_gpt.config import ModelConfig
 from mini_gpt.model import MiniGPT
@@ -192,7 +192,7 @@ model(x,y)[1].backward()
 norm = torch.nn.utils.clip_grad_norm_(model.parameters(),1.0)
 print('norm before clipping:', norm.item())
 """,
-        "task": "clip_vector(gradient, limit) برای بردار float و limit مثبت، یک بردار تازه با همان جهت و Norm حداکثر limit برگرداند. اگر Norm کوچک است یا بردار صفر است، مقدارها تغییر نکنند.",
+        "task": "`clip_vector(gradient, limit)` برای بردار `float` و `limit` مثبت، یک بردار تازه با همان جهت و Norm حداکثر `limit` برگرداند. اگر Norm کوچک است یا بردار صفر است، مقدارها تغییر نکنند.",
         "starter": """def clip_vector(gradient, limit):
     # TODO: یک ضریب مشترک برای کل بردار
     return None
@@ -222,7 +222,7 @@ for rate in (0.01,0.1,1.0):
     update = -rate*gradient
     print(rate, 'update norm:', update.norm().item())
 """,
-        "debug": "اگر ابتدا step را انجام دهیم، محدودکردن مشتق دیگر آن تغییر وزن را اصلاح نمی‌کند. clipped_sgd(value, gradient, rate, limit) را برای عددهای scalar بنویسید: اول gradient را به بازهٔ مجاز ببرید و سپس وزن تازه را برگردانید.",
+        "debug": "اگر ابتدا `step` را انجام دهیم، محدودکردن Gradient دیگر آن تغییر وزن را اصلاح نمی‌کند. `clipped_sgd(value, gradient, rate, limit)` را برای عددهای تک‌مقداری بنویسید: اول `gradient` را به بازهٔ مجاز ببرید و سپس وزن تازه را برگردانید.",
         "bug_code": """value, gradient, rate, limit = 2.0, 10.0, 0.1, 1.0
 wrong_value = value-rate*gradient
 gradient = max(-limit,min(limit,gradient))
@@ -246,7 +246,7 @@ print('PASS' if repair_complete else 'INCOMPLETE: clipped_sgd')
         "fix_solution": """def clipped_sgd(value, gradient, rate, limit):
     return value-rate*max(-limit,min(limit,gradient))
 """,
-        "connection": "train.py مقدار بازگشتی clip_grad_norm_ را پیش از step ثبت می‌کند. این مقدار Norm پیش از محدودسازی است، نه اندازهٔ تغییر وزن AdamW.",
+        "connection": "`train.py` مقدار بازگشتی `clip_grad_norm_` را پیش از `step` ثبت می‌کند. این مقدار Norm پیش از محدودسازی است، نه اندازهٔ تغییر وزن AdamW.",
         "takeaway": "اگر Norm محدود شد ولی Loss همچنان نامتناهی بود، چرا بزرگ‌ترکردن سقف راه‌حل قابل اتکایی نیست؟",
     },
     "49b-schedule": {
@@ -260,7 +260,7 @@ schedule = ScheduleConfig('cosine',2,6,0.1)
 print('reference step 1:',schedule.learning_rate(0.001,1))
 print('reference step 6:',schedule.learning_rate(0.001,6))
 """,
-        "task": "cosine_rate(step, peak, warmup, end, ratio) را برای step>=1 و end>warmup>=0 بنویسید. Warmup تا خود گام warmup است؛ پس از end نرخ روی peak*ratio می‌ماند. حالت warmup=0 نیز معتبر است.",
+        "task": "`cosine_rate(step, peak, warmup, end, ratio)` را برای `step>=1` و `end>warmup>=0` بنویسید. Warmup تا خود گام `warmup` است؛ پس از `end` نرخ روی `peak*ratio` می‌ماند. حالت `warmup=0` نیز معتبر است.",
         "starter": """def cosine_rate(step, peak, warmup, end, ratio):
     # TODO: نرخ همان شمارهٔ گام، بدون بازتنظیم افق
     return None
@@ -288,7 +288,7 @@ print('PASS' if exercise_complete else 'INCOMPLETE: cosine_rate')
     trial = ScheduleConfig('cosine',warmup,8,0.1)
     print(warmup,[round(trial.learning_rate(0.001,s),6) for s in range(1,10)])
 """,
-        "debug": "پس از سه گام، نرخ‌های ادامه را اشتباهاً از شمارهٔ ۱ گرفته‌ایم. resumed_rates(schedule, peak, completed, count) باید نرخ count گام بعد از completed را برگرداند.",
+        "debug": "پس از سه گام، نرخ‌های ادامه را اشتباهاً از شمارهٔ ۱ گرفته‌ایم. `resumed_rates(schedule, peak, completed, count)` باید نرخ `count` گام بعد از `completed` را برگرداند.",
         "bug_code": """wrong = [schedule.learning_rate(0.001,s) for s in range(1,4)]
 expected_steps = [4,5,6]
 print('restarted rates:',wrong,'but next step numbers are:',expected_steps)
@@ -311,14 +311,14 @@ print('PASS' if repair_complete else 'INCOMPLETE: resumed_rates')
         "fix_solution": """def resumed_rates(schedule, peak, completed, count):
     return [schedule.learning_rate(peak,s) for s in range(completed+1,completed+count+1)]
 """,
-        "connection": "ScheduleConfig همان کلاس مصرف‌شده در train.py است. پایان کاهش از Checkpoint بازیابی می‌شود و به --steps تازه وابسته نیست.",
+        "connection": "`ScheduleConfig` همان کلاس مصرف‌شده در `train.py` است. پایان کاهش از Checkpoint بازیابی می‌شود و به `--steps` تازه وابسته نیست.",
         "takeaway": "برابری فرمول نرخ چرا به‌تنهایی برتری کیفیت آموزش را ثابت نمی‌کند؟",
     },
     "50-checkpoint": {
         "title": "یک فایل سالم، یک معنی ثابت",
         "goal": "بازیابی مدل را با وزن‌ها و ترتیب واژگان بیازمایید، نه فقط با بازشدن فایل.",
-        "prerequisite": "state_dict، Tokenizer و کپی مستقل Tensor.",
-        "predict": "اگر دو نویسه در واژگان جابه‌جا شوند ولی شکل همهٔ وزن‌ها درست باشد، کدام آزمون باید شکست بخورد؟",
+        "prerequisite": "`state_dict`، Tokenizer و کپی مستقل Tensor.",
+        "predict": "اگر دو کاراکتر در Vocabulary جابه‌جا شوند ولی شکل همهٔ وزن‌ها درست باشد، کدام آزمون باید شکست بخورد؟",
         "setup": """import copy
 import tempfile
 from pathlib import Path
@@ -342,7 +342,7 @@ with tempfile.TemporaryDirectory(prefix='aibook-checkpoint-') as directory:
     restored,restored_tokenizer,payload = load_checkpoint(path)
 print('restored step:',payload['step'],'optimizer has history:',bool(payload['optimizer']['state']))
 """,
-        "task": "same_artifact(left, right, left_tokens, right_tokens) دو state_dict و دو فهرست واژگان را مقایسه کند. فقط اگر کلیدها، مقدار Tensorها و ترتیب واژگان یکسان‌اند True بدهد.",
+        "task": "`same_artifact(left, right, left_tokens, right_tokens)` دو `state_dict` و دو فهرست واژگان را مقایسه کند. فقط اگر کلیدها، مقدار Tensorها و ترتیب واژگان یکسان‌اند `True` بدهد.",
         "starter": """def same_artifact(left, right, left_tokens, right_tokens):
     # TODO: شکل درست به‌تنهایی کافی نیست
     return None
@@ -377,7 +377,7 @@ with torch.no_grad():
     trial.language_model_head.weight[1,0] += 0.5
     print('maximum logit difference:',(trial(x)[0]-baseline).abs().max().item())
 """,
-        "debug": "state_dict به‌تنهایی عکس مستقل وزن‌های در حال تغییر نیست. snapshot(model) را بنویسید تا همهٔ Tensorها detach و clone شوند.",
+        "debug": "`state_dict` به‌تنهایی کپی مستقلی از وزن‌های در حال تغییر نیست. `snapshot(model)` را بنویسید تا همهٔ Tensorها `detach` و `clone` شوند.",
         "bug_code": """trial = copy.deepcopy(model)
 wrong_snapshot = trial.state_dict()
 old_value = wrong_snapshot['token_embedding.weight'][1,0].item()
@@ -407,7 +407,7 @@ print('PASS' if repair_complete else 'INCOMPLETE: snapshot')
         "fix_solution": """def snapshot(model):
     return {name:value.detach().clone() for name,value in model.state_dict().items()}
 """,
-        "connection": "save_checkpoint/load_checkpoint واقعی استفاده شدند. metadata خالی این مثال برای نمایش بازیابی است؛ برای Resume کامل، فایل را با train.py بسازید. فایل موقت در پایان setup پاک شده است.",
+        "connection": "`save_checkpoint`/`load_checkpoint` واقعی استفاده شدند. metadata خالی این مثال برای نمایش بازیابی است؛ برای Resume کامل، فایل را با `train.py` بسازید. فایل موقت در پایان setup پاک شده است.",
         "takeaway": "چرا هم برابری Tensorها و هم برابری واژگان لازم بود؟",
     },
     "51-resume": {
@@ -437,7 +437,7 @@ with tempfile.TemporaryDirectory(prefix='aibook-resume-') as directory:
     _,_,resumed_payload = load_checkpoint(resumed_path)
 print('total steps:',full_payload['step'],resumed_payload['step'])
 """,
-        "task": "different_tensors(left, right) برای دو state_dict با کلیدهای برابر، نام Tensorهای نابرابر را به‌ترتیب الفبایی برگرداند. از برابری کامل استفاده کنید، نه Loss گرد‌شده.",
+        "task": "`different_tensors(left, right)` برای دو `state_dict` با کلیدهای برابر، نام Tensorهای نابرابر را به‌ترتیب الفبایی برگرداند. از برابری کامل استفاده کنید، نه Loss گرد‌شده.",
         "starter": """def different_tensors(left, right):
     # TODO: فهرست نام Tensorهای متفاوت
     return None
@@ -462,7 +462,7 @@ print('PASS' if exercise_complete else 'INCOMPLETE: different_tensors')
     generator = torch.Generator().manual_seed(seed)
     print(seed,torch.randint(100,(8,),generator=generator).tolist())
 """,
-        "debug": "ساخت دوبارهٔ Generator با Seed اولیه، وضعیت میانهٔ اجرا را برنمی‌گرداند. restore_batch_generator(payload) یک Generator تازه با rng_batches ذخیره‌شده بسازد.",
+        "debug": "ساخت دوبارهٔ `Generator` با Seed اولیه، وضعیت میانهٔ اجرا را برنمی‌گرداند. `restore_batch_generator(payload)` یک `Generator` تازه با `rng_batches` ذخیره‌شده بسازد.",
         "bug_code": """wrong = torch.Generator().manual_seed(18)
 saved = torch.Generator()
 saved.set_state(resumed_payload['rng_batches'])
@@ -491,8 +491,8 @@ print('PASS' if repair_complete else 'INCOMPLETE: restore_batch_generator')
     generator.set_state(payload['rng_batches'])
     return generator
 """,
-        "connection": "هر سه اجرا از train واقعی‌اند؛ فایل‌ها در پوشه‌های موقت مستقل ساخته و سپس پاک شدند. برابری بیت‌به‌بیت این آزمون مربوط به CPU و محیط ثابت همین اجراست، نه وعده‌ای برای هر GPU یا نسخه.",
-        "takeaway": "علاوه بر rng_batches، کدام وضعیت‌های Checkpoint برای ادامهٔ دقیق لازم‌اند؟",
+        "connection": "هر سه اجرا از `train` واقعی‌اند؛ فایل‌ها در پوشه‌های موقت مستقل ساخته و سپس پاک شدند. برابری بیت‌به‌بیت این آزمون مربوط به CPU و محیط ثابت همین اجراست، نه وعده‌ای برای هر GPU یا نسخه.",
+        "takeaway": "علاوه بر `rng_batches`، کدام وضعیت‌های Checkpoint برای ادامهٔ دقیق لازم‌اند؟",
     },
     "52-first-run": {
         "title": "از اجرای واقعی تا گزارش قابل بررسی",
@@ -522,7 +522,7 @@ report = inspect_model(model,tokenizer,'مدل ',layer=0,head=0,max_tokens=8,gen
 print('actual trace shapes:',report['shapes'])
 print('logged steps:',[row['step'] for row in rows])
 """,
-        "task": "summarize_metrics(rows) فهرست ناتهی سطرهای CSV را بگیرد و dict با last_step، best_step و best_validation برگرداند. step را int و validation_loss را float کنید؛ در تساوی بهترین خطا، نخستین سطر را انتخاب کنید.",
+        "task": "`summarize_metrics(rows)` فهرست غیرخالی سطرهای CSV را بگیرد و `dict` با `last_step`، `best_step` و `best_validation` برگرداند. `step` را `int` و `validation_loss` را `float` کنید؛ در تساوی بهترین خطا، نخستین سطر را انتخاب کنید.",
         "starter": """def summarize_metrics(rows):
     # TODO: آخرین گام و بهترین ارزیابی یکی نیستند
     return None
@@ -552,7 +552,7 @@ print('PASS' if exercise_complete else 'INCOMPLETE: summarize_metrics')
     item = inspect_model(model,tokenizer,'مدل ',layer=0,head=head,max_tokens=8,generate_tokens=0,greedy=True)
     print('head',head,'last attention row:',item['attention']['weights'][-1])
 """,
-        "debug": "چسباندن گزارش دو اجرا ممکن است گام‌های تکراری یا عقب‌رفته بسازد. valid_metrics(rows) باید برای گام‌های مثبت و اکیداً صعودی و validation_loss متناهی True بدهد؛ گزارش خالی نامعتبر است.",
+        "debug": "چسباندن گزارش دو اجرا ممکن است گام‌های تکراری یا عقب‌رفته بسازد. `valid_metrics(rows)` باید برای گام‌های مثبت و اکیداً صعودی و `validation_loss` متناهی `True` بدهد؛ گزارش خالی نامعتبر است.",
         "bug_code": """mixed = rows+rows[:1]
 print('mixed history:',[row['step'] for row in mixed])
 print('all rows individually have numbers, but the history restarts')
@@ -580,13 +580,13 @@ print('PASS' if repair_complete else 'INCOMPLETE: valid_metrics')
     return (steps[0]>0 and all(a<b for a,b in zip(steps,steps[1:]))
             and all(math.isfinite(float(row['validation_loss'])) for row in rows))
 """,
-        "connection": "آموزش، CSV، Checkpoint و inspect همگی از پیاده‌سازی واقعی‌اند. train_batch_loss قبل از update و validation_loss پس از آن محاسبه می‌شود؛ این دو ستون ارزیابی همسانِ دو Split نیستند.",
+        "connection": "آموزش، CSV، Checkpoint و `inspect` همگی از پیاده‌سازی واقعی‌اند. `train_batch_loss` قبل از update و `validation_loss` پس از آن محاسبه می‌شود؛ این دو ستون ارزیابی همسانِ دو Split نیستند.",
         "takeaway": "کدام اطلاعات لازم است تا کسی دیگر همین نمودار و همین نقشهٔ Attention را بازسازی کند؟",
     },
     "53-curves": {
         "title": "منحنی را بخوانید، نتیجه را محدود کنید",
         "goal": "توقف بر اساس Validation را روی یک منحنی معلوم پیاده کنید و Test را از انتخاب تنظیمات بیرون نگه دارید.",
-        "prerequisite": "تفاوت Training، Validation و Test؛ عدد کمتر همیشه ادعای بزرگ‌تر نمی‌دهد.",
+        "prerequisite": "تفاوت Training، Validation و Test؛ Loss کمتر به‌تنهایی نشانهٔ بهترشدن همهٔ توانایی‌های مدل نیست.",
         "predict": "اگر Training بهتر شود ولی Validation بعد از دو ارزیابی بدتر شود، آیا باید آخرین وزن را بهترین بدانیم؟",
         "setup": """import torch
 import matplotlib.pyplot as plt
@@ -607,7 +607,7 @@ plt.plot(range(1,7),train_curve,'o-',label='Synthetic train')
 plt.plot(range(1,7),valid_curve,'o-',label='Synthetic validation')
 plt.xlabel('Evaluation number'); plt.ylabel('Loss'); plt.legend(); plt.show()
 """,
-        "task": "early_stop(values, patience) نخستین شمارهٔ ارزیابی، از ۱، را برگرداند که patience ارزیابی پیاپی بهبودِ اکید نداشته‌ایم. اگر چنین گامی نیست None بدهید. با هر بهبود شمارنده صفر می‌شود؛ تساوی بهبود نیست.",
+        "task": "`early_stop(values, patience)` نخستین شمارهٔ ارزیابی، از ۱، را برگرداند که `patience` ارزیابی پیاپی بهبودِ اکید نداشته‌ایم. اگر چنین گامی نیست `None` بدهید. با هر بهبود شمارنده صفر می‌شود؛ تساوی بهبود نیست.",
         "starter": """def early_stop(values, patience):
     # TODO: بهترین مقدار و تعداد ارزیابی‌های بدون بهبود
     return None
@@ -641,7 +641,7 @@ print('PASS' if exercise_complete else 'INCOMPLETE: early_stop')
     trial = MiniGPT(ModelConfig(5,4,8,2,1,0.0))
     print(seed,evaluate(trial,DataLoader(data,batch_size=2),'cpu'))
 """,
-        "debug": "انتخاب Checkpoint با نگاه‌کردن به Test، استقلال آن را از بین می‌برد. select_by_validation(values) فقط فهرست Validation را بگیرد و اندیس صفرمبنای نخستین کمینه را بدهد.",
+        "debug": "انتخاب Checkpoint با نگاه‌کردن به Test، استقلال آن را از بین می‌برد. `select_by_validation(values)` فقط فهرست Validation را بگیرد و اندیس صفرمبنای نخستین کمینه را بدهد.",
         "bug_code": """validation = [1.4,1.1,1.3]
 test = [1.0,1.2,1.15]
 wrong_index = min(range(len(test)),key=lambda i:test[i])
@@ -665,14 +665,14 @@ print('PASS' if repair_complete else 'INCOMPLETE: select_by_validation')
         "fix_solution": """def select_by_validation(values):
     return min(range(len(values)),key=lambda i:values[i])
 """,
-        "connection": "پروژه best.pt را با Validation نگه می‌دارد، اما Early stopping خودکار ندارد. تابع این دفتر یک تمرین مستقل است و رفتار train.py را تغییر نمی‌دهد.",
+        "connection": "پروژه `best.pt` را با Validation نگه می‌دارد، اما Early stopping خودکار ندارد. تابع این دفتر یک تمرین مستقل است و رفتار `train.py` را تغییر نمی‌دهد.",
         "takeaway": "چرا یک منحنی با شکل بیش‌برازش، بدون شناخت داده و شیوهٔ سنجش، تشخیص قطعی علت نیست؟",
     },
     "54-generate": {
         "title": "حلقهٔ تولید را خودتان ببندید",
-        "goal": "از Logits آخرین موقعیت یک ادامهٔ حریصانه بسازید و با generate واقعی مقایسه کنید.",
-        "prerequisite": "شکل (B,T,V)، argmax و بریدن Context.",
-        "predict": "وقتی Prompt از ظرفیت Context بلندتر است، طول خروجی باید از Prompt کوتاه‌تر شود یا فقط ورودی forward محدود می‌شود؟",
+        "goal": "از Logits آخرین موقعیت یک ادامهٔ حریصانه بسازید و با `generate` واقعی مقایسه کنید.",
+        "prerequisite": "شکل `(B,T,V)`، `argmax` و بریدن Context.",
+        "predict": "وقتی Prompt از ظرفیت Context بلندتر است، طول خروجی باید از Prompt کوتاه‌تر شود یا فقط ورودی `forward` محدود می‌شود؟",
         "setup": """import torch
 from mini_gpt.config import ModelConfig
 from mini_gpt.model import MiniGPT
@@ -683,7 +683,7 @@ prompt = torch.tensor([[1,2,3]])
 print('actual generation:',model.generate(prompt,3,greedy=True).tolist())
 print('This untrained model demonstrates mechanics, not language quality.')
 """,
-        "task": "greedy_extend(model, ids, count) را بنویسید. مدلِ ورودی در eval است؛ در no_grad، هر بار آخرین context_length شناسه را بدهید، از آخرین موقعیت argmax بگیرید و به متن کامل اضافه کنید. ids اصلی را تغییر ندهید.",
+        "task": "`greedy_extend(model, ids, count)` را بنویسید. مدلِ ورودی در `eval` است؛ در `no_grad`، هر بار آخرین `context_length` شناسه را بدهید، از آخرین موقعیت `argmax` بگیرید و به متن کامل اضافه کنید. `ids` اصلی را تغییر ندهید.",
         "starter": """def greedy_extend(model, ids, count):
     # TODO: هر بار فقط یک Token تازه
     return None
@@ -715,7 +715,7 @@ print('PASS' if exercise_complete else 'INCOMPLETE: greedy_extend')
     result = model.generate(prompt,count,greedy=True)
     print(count,'full shape:',tuple(result.shape),'context limit:',model.config.context_length)
 """,
-        "debug": "argmax روی محور زمان، شناسهٔ Token نمی‌دهد. last_token_scores(logits) باید برای ورودی (B,T,V)، امتیازهای آخرین موقعیت با شکل (B,V) را برگرداند.",
+        "debug": "`argmax` روی محور زمان، شناسهٔ Token نمی‌دهد. `last_token_scores(logits)` باید برای ورودی `(B,T,V)`، امتیازهای آخرین موقعیت با شکل `(B,V)` را برگرداند.",
         "bug_code": """with torch.no_grad():
     scores = model(prompt)[0]
 wrong = scores.argmax(dim=1)
@@ -740,14 +740,14 @@ print('PASS' if repair_complete else 'INCOMPLETE: last_token_scores')
         "fix_solution": """def last_token_scores(logits):
     return logits[:,-1,:]
 """,
-        "connection": "تابع شما با MiniGPT.generate واقعی مقایسه می‌شود. نسخهٔ پروژه علاوه بر حلقه، حالت train/eval قبلی را برمی‌گرداند و گزینه‌های Sampling را اعتبارسنجی می‌کند.",
-        "takeaway": "چرا محاسبهٔ امتیاز همهٔ موقعیت‌ها در forward به معنی اضافه‌کردن همهٔ آن پیش‌بینی‌ها به متن نیست؟",
+        "connection": "تابع شما با `MiniGPT.generate` واقعی مقایسه می‌شود. نسخهٔ پروژه علاوه بر حلقه، حالت `train`/`eval` قبلی را برمی‌گرداند و گزینه‌های Sampling را اعتبارسنجی می‌کند.",
+        "takeaway": "چرا محاسبهٔ امتیاز همهٔ موقعیت‌ها در `forward` به معنی اضافه‌کردن همهٔ آن پیش‌بینی‌ها به متن نیست؟",
     },
     "55-temperature": {
         "title": "دما، بدون تغییر وزن",
         "goal": "توزیع انتخاب را تغییر دهید و ثابت‌ماندن رتبه‌ها و وزن‌های مدل را بررسی کنید.",
         "prerequisite": "Softmax و تفاوت Logits با احتمال.",
-        "predict": "اگر همهٔ Logits را در یک عدد مثبت تقسیم کنیم، آیا شناسهٔ بزرگ‌ترین امتیاز عوض می‌شود؟",
+        "predict": "اگر همهٔ Logits را بر یک عدد مثبت تقسیم کنیم، آیا شناسهٔ بزرگ‌ترین امتیاز عوض می‌شود؟",
         "setup": """import torch
 from mini_gpt.config import ModelConfig
 from mini_gpt.model import MiniGPT
@@ -760,7 +760,7 @@ with torch.no_grad():
     actual_logits = model(prompt)[0][:,-1,:]
 print('real model probabilities:',sampling_distribution(actual_logits).tolist())
 """,
-        "task": "temperature_probs(logits, temperature) برای Logits دوبعدی متناهی و دمای مثبت، Softmax امتیازهای تقسیم‌شده بر دما را در محور آخر برگرداند. برای دمای صفر یا منفی ValueError بدهید.",
+        "task": "`temperature_probs(logits, temperature)` برای Logits دوبعدی متناهی و دمای مثبت، Softmax امتیازهای تقسیم‌شده بر دما را در محور آخر برگرداند. برای دمای صفر یا منفی `ValueError` بدهید.",
         "starter": """def temperature_probs(logits, temperature):
     # TODO: تغییر احتمال‌ها، نه وزن‌ها
     return None
@@ -797,7 +797,7 @@ for temperature in (0.5,1.0,2.0):
     print(temperature,model.generate(prompt,6,temperature=temperature).tolist())
 assert all(torch.equal(before[name],value) for name,value in model.state_dict().items())
 """,
-        "debug": "دمای صفر روش پیاده‌سازی Greedy نیست. greedy_ids(logits) را بدون تقسیم بنویسید؛ خروجی باید (B,1) باشد و در تساوی نخستین شناسه را انتخاب کند.",
+        "debug": "دمای صفر روش پیاده‌سازی Greedy نیست. `greedy_ids(logits)` را بدون تقسیم بنویسید؛ خروجی باید `(B,1)` باشد و در تساوی نخستین شناسه را انتخاب کند.",
         "bug_code": """try:
     model.generate(prompt,1,temperature=0)
 except ValueError as error:
@@ -823,21 +823,21 @@ print('PASS' if repair_complete else 'INCOMPLETE: greedy_ids')
         "fix_solution": """def greedy_ids(logits):
     return logits.argmax(-1,keepdim=True)
 """,
-        "connection": "sampling_distribution و generate همان توابع پروژه‌اند. تغییر دما مرحلهٔ تولید را عوض می‌کند و هیچ آموزش تازه‌ای انجام نمی‌دهد.",
+        "connection": "`sampling_distribution` و `generate` همان توابع پروژه‌اند. تغییر دما مرحلهٔ تولید را عوض می‌کند و هیچ آموزش تازه‌ای انجام نمی‌دهد.",
         "takeaway": "چرا تغییر Seed یا دما نمی‌تواند اطلاعاتی را که Tokenizer حذف کرده برگرداند؟",
     },
     "56-topkp": {
         "title": "گزینهٔ عبورکننده از آستانه را گم نکنید",
-        "goal": "ماسک Top-p را بنویسید و رفتار Top-k در امتیازهای مساوی را تعمیر کنید.",
+        "goal": "ماسک Top-p را بنویسید و رفتار Top-k در امتیازهای مساوی را اصلاح کنید.",
         "prerequisite": "مرتب‌سازی، مجموع تجمعی و بازگرداندن اندیس‌ها.",
-        "predict": "برای [0.6,0.25,0.1,0.05] و p=0.8 چند گزینه لازم است؟",
+        "predict": "برای `[0.6,0.25,0.1,0.05]` و `p=0.8` چند گزینه لازم است؟",
         "setup": """import torch
 from mini_gpt.sampling import filter_logits
 torch.set_num_threads(1)
 probabilities = torch.tensor([0.6,0.25,0.1,0.05])
 print('project candidates:',torch.isfinite(filter_logits(probabilities.log()[None],top_p=0.8)).tolist())
 """,
-        "task": "nucleus_mask(probabilities, p) برای یک بردار احتمال مثبت با مجموع یک و 0<p<=1، ماسک bool هم‌اندازه در ترتیب اصلی بدهد. کوچک‌ترین پیشوند مرتب با مجموع حداقل p حفظ شود؛ در تساوی احتمال، ترتیب اصلی حفظ شود.",
+        "task": "`nucleus_mask(probabilities, p)` برای یک بردار احتمال مثبت با مجموع یک و `0<p<=1`، ماسک `bool` هم‌اندازه در ترتیب اصلی بدهد. کوچک‌ترین پیشوند مرتب با مجموع حداقل p حفظ شود؛ در تساوی احتمال، ترتیب اصلی حفظ شود.",
         "starter": """def nucleus_mask(probabilities, p):
     # TODO: مرتب‌سازی، عبور از آستانه، بازگشت به ترتیب اصلی
     return None
@@ -871,7 +871,7 @@ print('PASS' if exercise_complete else 'INCOMPLETE: nucleus_mask')
     mask = torch.isfinite(filter_logits(probabilities.log()[None],top_p=p))
     print(p,mask.tolist(),int(mask.sum()))
 """,
-        "debug": "حذف امتیازهای کمتر از kاُم، هنگام تساوی بیش از k گزینه نگه می‌دارد. exact_topk_mask(logits,k) برای بردار یک‌بعدی و 1<=k<=V ماسکی با دقیقاً k خانهٔ True بدهد؛ هویت گزینه‌های مساوی در این تمرین مهم نیست.",
+        "debug": "حذف امتیازهای کمتر از امتیازِ گزینهٔ رتبهٔ k، هنگام تساوی بیش از k گزینه نگه می‌دارد. `exact_topk_mask(logits,k)` برای بردار یک‌بعدی و `1<=k<=V` ماسکی با دقیقاً k خانهٔ `True` بدهد؛ هویت گزینه‌های مساوی در این تمرین مهم نیست.",
         "bug_code": """ties = torch.tensor([2.0,2.0,2.0,0.0])
 wrong = ties>=ties.topk(2).values[-1]
 print('wanted 2, kept:',int(wrong.sum()),wrong.tolist())
@@ -897,13 +897,13 @@ print('PASS' if repair_complete else 'INCOMPLETE: exact_topk_mask')
     result[logits.topk(k).indices] = True
     return result
 """,
-        "connection": "filter_logits در sampling.py با همین دو خطای مرزی روبه‌روست. در ترکیب دو روش، ابتدا Top-k اعمال و سپس Top-p روی توزیع باقی‌مانده حساب می‌شود.",
+        "connection": "`filter_logits` در `sampling.py` با همین دو خطای مرزی روبه‌روست. در ترکیب دو روش، ابتدا Top-k اعمال و سپس Top-p روی توزیع باقی‌مانده حساب می‌شود.",
         "takeaway": "چرا ماسک درست باید هم احتمال تجمعی را رعایت کند و هم ترتیب اصلی واژگان را نگه دارد؟",
     },
     "57-prompts": {
         "title": "مدل واقعاً کدام متن را دیده است؟",
         "goal": "شناسه‌های ناشناخته و Context بریده‌شده را پیش از قضاوت دربارهٔ خروجی بررسی کنید.",
-        "prerequisite": "CharacterTokenizer، شناسهٔ ناشناخته و Context Window.",
+        "prerequisite": "`CharacterTokenizer`، شناسهٔ ناشناخته و Context Window.",
         "predict": "اگر دو Prompt بلند فقط در ابتدای حذف‌شده فرق کنند، آخرین ورودی مدل در تولید Greedy چه تفاوتی دارد؟",
         "setup": """import torch
 from mini_gpt.tokenizer import CharacterTokenizer
@@ -917,7 +917,7 @@ text = 'مدل X زبان مدل'
 ids = torch.tensor([tokenizer.encode(text)])
 print('all IDs:',ids.tolist(),'effective IDs:',ids[:,-5:].tolist())
 """,
-        "task": "effective_ids(tokenizer, text, limit) دو list برگرداند: شناسه‌های کامل متن و حداکثر limit شناسهٔ آخر. متن ناتهی و limit مثبت است؛ واژگان را تغییر ندهید.",
+        "task": "`effective_ids(tokenizer, text, limit)` دو `list` برگرداند: شناسه‌های کامل متن و حداکثر `limit` شناسهٔ آخر. متن غیرخالی و `limit` مثبت است؛ واژگان را تغییر ندهید.",
         "starter": """def effective_ids(tokenizer, text, limit):
     # TODO: متن کامل و ورودی واقعی forward
     return None
@@ -947,7 +947,7 @@ b = torch.tensor([tokenizer.encode('زبان زبان مدل')])
 assert torch.equal(a[:,-5:],b[:,-5:])
 print('next IDs:',model.generate(a,1,greedy=True)[0,-1].item(),model.generate(b,1,greedy=True)[0,-1].item())
 """,
-        "debug": "ساختن شناسهٔ تازه پس از آموزش، جدول Embedding را بزرگ نمی‌کند. encode_with_unknowns(tokenizer,text) باید همان encode معتبر را همراه تعداد صفرها برگرداند؛ برای متن خالی ValueError بدهد.",
+        "debug": "ساختن شناسهٔ تازه پس از آموزش، جدول Embedding را بزرگ نمی‌کند. `encode_with_unknowns(tokenizer,text)` باید همان `encode` معتبر را همراه تعداد صفرها برگرداند؛ برای متن خالی `ValueError` بدهد.",
         "bug_code": """try:
     model(torch.tensor([[tokenizer.vocab_size]]))
 except ValueError as error:
@@ -982,13 +982,13 @@ print('PASS' if repair_complete else 'INCOMPLETE: encode_with_unknowns')
         raise ValueError('empty prompt')
     return ids,ids.count(0)
 """,
-        "connection": "این همان Tokenizer و generate پروژه است. متن برگشتی کامل می‌ماند ولی forward فقط پنجرهٔ آخر را می‌بیند؛ موقعیت‌ها در آن پنجره از صفر شروع می‌شوند.",
+        "connection": "این همان Tokenizer و `generate` پروژه است. متن برگشتی کامل می‌ماند ولی `forward` فقط پنجرهٔ آخر را می‌بیند؛ موقعیت‌ها در آن پنجره از صفر شروع می‌شوند.",
         "takeaway": "وقتی Prefix از Context خارج شده، آیا تغییر دما راهی برای بازیابی آن است؟",
     },
     "58-ablation": {
         "title": "آینده را عوض کنید، گذشته را بسنجید",
-        "goal": "یک آزمون علّیت بنویسید که تنها یک کلید محاسبه را تغییر می‌دهد.",
-        "prerequisite": "Causal mask و مدل در حالت eval.",
+        "goal": "یک آزمون علّیت بنویسید که تنها یک گزینهٔ محاسبه را تغییر می‌دهد.",
+        "prerequisite": "Causal mask و مدل در حالت `eval`.",
         "predict": "با ثابت‌ماندن سه Token نخست، تغییر دو Token آخر باید کدام Logits را ثابت نگه دارد؟",
         "setup": """import copy
 import torch
@@ -1003,7 +1003,7 @@ with torch.no_grad():
     model(a,trace=trace)
 print('future attention mass:',trace['layers'][0]['attention']['weights'].triu(1).sum().item())
 """,
-        "task": "past_difference(model, a, b, prefix, causal) در eval/no_grad، بیشترین قدرمطلق اختلاف Logits نخستین prefix موقعیت را برگرداند. مقدار causal را به هر دو forward بدهید و حالت قبلی مدل را برگردانید.",
+        "task": "`past_difference(model, a, b, prefix, causal)` در `eval`/`no_grad`، بیشترین قدرمطلق اختلاف Logits نخستین `prefix` موقعیت را برگرداند. مقدار `causal` را به هر دو `forward` بدهید و حالت قبلی مدل را برگردانید.",
         "starter": """def past_difference(model, a, b, prefix, causal):
     # TODO: ورودی‌ها فقط در آینده متفاوت‌اند
     return None
@@ -1032,7 +1032,7 @@ print('PASS' if exercise_complete else 'INCOMPLETE: past_difference')
     finally:
         model.train(was_training)
 """,
-        "vary": "فقط use_positions را عوض کنید؛ در هر حالت دو جایگشت با Token آخر یکسان را مقایسه کنید. صفرشدن تفاوت را پیش‌فرض نگیرید.",
+        "vary": "فقط `use_positions` را عوض کنید؛ در هر حالت دو جایگشت با Token آخر یکسان را مقایسه کنید. صفرشدن تفاوت را پیش‌فرض نگیرید.",
         "vary_code": """model.eval()
 with torch.no_grad():
     for enabled in (False,True):
@@ -1040,7 +1040,7 @@ with torch.no_grad():
         right = model(torch.tensor([[3,2,1,4]]),use_positions=enabled)[0][:,-1]
         print('positions:',enabled,'last difference:',(left-right).abs().max().item())
 """,
-        "debug": "دو مدل تصادفی مستقل، مقایسهٔ کنترل‌شده نیستند. paired_models(model) دو deepcopy مستقل از یک وضعیت یکسان برگرداند؛ تغییر یک نسخه نباید روی دیگری یا مدل پایه اثر بگذارد.",
+        "debug": "دو مدل تصادفی مستقل، مقایسهٔ کنترل‌شده نیستند. `paired_models(model)` دو `deepcopy` مستقل از یک وضعیت یکسان برگرداند؛ تغییر یک نسخه نباید روی دیگری یا مدل پایه اثر بگذارد.",
         "bug_code": """left = MiniGPT(model.config)
 right = MiniGPT(model.config)
 print('independent initial weights equal:',torch.equal(left.token_embedding.weight,right.token_embedding.weight))
@@ -1067,7 +1067,7 @@ print('PASS' if repair_complete else 'INCOMPLETE: paired_models')
         "fix_solution": """def paired_models(model):
     return copy.deepcopy(model),copy.deepcopy(model)
 """,
-        "connection": "causal و use_positions کلیدهای آزمایشی forward واقعی‌اند؛ train معمولی هر دو را فعال می‌گذارد. تغییر خروجی مدل تصادفی، برتری کیفیت پس از آموزش را ثابت نمی‌کند.",
+        "connection": "`causal` و `use_positions` گزینه‌های آزمایشی `forward` واقعی‌اند؛ `train` معمولی هر دو را فعال می‌گذارد. تغییر خروجی مدل تصادفی، برتری کیفیت پس از آموزش را ثابت نمی‌کند.",
         "takeaway": "آزمایش علّیت کدام ادعای ساختاری را می‌سنجد که یک متن تولیدی روان نمی‌تواند ثابت کند؟",
     },
     "59-capacity": {
@@ -1085,7 +1085,7 @@ model = MiniGPT(config)
 print('parameter tensors:',len(list(model.parameters())))
 print('embedding shape:',tuple(model.token_embedding.weight.shape))
 """,
-        "task": "count_parameters(config) تعداد scalarهای قابل آموزش یک MiniGPT با این تنظیمات را برگرداند. تعداد شیءهای Parameter را با تعداد عددهای داخلشان اشتباه نگیرید.",
+        "task": "`count_parameters(config)` تعداد مقدارهای عددیِ قابل آموزش یک `MiniGPT` با این تنظیمات را برگرداند. تعداد شیءهای Parameter را با تعداد عددهای داخلشان اشتباه نگیرید.",
         "starter": """def count_parameters(config):
     # TODO: شمارش عددها در مدل واقعی
     return None
@@ -1110,7 +1110,7 @@ print('PASS' if exercise_complete else 'INCOMPLETE: count_parameters')
     trial = MiniGPT(ModelConfig(12,8,width,2,1,0.0))
     print(width,sum(parameter.numel() for parameter in trial.parameters()))
 """,
-        "debug": "شمردن جدول Attention با B*T*C تعداد نمایش‌ها را می‌دهد، نه امتیازهای هر Head. attention_elements(batch, heads, length) تعداد خانه‌های جدول (B,H,T,T) را حساب کند.",
+        "debug": "شمردن جدول Attention با `B*T*C` تعداد مؤلفه‌های نمایش‌ها را می‌دهد، نه امتیازهای هر Head. `attention_elements(batch, heads, length)` تعداد خانه‌های جدول `(B,H,T,T)` را حساب کند.",
         "bug_code": """B,H,T,C = 2,4,8,16
 print('wrong attention count:',B*T*C)
 print('actual score tensor shape:',(B,H,T,T))
@@ -1133,13 +1133,13 @@ print('PASS' if repair_complete else 'INCOMPLETE: attention_elements')
         "fix_solution": """def attention_elements(batch, heads, length):
     return batch*heads*length*length
 """,
-        "connection": "شمارش وزن از MiniGPT واقعی است. جدول کامل Attention نیز شکل همان محاسبهٔ سادهٔ پروژه را دارد؛ تعداد پارامتر به‌تنهایی تخمین هزینهٔ اجرا نیست.",
-        "takeaway": "چرا مقایسهٔ دو مدل با تعداد step برابر، مقایسه با زمان یا حافظهٔ برابر نیست؟",
+        "connection": "شمارش وزن از `MiniGPT` واقعی است. جدول کامل Attention نیز شکل همان محاسبهٔ سادهٔ پروژه را دارد؛ تعداد پارامتر به‌تنهایی تخمین هزینهٔ اجرا نیست.",
+        "takeaway": "چرا مقایسهٔ دو مدل با تعداد `step` برابر، مقایسه با زمان یا حافظهٔ برابر نیست؟",
     },
     "60-bug-clinic": {
         "title": "شکل درست، محاسبهٔ غلط",
         "goal": "محور کلاس در Cross-Entropy و ترتیب واقعی خانه‌ها در تقسیم Headها را آزمایش کنید.",
-        "prerequisite": "reshape، transpose و معنای محورهای (B,T,V) و (B,T,C).",
+        "prerequisite": "`reshape`، `transpose` و معنای محورهای `(B,T,V)` و `(B,T,C)`.",
         "predict": "وقتی T و V برابر باشند، چرا یک خطای محور ممکن است بدون پیام خطا اجرا شود؟",
         "setup": """import torch
 from torch.nn import functional as F
@@ -1156,7 +1156,7 @@ try:
 except RuntimeError as error:
     print('expected wrong-axis failure:',error)
 """,
-        "task": "last_axis_loss(logits, targets) برای Logits با شکل (B,T,V) و Target با شکل (B,T)، میانگین Cross-Entropy روی B*T هدف را برگرداند. تست‌ها فقط Shape را بررسی نمی‌کنند.",
+        "task": "`last_axis_loss(logits, targets)` برای Logits با شکل `(B,T,V)` و Target با شکل `(B,T)`، میانگین Cross-Entropy روی `B*T` هدف را برگرداند. تست‌ها فقط Shape را بررسی نمی‌کنند.",
         "starter": """def last_axis_loss(logits, targets):
     # TODO: محور Vocabulary باید محور کلاس باشد
     return None
@@ -1185,7 +1185,7 @@ wrong = F.cross_entropy(scores,targets)
 correct = -scores.log_softmax(-1).gather(-1,targets[...,None]).mean()
 print('same shape accepted; wrong:',wrong.item(),'correct:',correct.item())
 """,
-        "debug": "reshape مستقیم به (B,H,T,D)، ترتیب خانه‌ها را مثل transpose جابه‌جا نمی‌کند. split_heads(x,heads) ورودی (B,T,C) را به (B,H,T,C/H) با حفظ معنی خانه‌ها تبدیل کند.",
+        "debug": "`reshape` مستقیم به `(B,H,T,D)`، ترتیب خانه‌ها را مثل `transpose` جابه‌جا نمی‌کند. `split_heads(x,heads)` ورودی `(B,T,C)` را به `(B,H,T,C/H)` با حفظ معنی خانه‌ها تبدیل کند.",
         "bug_code": """values = torch.arange(2*3*8).reshape(2,3,8)
 wrong = values.reshape(2,2,3,4)
 expected_slice = values[0,:,4:8]
@@ -1215,14 +1215,14 @@ print('PASS' if repair_complete else 'INCOMPLETE: split_heads')
     batch,length,channels = x.shape
     return x.reshape(batch,length,heads,channels//heads).transpose(1,2)
 """,
-        "connection": "دو قرارداد مستقیماً در MiniGPT.forward و CausalSelfAttention.forward استفاده می‌شوند. آزمون با اندازه‌های نامساوی کمک می‌کند خطا پشت برابری تصادفی محورهای مختلف پنهان نماند.",
+        "connection": "دو قرارداد مستقیماً در `MiniGPT.forward` و `CausalSelfAttention.forward` استفاده می‌شوند. آزمون با اندازه‌های نامساوی کمک می‌کند خطا پشت برابری تصادفی محورهای مختلف پنهان نماند.",
         "takeaway": "کدام آزمونِ مقدار توانست خطایی را ببیند که آزمون Shape به‌تنهایی از دست می‌داد؟",
     },
     "61-one-batch": {
         "title": "اجازه داریم همین یک نمونه را حفظ کنیم",
-        "goal": "یک آزمون کوچک یادگیری بسازید و نبودِ step را از نبودِ Gradient جدا کنید.",
+        "goal": "یک آزمون کوچک یادگیری بسازید و نبودِ `step` را از نبودِ Gradient جدا کنید.",
         "prerequisite": "حلقهٔ آموزش، بررسی تغییر وزن و محدودیت آزمون تک‌نمونه‌ای.",
-        "predict": "اگر Dropout صفر و وزن ثابت باشد، آیا تکرار forward روی همان نمونه Loss تازه‌ای می‌دهد؟",
+        "predict": "اگر Dropout صفر و وزن ثابت باشد، آیا تکرار `forward` روی همان نمونه Loss تازه‌ای می‌دهد؟",
         "setup": """import torch
 from mini_gpt.config import ModelConfig
 from mini_gpt.model import MiniGPT
@@ -1234,7 +1234,7 @@ x,y = torch.tensor([[1,2,3,4,5,6]]),torch.tensor([[2,3,4,5,6,7]])
 model = fresh_model()
 print('same input losses:',model(x,y)[1].item(),model(x,y)[1].item())
 """,
-        "task": "overfit_history(model,x,y,steps) یک AdamW با lr=0.01 بسازد و یک Batch ثابت را steps بار آموزش دهد. فهرست Loss پیش از آموزش و پس از هر update را برگرداند؛ طول فهرست steps+1 است.",
+        "task": "`overfit_history(model,x,y,steps)` یک AdamW با `lr=0.01` بسازد و یک Batch ثابت را `steps` بار آموزش دهد. فهرست Loss پیش از آموزش و پس از هر update را برگرداند؛ طول فهرست `steps+1` است.",
         "starter": """def overfit_history(model, x, y, steps):
     # TODO: همان داده در هر گام، با update واقعی
     return None
@@ -1267,7 +1267,7 @@ print('PASS' if exercise_complete else 'INCOMPLETE: overfit_history')
             history.append(model(x,y)[1].item())
     return history
 """,
-        "vary": "فقط فعال‌بودن Dropout را عوض کنید، بدون هیچ optimizer.step. نوسان Loss را با یادگیری اشتباه نگیرید.",
+        "vary": "فقط فعال‌بودن Dropout را عوض کنید، بدون هیچ `optimizer.step`. نوسان Loss را با یادگیری اشتباه نگیرید.",
         "vary_code": """for dropout in (0.0,0.5):
     torch.manual_seed(7)
     trial = MiniGPT(ModelConfig(12,8,16,2,2,dropout)).train()
@@ -1275,7 +1275,7 @@ print('PASS' if exercise_complete else 'INCOMPLETE: overfit_history')
     print(dropout,[trial(x,y)[1].item() for _ in range(4)])
     assert torch.equal(before,trial.token_embedding.weight)
 """,
-        "debug": "در نمونهٔ scalar، backward وزن را حرکت نمی‌دهد. scalar_step(parameter, optimizer) یک گام برای کم‌کردن (parameter-3)**2 اجرا کند و مقدار تازهٔ وزن را بدهد.",
+        "debug": "در نمونهٔ تک‌مقداری، `backward` وزن را حرکت نمی‌دهد. `scalar_step(parameter, optimizer)` یک گام برای کم‌کردن `(parameter-3)**2` اجرا کند و مقدار تازهٔ وزن را بدهد.",
         "bug_code": """w = torch.nn.Parameter(torch.tensor(0.0))
 optimizer = torch.optim.SGD([w],lr=0.1)
 ((w-3)**2).backward()
@@ -1303,14 +1303,14 @@ print('PASS' if repair_complete else 'INCOMPLETE: scalar_step')
     optimizer.step()
     return parameter.item()
 """,
-        "connection": "مدل و تنظیم مرجع با آزمایش overfit پروژه سازگارند. این موفقیت فقط سلامت یادگیری همان نمونه را نشان می‌دهد؛ نشت داده یا اشکال Validation را رد نمی‌کند.",
+        "connection": "مدل و تنظیم مرجع با آزمایش `overfit` پروژه سازگارند. این موفقیت فقط سلامت یادگیری همان نمونه را نشان می‌دهد؛ نشت داده یا اشکال Validation را رد نمی‌کند.",
         "takeaway": "چرا موفقیت این آزمون اجازه نمی‌دهد بگوییم مدل روی متن تازه خوب کار می‌کند؟",
     },
     "62-journal": {
         "title": "گزارشی که از مدل جدا نمی‌شود",
-        "goal": "یک نتیجهٔ واقعی را همراه تنظیمات مستقل و عدد قابل ذخیره ثبت کنید.",
-        "prerequisite": "dict، JSON، Seed و تفاوت Tensor با عدد Python.",
-        "predict": "اگر گزارش همان dict تنظیمات را نگه دارد، تغییر تنظیمات آزمایش بعدی با سابقهٔ قبلی چه می‌کند؟",
+        "goal": "یک نتیجهٔ واقعی را همراه یک کپی مستقل از تنظیمات و عددی قابل ذخیره ثبت کنید.",
+        "prerequisite": "`dict`، JSON، Seed و تفاوت Tensor با عدد Python.",
+        "predict": "اگر گزارش همان `dict` تنظیمات را نگه دارد، تغییر تنظیمات آزمایش بعدی با سابقهٔ قبلی چه می‌کند؟",
         "setup": """import copy
 import json
 import math
@@ -1327,7 +1327,7 @@ measured_loss = model(x,y)[1]
 settings = asdict(config)
 print('actual untrained loss:',measured_loss.item())
 """,
-        "task": "make_record(settings, seed, loss) یک dict با کلیدهای settings، seed و loss بسازد. settings باید deepcopy شود و loss یک float باشد. این گزارش وزن‌ها یا سند کامل آزمایش نیست؛ فقط ثبت یک مشاهده است.",
+        "task": "`make_record(settings, seed, loss)` یک `dict` با کلیدهای `settings`، `seed` و `loss` بسازد. `settings` باید `deepcopy` شود و `loss` یک `float` باشد. این گزارش وزن‌ها یا سند کامل آزمایش نیست؛ فقط ثبت یک مشاهده است.",
         "starter": """def make_record(settings, seed, loss):
     # TODO: سابقه نباید با تنظیمات آزمایش بعدی تغییر کند
     return None
@@ -1357,7 +1357,7 @@ print('PASS' if exercise_complete else 'INCOMPLETE: make_record')
     trial = MiniGPT(config)
     print(json.dumps({'seed':seed,'initial_loss':trial(x,y)[1].item()}))
 """,
-        "debug": "Tensor خام در JSON ذخیره نمی‌شود؛ NaN هم مشاهدهٔ معتبر نیست. metric_number(value) برای Tensor scalar یا عدد Python یک float متناهی برگرداند؛ برای مقدار نامتناهی ValueError بدهد.",
+        "debug": "Tensor خام در JSON ذخیره نمی‌شود؛ `NaN` هم مشاهدهٔ معتبر نیست. `metric_number(value)` برای Tensor تک‌مقداری یا عدد Python یک `float` متناهی برگرداند؛ برای مقدار نامتناهی `ValueError` بدهد.",
         "bug_code": """try:
     json.dumps({'loss':measured_loss})
 except TypeError as error:
@@ -1392,14 +1392,14 @@ print('PASS' if repair_complete else 'INCOMPLETE: metric_number')
         raise ValueError('measurement must be finite')
     return result
 """,
-        "connection": "مشاهده از MiniGPT واقعی است. در دفتر آزمایش و learning-log.md باید علاوه بر این عدد، سؤال، داده، فرمان، زمان و محدودیت نتیجه را ثبت کنید؛ این dict جای آن گزارش کامل نیست.",
-        "takeaway": "برای بازسازی این آزمایش روی رایانه‌ای دیگر، چه اطلاعاتی هنوز در record شما کم است؟",
+        "connection": "مشاهده از `MiniGPT` واقعی است. در دفتر آزمایش و `learning-log.md` باید علاوه بر این عدد، سؤال، داده، فرمان، زمان و محدودیت نتیجه را ثبت کنید؛ این `dict` جای آن گزارش کامل نیست.",
+        "takeaway": "برای بازسازی این آزمایش روی رایانه‌ای دیگر، چه اطلاعاتی هنوز در `record` شما کم است؟",
     },
     "62b-lifecycle": {
         "title": "ورودی تازه یا وزن تازه؟",
-        "goal": "تغییر Context را از آموزش وزن جدا کنید؛ نام یک محصول از این دو مشاهده نتیجه نمی‌شود.",
-        "prerequisite": "forward، generate و update؛ تفاوت هدف آموزش و معماری.",
-        "predict": "افزودن دستور به ورودی، فراخوانی model.train() و optimizer.step() کدام‌یک می‌توانند وزن را تغییر دهند؟",
+        "goal": "تغییر Context را از آموزش وزن جدا کنید؛ هیچ‌یک از این دو به‌تنهایی به معنی ساخت یک دستیار گفت‌وگویی نیست.",
+        "prerequisite": "`forward`، `generate` و update؛ تفاوت هدف آموزش و معماری.",
+        "predict": "افزودن دستور به ورودی، فراخوانی `model.train()` و `optimizer.step()` کدام‌یک می‌توانند وزن را تغییر دهند؟",
         "setup": """import copy
 import torch
 from mini_gpt.config import ModelConfig
@@ -1414,7 +1414,7 @@ after_inference = {name:value.detach().clone() for name,value in model.state_dic
 print('input lengths:',old_ids.shape[1],new_ids.shape[1])
 print('Generating with a different input is not SFT or preference training.')
 """,
-        "task": "transition_report(before, after, old_ids, new_ids) یک dict با دو bool بدهد: weights_changed برای تغییر هر Tensor وضعیت مدل و input_changed برای تغییر شناسه‌های ورودی. دو state_dict کلیدهای برابر دارند.",
+        "task": "`transition_report(before, after, old_ids, new_ids)` یک `dict` با دو `bool` بدهد: `weights_changed` برای تغییر هر Tensor وضعیت مدل و `input_changed` برای تغییر شناسه‌های ورودی. دو `state_dict` کلیدهای برابر دارند.",
         "starter": """def transition_report(before, after, old_ids, new_ids):
     # TODO: دو نوع تغییر را مستقل بسنجید
     return None
@@ -1443,7 +1443,7 @@ with torch.no_grad():
         print(ids.tolist(),model(ids)[0][0,-1].tolist())
 assert all(torch.equal(before[name],value) for name,value in model.state_dict().items())
 """,
-        "debug": "model.train() فقط حالت لایه‌ها را تنظیم می‌کند. update_from_loss(model, loss, rate) با SGD یک update واقعی انجام دهد و bool تغییر وزن را برگرداند. loss از forward همین مدل آمده است.",
+        "debug": "`model.train()` فقط حالت لایه‌ها را تنظیم می‌کند. `update_from_loss(model, loss, rate)` با SGD یک update واقعی انجام دهد و `bool` تغییر وزن را برگرداند. `loss` از `forward` همین مدل آمده است.",
         "bug_code": """trial = copy.deepcopy(model)
 old = trial.token_embedding.weight.detach().clone()
 trial.train()
@@ -1475,13 +1475,13 @@ print('PASS' if repair_complete else 'INCOMPLETE: update_from_loss')
     optimizer.step()
     return any(not torch.equal(old,new) for old,new in zip(before,model.parameters()))
 """,
-        "connection": "MiniGPT واقعی را مشاهده کردید، نه یک دستیار عمومی. Pretraining، SFT و آموزش مبتنی بر ترجیح می‌توانند وزن را تغییر دهند ولی داده و هدف متفاوت دارند. RAG هنگام بازیابی و تولید، Context را عوض می‌کند. این دفتر آن فرایندها را کامل پیاده نکرده است.",
+        "connection": "`MiniGPT` واقعی را مشاهده کردید، نه یک دستیار عمومی. Pretraining، SFT و آموزش مبتنی بر ترجیح می‌توانند وزن را تغییر دهند ولی داده و هدف متفاوت دارند. RAG هنگام بازیابی و تولید، Context را عوض می‌کند. این دفتر آن فرایندها را کامل پیاده نکرده است.",
         "takeaway": "چرا دو پرچم این گزارش برای تشخیص اینکه یک مدل واقعاً دستورپذیر، درست‌گو یا هم‌راستا شده کافی نیستند؟",
     },
     "63-scale": {
         "title": "چهار بایت به‌ازای وزن، کل حافظه نیست",
         "goal": "تخمین حافظهٔ وزن را از تخمین سادهٔ آموزش و مصرف واقعی Tensorها جدا کنید.",
-        "prerequisite": "numel، dtype، Gradient و دو وضعیت Adam.",
+        "prerequisite": "`numel`، `dtype`، Gradient و دو آرایهٔ میانگین متحرک Adam.",
         "predict": "یک میلیون وزن float32 تقریباً چهار میلیون بایت است؛ چرا آموزش به بیشتر از همین مقدار نیاز دارد؟",
         "setup": """import torch
 from mini_gpt.config import ModelConfig
@@ -1498,7 +1498,7 @@ optimizer_bytes = sum(value.numel()*value.element_size() for state in optimizer.
 print('parameters:',parameter_count,'actual optimizer tensor bytes:',optimizer_bytes)
 print('Activation memory and allocator overhead are not measured here.')
 """,
-        "task": "memory_estimate(parameters, bytes_per_number, training) یک تعداد بایت صحیح بدهد. برای وزن‌ها یک مجموعه و برای تخمین سادهٔ آموزش چهار مجموعهٔ هم‌اندازه در نظر بگیرید: وزن، Gradient و دو وضعیت Adam. این مدل تخمینی فرض می‌کند dtype هر چهار یکسان است.",
+        "task": "`memory_estimate(parameters, bytes_per_number, training)` یک تعداد بایت صحیح بدهد. برای وزن‌ها یک مجموعه و برای تخمین سادهٔ آموزش چهار مجموعهٔ هم‌اندازه در نظر بگیرید: وزن، Gradient و دو آرایهٔ میانگین متحرک Adam. این مدل تخمینی فرض می‌کند `dtype` هر چهار یکسان است.",
         "starter": """def memory_estimate(parameters, bytes_per_number, training):
     # TODO: تخمین خام، نه حافظهٔ اوج واقعی
     return None
@@ -1523,7 +1523,7 @@ print('PASS' if exercise_complete else 'INCOMPLETE: memory_estimate')
         "vary_code": """for bytes_per_weight in (4,2,1):
     print(bytes_per_weight,parameter_count*bytes_per_weight,'estimated raw weight bytes')
 """,
-        "debug": "len(model.parameters()) تعداد ظرف‌هاست، نه تعداد وزن‌ها. model_weight_bytes(model) مجموع numel*element_size همهٔ Parameterها را بدهد؛ Bufferها و Activationها جزو این تابع نیستند.",
+        "debug": "`len(list(model.parameters()))` تعداد شیءهای Parameter را می‌شمارد، نه تعداد عددهای داخل آن‌ها را. `model_weight_bytes(model)` مجموع حاصل‌ضرب `numel()` و `element_size()` همهٔ Parameterها را بدهد؛ Bufferها و Activationها جزو این تابع نیستند.",
         "bug_code": """wrong = len(list(model.parameters()))*4
 print('wrong bytes from parameter-object count:',wrong)
 print('first weight shape:',tuple(next(model.parameters()).shape))
@@ -1553,7 +1553,7 @@ print('PASS' if repair_complete else 'INCOMPLETE: model_weight_bytes')
     "64-cache": {
         "title": "وقتی گذشته واقعاً ثابت مانده است",
         "goal": "خروجی آخرین Query را با K/V نگه‌داشته‌شده بازسازی کنید و مرز اعتبار Cache را ببینید.",
-        "prerequisite": "Q/K/V با شکل (B,H,T,D)، حالت eval و موقعیت‌های ثابت.",
+        "prerequisite": "Q/K/V با شکل `(B,H,T,D)`، حالت `eval` و موقعیت‌های ثابت.",
         "predict": "اگر پنجره از چپ بریده و موقعیت‌ها از صفر شماره‌گذاری شوند، آیا K/V قبلی هنوز همان محاسبه را نشان می‌دهند؟",
         "setup": """import math
 import torch
@@ -1573,7 +1573,7 @@ new_attention = new_trace['layers'][0]['attention']
 torch.testing.assert_close(old_attention['k'],new_attention['k'][:,:,:3])
 print('old/new key shapes:',tuple(old_attention['k'].shape),tuple(new_attention['k'].shape))
 """,
-        "task": "cached_last_attention(q_new,k_old,v_old,k_new,v_new) سه Tensor برگرداند: خروجی Query تازه، K کامل و V کامل. همه شکل (B,H,T,D) دارند و q_new/k_new/v_new فقط یک موقعیت دارند؛ الحاق روی محور زمان و مقیاس 1/sqrt(D) است. آخرین Query اجازهٔ دیدن همهٔ این موقعیت‌ها را دارد.",
+        "task": "`cached_last_attention(q_new,k_old,v_old,k_new,v_new)` سه Tensor برگرداند: خروجی Query تازه، K کامل و V کامل. همه شکل `(B,H,T,D)` دارند و `q_new/k_new/v_new` فقط یک موقعیت دارند؛ الحاق روی محور زمان و مقیاس `1/sqrt(D)` است. آخرین Query اجازهٔ دیدن همهٔ این موقعیت‌ها را دارد.",
         "starter": """def cached_last_attention(q_new, k_old, v_old, k_new, v_new):
     # TODO: فقط محاسبهٔ آخرین Query
     return None
@@ -1611,7 +1611,7 @@ print('PASS' if exercise_complete else 'INCOMPLETE: cached_last_attention')
         attention = trace['layers'][0]['attention']
         print(length,'K+V elements:',attention['k'].numel()+attention['v'].numel())
 """,
-        "debug": "حذف قدیمی‌ترین K/V کافی نیست، چون شمارهٔ موقعیت بقیه هم عوض شده است. cache_reusable(old_ids,new_ids,limit) برای فهرست‌های ID و فرض وزن و حالت ثابت، فقط وقتی True بدهد که دقیقاً یک Token به Prefix بدون تغییر اضافه شده و طول از limit نگذشته باشد.",
+        "debug": "حذف قدیمی‌ترین K/V کافی نیست، چون شمارهٔ موقعیت بقیه هم عوض شده است. `cache_reusable(old_ids,new_ids,limit)` برای فهرست‌های ID و فرض وزن و حالت ثابت، فقط وقتی `True` بدهد که دقیقاً یک Token به Prefix بدون تغییر اضافه شده و طول از `limit` نگذشته باشد.",
         "bug_code": """with torch.no_grad():
     shifted = {}
     model(torch.tensor([[2,3,4,5]]),trace=shifted)
@@ -1638,14 +1638,14 @@ print('PASS' if repair_complete else 'INCOMPLETE: cache_reusable')
         "fix_solution": """def cache_reusable(old_ids, new_ids, limit):
     return len(new_ids)==len(old_ids)+1 and len(new_ids)<=limit and new_ids[:-1]==old_ids
 """,
-        "connection": "Q/K/V از trace واقعی MiniGPT آمده‌اند؛ تابع شما فقط هستهٔ Attention آخرین موقعیت را بازسازی می‌کند، نه Cache کامل همهٔ لایه‌ها. generate پروژه همچنان کل پنجره را دوباره محاسبه می‌کند.",
+        "connection": "Q/K/V از `trace` واقعی `MiniGPT` آمده‌اند؛ تابع شما فقط هستهٔ Attention آخرین موقعیت را بازسازی می‌کند، نه Cache کامل همهٔ لایه‌ها. `generate` پروژه همچنان کل پنجره را دوباره محاسبه می‌کند.",
         "takeaway": "برای تبدیل این تمرین به Cache کامل مدل، کدام وضعیت‌ها را باید برای هر Layer نگه دارید؟",
     },
     "65-sft": {
         "title": "درخواست را ببینید، پاسخ را نمره بدهید",
-        "goal": "Loss پاسخ را بیرون API فعلی MiniGPT بسازید و مرز آن را با Causal mask جدا کنید.",
-        "prerequisite": "شیفت یک‌خانه‌ای Target و Cross-Entropy با reduction='none'.",
-        "predict": "در [q0,q1,sep,a0,a1]، آیا خروجی موقعیت sep باید در Loss پاسخ حساب شود؟",
+        "goal": "Loss پاسخ را بیرون API فعلی `MiniGPT` بسازید و مرز آن را با Causal mask جدا کنید.",
+        "prerequisite": "شیفت یک‌خانه‌ای Target و Cross-Entropy با `reduction='none'`.",
+        "predict": "در `[q0,q1,sep,a0,a1]`، آیا خروجی موقعیت `sep` باید در Loss پاسخ حساب شود؟",
         "setup": """import torch
 from torch.nn import functional as F
 from mini_gpt.config import ModelConfig
@@ -1660,7 +1660,7 @@ print('logits shape:',tuple(logits.shape))
 print('target ID / counted as response:',list(zip(targets[0].tolist(),selected[0].tolist())))
 print('all targets:',targets.numel(),'response targets:',selected.sum().item())
 """,
-        "task": "response_loss(logits,targets,mask) فقط Cross-Entropy هدف‌هایی با mask=True را میانگین بگیرد. Logits شکل (B,T,V)، دو ورودی دیگر شکل (B,T) دارند. Mask خالی از True باید ValueError بدهد؛ از Loss آمادهٔ model(x,targets) استفاده نکنید چون قبلاً میانگین گرفته شده است.",
+        "task": "`response_loss(logits,targets,mask)` فقط Cross-Entropy هدف‌هایی با `mask=True` را میانگین بگیرد. Logits شکل `(B,T,V)`، دو ورودی دیگر شکل `(B,T)` دارند. Mask خالی از `True` باید `ValueError` بدهد؛ از Loss آمادهٔ `model(x,targets)` استفاده نکنید چون قبلاً میانگین گرفته شده است.",
         "starter": """def response_loss(logits, targets, mask):
     # TODO: اول Loss هر Target، سپس انتخاب و میانگین
     return None
@@ -1696,7 +1696,7 @@ print('PASS' if exercise_complete else 'INCOMPLETE: response_loss')
     losses = F.cross_entropy(logits.reshape(-1,logits.shape[-1]),targets.reshape(-1),reduction='none')
     return losses[mask.reshape(-1)].mean()
 """,
-        "vary": "فقط تعداد موقعیت‌های درخواست را در یک ماسک نمونه بیشتر کنید؛ دو موقعیت پاسخ ثابت بمانند. تعداد کل موقعیت‌ها و تعداد Trueها چه تغییری می‌کنند؟ برای میانگین Loss پاسخ، کدام تعداد باید مخرج باشد؟ این آزمایش فقط شمارش موقعیت‌هاست، نه اجرای مدل با درخواست بلندتر.",
+        "vary": "فقط تعداد موقعیت‌های درخواست را در یک ماسک نمونه بیشتر کنید؛ دو موقعیت پاسخ ثابت بمانند. تعداد کل موقعیت‌ها و تعداد `True`ها چه تغییری می‌کنند؟ برای میانگین Loss پاسخ، کدام تعداد باید مخرج باشد؟ این آزمایش فقط شمارش موقعیت‌هاست، نه اجرای مدل با درخواست بلندتر.",
         "vary_code": """response_mask = torch.tensor([[False,False,True,True]])
 for extra_prompt_positions in (0,3,8):
     prefix = torch.zeros((1,extra_prompt_positions),dtype=torch.bool)
@@ -1705,7 +1705,7 @@ for extra_prompt_positions in (0,3,8):
           'all positions:',longer_mask.numel(),
           'response positions:',torch.count_nonzero(longer_mask).item())
 """,
-        "debug": "ماسکِ بخش ورودی، نخستین Token پاسخ را از Loss جا می‌اندازد. target_response_mask(roles) برای نقش‌های کل دنباله، ماسک Targetهای شیفت‌یافته را بدهد؛ فقط نقش 'answer' انتخاب می‌شود.",
+        "debug": "ماسکِ بخش ورودی، نخستین Token پاسخ را از Loss جا می‌اندازد. `target_response_mask(roles)` برای نقش‌های کل دنباله، ماسکِ هم‌راستا با Targetهای شیفت‌یافته را بدهد؛ فقط نقش `'answer'` انتخاب می‌شود.",
         "bug_code": """roles = ['prompt','prompt','separator','answer','answer']
 wrong = [role=='answer' for role in roles[:-1]]
 print('input-based mask:',wrong)
@@ -1729,13 +1729,13 @@ print('PASS' if repair_complete else 'INCOMPLETE: target_response_mask')
         "fix_solution": """def target_response_mask(roles):
     return [role=='answer' for role in roles[1:]]
 """,
-        "connection": "forward واقعی برای Logits استفاده شد؛ Response mask به‌صورت آموزشی بیرون آن محاسبه شد. API فعلی Target منفی را رد می‌کند و SFT آماده ندارد. حذف Loss درخواست، مسیر Gradient از پاسخ به نمایش درخواست را حذف نمی‌کند.",
+        "connection": "`forward` واقعی برای Logits استفاده شد؛ Response mask بیرون آن محاسبه شد. API هسته همچنان Target منفی را رد می‌کند؛ درس بعد از همین قرارداد در `mini_gpt/instruction.py` برای آزمایش SFT استفاده می‌کند. حذف Loss درخواست، مسیر Gradient از پاسخ به نمایش درخواست را حذف نمی‌کند.",
         "takeaway": "چرا حذف یک موقعیت از میانگین Loss با منع Attention به آن موقعیت فرق دارد؟",
     },
     "65b-lora": {
         "title": "اصلاح کوچک روی وزن ثابت",
-        "goal": "شاخهٔ LoRA را بنویسید و ببینید کدام Parameter در گام اول Gradient می‌گیرد.",
-        "prerequisite": "ضرب ماتریسی، Linear، Parameter ثابت و قابل آموزش.",
+        "goal": "شاخهٔ LoRA را بنویسید و ببینید کدام پارامتر در گام اول Gradient می‌گیرد.",
+        "prerequisite": "ضرب ماتریسی، Linear، Tensor ثابت و پارامتر قابل آموزش.",
         "predict": "اگر A و B هر دو صفر باشند، آیا این شاخه از صفر حرکت می‌کند؟",
         "setup": """import torch
 from torch import nn
@@ -1751,7 +1751,7 @@ x = torch.randn(3,12)
 print('base weight shape:',tuple(W.shape),'adapter scalars:',A.numel()+B.numel())
 print('base output shape:',tuple((x@W.T).shape))
 """,
-        "task": "lora_forward(x,W,A,B,alpha) خروجی xWᵀ + (alpha/r)(xAᵀ)Bᵀ را بدهد؛ r تعداد سطرهای A است. W شکل (M,C)، A شکل (r,C)، B شکل (M,r) دارد. هیچ Tensor را درجا تغییر ندهید.",
+        "task": "`lora_forward(x,W,A,B,alpha)` خروجی `xWᵀ + (alpha/r)(xAᵀ)Bᵀ` را بدهد؛ r تعداد سطرهای A است. W شکل `(M,C)`، A شکل `(r,C)`، B شکل `(M,r)` دارد. هیچ Tensor را درجا تغییر ندهید.",
         "starter": """def lora_forward(x, W, A, B, alpha):
     # TODO: شاخهٔ کم‌رتبه به خروجی پایه اضافه می‌شود
     return None
@@ -1782,7 +1782,7 @@ print('PASS' if exercise_complete else 'INCOMPLETE: lora_forward')
     b = torch.zeros(8,rank)
     print(rank,'adapter:',a.numel()+b.numel(),'base still needed:',W.numel())
 """,
-        "debug": "صفرکردن هر دو عامل، Gradient هرکدام را در عامل صفر دیگر ضرب می‌کند. initialize_adapter(out_features,in_features,rank) دو nn.Parameter بسازد: A با مقدار تصادفی کوچک و B صفر.",
+        "debug": "صفرکردن هر دو عامل، Gradient هرکدام را در عامل صفر دیگر ضرب می‌کند. `initialize_adapter(out_features,in_features,rank)` دو `nn.Parameter` بسازد: A با مقدار تصادفی کوچک و B صفر.",
         "bug_code": """wrong_a = nn.Parameter(torch.zeros(2,12))
 wrong_b = nn.Parameter(torch.zeros(8,2))
 ((x@W.T+(x@wrong_a.T)@wrong_b.T-1)**2).mean().backward()
@@ -1811,7 +1811,7 @@ print('PASS' if repair_complete else 'INCOMPLETE: initialize_adapter')
     return (nn.Parameter(torch.randn(rank,in_features)*0.01),
             nn.Parameter(torch.zeros(out_features,rank)))
 """,
-        "connection": "W یک کپی ثابت از سر خروجی MiniGPT است؛ شاخهٔ آموزشی به خود مدل نصب نشده است. LoRA روش انتخاب Parameterهای قابل آموزش است و می‌تواند کنار هدف SFT به کار رود؛ هدف آموزشی جداگانه‌ای نیست.",
+        "connection": "W یک کپی ثابت از سر خروجی `MiniGPT` است؛ این شاخه به ساختار خود مدل اضافه نشده است. LoRA روش انتخاب Parameterهای قابل آموزش است و می‌تواند کنار هدف SFT به کار رود؛ هدف آموزشی جداگانه‌ای نیست.",
         "takeaway": "چرا ۴۰ پارامتر قابل آموزش به معنی ۴۰ پارامتر لازم برای اجرای مدل نیست؟",
     },
     "66-preference": {
@@ -1829,7 +1829,7 @@ policy_logits = torch.tensor([0.0,0.0],requires_grad=True)
 print(list(zip(responses,policy_logits.softmax(-1).detach().tolist())))
 print('Each outcome here is a whole answer, not one token from MiniGPT.')
 """,
-        "task": "preference_loss(policy_logits,reference_logits,chosen,beta) را برای دقیقاً دو پاسخ بنویسید. chosen اندیس پاسخ ترجیح‌داده‌شده است و دیگری 1-chosen. log_softmax هر دو توزیع را بگیرید. margin اختلاف log-prob برنده و بازنده در Policy، منهای همین اختلاف در مرجع ثابت است. Loss برابر softplus(-beta*margin) است؛ softplus(z)=log(1+exp(z)) و نسخهٔ PyTorch پایدارتر است. این نمونهٔ محدودِ هدف DPO است، نه فرایند کامل آموزش مدل زبان.",
+        "task": "`preference_loss(policy_logits,reference_logits,chosen,beta)` را برای دقیقاً دو پاسخ بنویسید. `chosen` اندیس پاسخ ترجیح‌داده‌شده است و دیگری `1-chosen`. `log_softmax` هر دو توزیع را بگیرید. `margin` اختلاف log-prob برنده و بازنده در Policy، منهای همین اختلاف در مرجع ثابت است. Loss برابر `softplus(-beta*margin)` است؛ `softplus(z)=log(1+exp(z))` و نسخهٔ PyTorch پایدارتر است. این نمونهٔ محدودِ هدف DPO است، نه فرایند کامل آموزش مدل زبان.",
         "starter": """def preference_loss(policy_logits, reference_logits, chosen, beta):
     # TODO: مقایسهٔ نسبی با مرجع ثابت
     return None
@@ -1869,7 +1869,7 @@ print('PASS' if exercise_complete else 'INCOMPLETE: preference_loss')
         scores -= 0.2*scores.grad
     print('preferred:',chosen,'new probabilities:',scores.softmax(-1).detach().tolist())
 """,
-        "debug": "اگر ترتیب برنده و بازنده را برعکس کنید، کم‌کردن Loss پاسخ نامطلوب را تقویت می‌کند. preference_margin(policy_logps,reference_logps,chosen,rejected) اختلاف درست نسبت به مرجع را برگرداند؛ ورودی‌ها از قبل log-prob هستند.",
+        "debug": "اگر ترتیب برنده و بازنده را برعکس کنید، کم‌کردن Loss پاسخ نامطلوب را تقویت می‌کند. `preference_margin(policy_logps,reference_logps,chosen,rejected)` اختلاف درست نسبت به مرجع را برگرداند؛ ورودی‌ها از قبل log-prob هستند.",
         "bug_code": """scores = torch.tensor([0.0,0.0],requires_grad=True)
 logp = scores.log_softmax(-1)
 wrong_margin = logp[1]-logp[0]  # The data actually prefers answer 0.
@@ -1898,11 +1898,11 @@ print('PASS' if repair_complete else 'INCOMPLETE: preference_margin')
         "fix_solution": """def preference_margin(policy_logps, reference_logps, chosen, rejected):
     return (policy_logps[chosen]-policy_logps[rejected])-(reference_logps[chosen]-reference_logps[rejected])
 """,
-        "connection": "این آزمایش دوپاسخی از صورت هدف در <a href='https://arxiv.org/abs/2305.18290'>مقالهٔ DPO</a> استفاده می‌کند. در مدل زبان، log-prob پاسخ از Tokenهای پاسخ به دست می‌آید. MiniGPT فعلی این فرایند، مدل پاداش یا حلقهٔ RLHF ندارد؛ DPO و RLHF دو ایستگاه اجباری پشت‌سرهم نیستند.",
+        "connection": "این آزمایش دوپاسخی از صورت هدف در <a href='https://arxiv.org/abs/2305.18290'>مقالهٔ DPO</a> استفاده می‌کند. در مدل زبان، log-prob پاسخ از Tokenهای پاسخ به دست می‌آید. `MiniGPT` فعلی این فرایند، مدل پاداش یا حلقهٔ RLHF ندارد؛ DPO و RLHF دو مرحلهٔ اجباری پشت‌سرهم نیستند.",
         "takeaway": "اگر ترجیح‌ها معیار بدی داشته باشند، کاهش این Loss چه چیزی را بهتر می‌کند و چه چیزی را تضمین نمی‌کند؟",
     },
     "67-rag": {
-        "title": "سند مرتبط را پیدا کنید، پاسخ را جعل نکنید",
+        "title": "سند مرتبط را پیدا کنید، پاسخ بی‌پشتوانه نسازید",
         "goal": "بازیابی کوچک با ارجاع بسازید و وقتی شاهدی ندارید، نبودِ آن را صریح گزارش کنید.",
         "prerequisite": "رشته، مجموعهٔ واژه‌ها و جدایی Retrieval از Generation.",
         "predict": "اگر هیچ واژه‌ای مشترک نباشد، آیا نخستین سندِ فهرست می‌تواند شاهد مناسبی برای پاسخ باشد؟",
@@ -1916,7 +1916,7 @@ words = set(question.split())
 print([(doc['id'],len(words & set(doc['text'].split()))) for doc in documents])
 print('This is lexical retrieval only; no language model answers are generated.')
 """,
-        "task": "retrieve(documents, question) سند با بیشترین تعداد واژهٔ متمایز مشترک را برگرداند؛ در تساوی نخستین سند انتخاب شود. اگر اسناد خالی‌اند یا بهترین امتیاز صفر است None برگردانید. رشته‌ها در این تمرین با split ساده شکسته می‌شوند.",
+        "task": "`retrieve(documents, question)` سند با بیشترین تعداد واژهٔ متمایز مشترک را برگرداند؛ در تساوی نخستین سند انتخاب شود. اگر اسناد خالی‌اند یا بهترین امتیاز صفر است `None` برگردانید. رشته‌ها در این تمرین با `split` ساده شکسته می‌شوند.",
         "starter": """def retrieve(documents, question):
     # TODO: نبودِ شاهد نیز یک نتیجه است
     return None
@@ -1947,7 +1947,7 @@ print('PASS' if exercise_complete else 'INCOMPLETE: retrieve')
     scores = [(doc['id'],len(set(query.split()) & set(doc['text'].split()))) for doc in documents]
     print(query,scores)
 """,
-        "debug": "بیشترین امتیازِ صفر هم یک برندهٔ ظاهری دارد؛ نباید برای آن ارجاع معتبر بسازیم. evidence_record(document) اگر ورودی None است {'status':'insufficient','source':None} وگرنه {'status':'retrieved','source':id,'text':text} بدهد. retrieved به معنی پاسخ تأییدشده نیست.",
+        "debug": "بیشترین امتیازِ صفر هم یک برندهٔ ظاهری دارد؛ نباید برای آن ارجاع معتبر بسازیم. `evidence_record(document)` اگر ورودی `None` است `{'status':'insufficient','source':None}` وگرنه `{'status':'retrieved','source':id,'text':text}` بدهد. `retrieved` به معنی پاسخ تأییدشده نیست.",
         "bug_code": """unknown_question = 'زلزله'
 wrong = max(documents,key=lambda doc:len(set(unknown_question.split()) & set(doc['text'].split())))
 print('false evidence for unrelated query:',wrong)
@@ -1972,7 +1972,7 @@ print('PASS' if repair_complete else 'INCOMPLETE: evidence_record')
         return {'status':'insufficient','source':None}
     return {'status':'retrieved','source':document['id'],'text':document['text']}
 """,
-        "connection": "این قطعه مرحلهٔ Retrieval است، نه دستیار اسناد. افزودن سند به Prompt وزن MiniGPT را آموزش نمی‌دهد؛ مدل کوچک ما توان پاسخ‌گویی مستند را تضمین نمی‌کند. سند بیرونی نیز دستور معتبر سامانه نیست.",
+        "connection": "این قطعه مرحلهٔ Retrieval است، نه دستیار اسناد. افزودن سند به Prompt وزن `MiniGPT` را آموزش نمی‌دهد؛ مدل کوچک ما توان پاسخ‌گویی مستند را تضمین نمی‌کند. سند بیرونی نیز دستور معتبر سامانه نیست.",
         "takeaway": "برای ادعای درست‌بودن پاسخ، علاوه بر بازیابی سند باید ارتباط، تازگی، تناقض و پشتیبانی هر ادعا را چگونه بررسی کنید؟",
     },
 }

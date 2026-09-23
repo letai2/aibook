@@ -127,6 +127,8 @@ def main():
         with tempfile.TemporaryDirectory(prefix='build-', dir=temporary) as work:
             work = Path(work)
             public = work / 'public'
+            run(sys.executable, '-B', '-m', 'tools.build_notebooks', '--check')
+            run(sys.executable, '-B', '-m', 'tools.journey_report', '--check')
             run(sys.executable, '-B', '-m', 'unittest', 'discover', '-s', 'tests/site', '-v')
             run(sys.executable, '-B', '-m', 'tools.build_book', '--output', str(public))
             run(sys.executable, '-B', '-m', 'tools.validate_book', '--root', str(public))

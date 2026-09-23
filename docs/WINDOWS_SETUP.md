@@ -255,5 +255,5 @@ No claim is made for every browser or hardware combination.
 
 ## Lesson laboratories
 
-The 76 dedicated lesson notebooks and 12 review labs share this one environment.
+The 92 dedicated lesson notebooks and 12 review labs share this one environment.
 See [Jupyter laboratories](NOTEBOOKS.md) for mapping, exercises and verification.

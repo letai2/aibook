@@ -1,0 +1,215 @@
+<!doctype html>
+<html lang="fa" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>mini_gpt/retrieval.py | از Python تا Mini-GPT</title><meta name="description" content="کتاب فارسیِ ساخت تدریجی یک مدل زبان؛ درس، آزمایش، کد و خودسنجی.">
+<link rel="stylesheet" href="../../assets/book.css?v=d3be336a7feb">
+<link rel="preload" href="../../assets/fonts/Vazirmatn.woff2" as="font" type="font/woff2" crossorigin>
+<script src="../../assets/manifest.js?v=d3be336a7feb" defer></script><script src="../../assets/book.js?v=d3be336a7feb" defer></script><script src="../../assets/experience.js?v=d3be336a7feb" defer></script></head>
+<body data-page-kind="reference" data-theme="model" data-mode="reference" data-unit-id="" data-root="../../index.html"><a class="skip" href="#main">رفتن به متن</a>
+<header class="topbar"><a class="brand" href="../../index.html" data-book-link>از <bdi dir="ltr">Python</bdi> تا <bdi dir="ltr" class="nowrap">Mini-GPT</bdi></a>
+<div class="header-actions"><nav class="atlas" aria-label="اطلس مسیر"><details><summary>فهرست درس‌ها</summary><div class="atlas-content"><label>پیداکردن درس <input type="search" data-lesson-search placeholder="مثلاً بلوک یا mask"></label><div data-search-results aria-live="polite"></div><div class="atlas-grid"><details><summary>بخش 1 · مسئله را با Python لمس کنیم</summary><a href="../../part-01/index.html" data-book-link>صفحهٔ بخش</a><ol><li><a href="../../part-01/chapter-01/index.html" data-book-link>مسئلهٔ یادگیری</a></li><li><a href="../../part-01/chapter-02/index.html" data-book-link>متن به <bdi dir="ltr">Token</bdi></a></li><li><a href="../../part-01/chapter-03/index.html" data-book-link>اولین ادامه‌دهنده</a></li><li><a href="../../part-01/chapter-04/index.html" data-book-link>شواهد یادگیری</a></li><li><a href="../../part-01/checkpoint.html" data-book-link data-unit="checkpoint-01">ایستگاه عملی</a></li></ol></details><details><summary>بخش 2 · عدد، احتمال و تغییر</summary><a href="../../part-02/index.html" data-book-link>صفحهٔ بخش</a><ol><li><a href="../../part-02/chapter-01/index.html" data-book-link>ساختار عددها</a></li><li><a href="../../part-02/chapter-02/index.html" data-book-link>ترکیب عددها</a></li><li><a href="../../part-02/chapter-03/index.html" data-book-link>از شمارش تا اطمینان</a></li><li><a href="../../part-02/chapter-04/index.html" data-book-link>سنجش پیش‌بینی</a></li><li><a href="../../part-02/chapter-05/index.html" data-book-link>تغییر <bdi dir="ltr">Parameter</bdi></a></li><li><a href="../../part-02/chapter-06/index.html" data-book-link>از محاسبه تا شبکه</a></li><li><a href="../../part-02/checkpoint.html" data-book-link data-unit="checkpoint-02">ایستگاه عملی</a></li></ol></details><details><summary>بخش 3 · ابزار محاسبه و اولین شبکه</summary><a href="../../part-03/index.html" data-book-link>صفحهٔ بخش</a><ol><li><a href="../../part-03/chapter-01/index.html" data-book-link>آشنایی با ابزار</a></li><li><a href="../../part-03/chapter-02/index.html" data-book-link>حساب محورها</a></li><li><a href="../../part-03/chapter-03/index.html" data-book-link>اولین یادگیری عصبی</a></li><li><a href="../../part-03/chapter-04/index.html" data-book-link>گردش داده</a></li><li><a href="../../part-03/checkpoint.html" data-book-link data-unit="checkpoint-03">ایستگاه عملی</a></li></ol></details><details><summary>بخش 4 · متن و نمایش یادگرفتنی</summary><a href="../../part-04/index.html" data-book-link>صفحهٔ بخش</a><ol><li><a href="../../part-04/chapter-01/index.html" data-book-link>متن قابل اعتماد</a></li><li><a href="../../part-04/chapter-02/index.html" data-book-link>نمونهٔ آموزش</a></li><li><a href="../../part-04/chapter-03/index.html" data-book-link>نمایش یادگرفتنی</a></li><li><a href="../../part-04/checkpoint.html" data-book-link data-unit="checkpoint-04">ایستگاه عملی</a></li></ol></details><details><summary>بخش 5 · Single-Head <bdi dir="ltr">Attention</bdi></summary><a href="../../part-05/index.html" data-book-link>صفحهٔ بخش</a><ol><li><a href="../../part-05/chapter-01/index.html" data-book-link>پرسش و اطلاعات</a></li><li><a href="../../part-05/chapter-02/index.html" data-book-link><bdi dir="ltr">Attention</bdi> با عدد</a></li><li><a href="../../part-05/chapter-03/index.html" data-book-link>محدودیت اطلاعات</a></li><li><a href="../../part-05/checkpoint.html" data-book-link data-unit="checkpoint-05">ایستگاه عملی</a></li></ol></details><details><summary>بخش 6 · از چند <bdi dir="ltr">Head</bdi> تا بلوک</summary><a href="../../part-06/index.html" data-book-link>صفحهٔ بخش</a><ol><li><a href="../../part-06/chapter-01/index.html" data-book-link>چند نگاه هم‌زمان</a></li><li><a href="../../part-06/chapter-02/index.html" data-book-link>پردازش هر موقعیت</a></li><li><a href="../../part-06/chapter-03/index.html" data-book-link>پایداری بلوک</a></li><li><a href="../../part-06/chapter-04/index.html" data-book-link>مونتاژ معماری</a></li><li><a href="../../part-06/checkpoint.html" data-book-link data-unit="checkpoint-06">ایستگاه عملی</a></li></ol></details><details><summary>بخش 7 · <bdi dir="rtl">مدل زبانی</bdi> کامل</summary><a href="../../part-07/index.html" data-book-link>صفحهٔ بخش</a><ol><li><a href="../../part-07/chapter-01/index.html" data-book-link>از نمایش به پیش‌بینی</a></li><li><a href="../../part-07/chapter-02/index.html" data-book-link>ردیابی کل مدل</a></li><li><a href="../../part-07/checkpoint.html" data-book-link data-unit="checkpoint-07">ایستگاه عملی</a></li></ol></details><details><summary>بخش 8 · زندگی روزمرهٔ آموزش</summary><a href="../../part-08/index.html" data-book-link>صفحهٔ بخش</a><ol><li><a href="../../part-08/chapter-01/index.html" data-book-link>آموزش روزمره</a></li><li><a href="../../part-08/chapter-02/index.html" data-book-link>ذخیره و ادامه</a></li><li><a href="../../part-08/chapter-03/index.html" data-book-link>خواندن نتیجه</a></li><li><a href="../../part-08/checkpoint.html" data-book-link data-unit="checkpoint-08">ایستگاه عملی</a></li></ol></details><details><summary>بخش 9 · تولید، خرابی و آزمایش</summary><a href="../../part-09/index.html" data-book-link>صفحهٔ بخش</a><ol><li><a href="../../part-09/chapter-01/index.html" data-book-link>یک <bdi dir="ltr">Token</bdi> در هر گام</a></li><li><a href="../../part-09/chapter-02/index.html" data-book-link>کنترل انتخاب</a></li><li><a href="../../part-09/chapter-03/index.html" data-book-link>حدود تولید</a></li><li><a href="../../part-09/chapter-04/index.html" data-book-link>آزمایش علّی و موقعیتی</a></li><li><a href="../../part-09/chapter-05/index.html" data-book-link>کارگاه خطا</a></li><li><a href="../../part-09/checkpoint.html" data-book-link data-unit="checkpoint-09">ایستگاه عملی</a></li></ol></details><details><summary>بخش 10 · از ادامه‌دهنده به پاسخ‌گو</summary><a href="../../part-10/index.html" data-book-link>صفحهٔ بخش</a><ol><li><a href="../../part-10/chapter-01/index.html" data-book-link>مسیر تغییر رفتار</a></li><li><a href="../../part-10/chapter-02/index.html" data-book-link>از ادامه‌دهنده به دستیار</a></li><li><a href="../../part-10/checkpoint.html" data-book-link data-unit="checkpoint-10">ایستگاه عملی</a></li></ol></details><details><summary>بخش 11 · زمینه و پاسخ مستند</summary><a href="../../part-11/index.html" data-book-link>صفحهٔ بخش</a><ol><li><a href="../../part-11/chapter-01/index.html" data-book-link>ساخت ورودی</a></li><li><a href="../../part-11/chapter-02/index.html" data-book-link>یافتن شاهد</a></li><li><a href="../../part-11/chapter-03/index.html" data-book-link>پاسخ مستند</a></li><li><a href="../../part-11/checkpoint.html" data-book-link data-unit="checkpoint-11">ایستگاه عملی</a></li></ol></details><details><summary>بخش 12 · گفت‌وگو و حافظهٔ بیرونی</summary><a href="../../part-12/index.html" data-book-link>صفحهٔ بخش</a><ol><li><a href="../../part-12/chapter-01/index.html" data-book-link>حافظهٔ گفت‌وگو</a></li><li><a href="../../part-12/chapter-02/index.html" data-book-link>حافظهٔ پایدار</a></li><li><a href="../../part-12/checkpoint.html" data-book-link data-unit="checkpoint-12">ایستگاه عملی</a></li></ol></details><details><summary>بخش 13 · ابزار، حل مسئله و وارسی</summary><a href="../../part-13/index.html" data-book-link>صفحهٔ بخش</a><ol><li><a href="../../part-13/chapter-01/index.html" data-book-link>اجرای کنترل‌شده</a></li><li><a href="../../part-13/chapter-02/index.html" data-book-link>حل و وارسی</a></li><li><a href="../../part-13/checkpoint.html" data-book-link data-unit="checkpoint-13">ایستگاه عملی</a></li></ol></details><details><summary>بخش 14 · مدل درون یک سامانه</summary><a href="../../part-14/index.html" data-book-link>صفحهٔ بخش</a><ol><li><a href="../../part-14/chapter-01/index.html" data-book-link>مدل درون سامانه</a></li><li><a href="../../part-14/chapter-02/index.html" data-book-link>سنجش سامانه</a></li><li><a href="../../part-14/checkpoint.html" data-book-link data-unit="checkpoint-14">ایستگاه عملی</a></li></ol></details><details><summary>بخش 15 · هزینه، اجرا و پروژهٔ یکپارچه</summary><a href="../../part-15/index.html" data-book-link>صفحهٔ بخش</a><ol><li><a href="../../part-15/chapter-01/index.html" data-book-link>حافظه و محاسبه</a></li><li><a href="../../part-15/chapter-02/index.html" data-book-link>هزینهٔ اجرا</a></li><li><a href="../../part-15/chapter-03/index.html" data-book-link>اجرای قابل تکرار</a></li><li><a href="../../part-15/chapter-04/index.html" data-book-link>پروژهٔ یکپارچه</a></li><li><a href="../../part-15/checkpoint.html" data-book-link data-unit="checkpoint-15">ایستگاه عملی</a></li></ol></details></div></div></details></nav><details class="book-tools"><summary>میز کار</summary><nav class="toplinks" aria-label="فضاهای کتاب"><a href="../../guide.html" data-book-link>راهنمای آغاز</a><a href="../../lab.html" data-book-link>بازرس مدل</a><a href="../../notebooks.html" data-book-link>آزمایشگاه‌های Jupyter</a><a href="../../journal.html" data-book-link>دفتر آزمایش</a><a href="../../project.html" data-book-link>پروژه</a><a href="../../glossary.html" data-book-link>واژه‌ها</a><a href="../../api.html" data-book-link>مرجع کد</a></nav></details></div></header>
+<div class="layout"><main id="main"><nav class="breadcrumbs" aria-label="مسیر صفحه"><a href="../../index.html" data-book-link>خانه</a> <span aria-hidden="true">/</span> <span aria-current="page">mini_gpt/retrieval.py</span></nav>
+<header class="page-masthead"><p class="eyebrow">از Python تا Mini-GPT</p><h1>mini_gpt/retrieval.py</h1></header><div class="page-content"><p>این فایل مرجع است. متن فارسی درون کد ممکن است به‌علت چیدمان چپ‌به‌راست جدا دیده شود؛ نسخهٔ دانلودی <a class="term-link" id="term-ref-utf-8-1" data-term="utf-8" href="../../glossary/utf-8.html?return=..%2Fcode%2Fmini_gpt%2Fretrieval.py.html%23term-ref-utf-8-1" title="توضیح UTF-8"><bdi dir="ltr">UTF-8</bdi></a> است.</p><p><a href="../../api.html" data-book-link>توضیح نام‌ها و دستورها</a> · <a href="../../project.html" data-book-link>دریافت همهٔ فایل‌ها</a></p><p>درس‌های مرتبط: <a href="../../part-11/chapter-02/69-chunks.html" data-book-link data-unit="69-chunks">سند بلند را کجا ببریم که پاسخ گم نشود؟</a> · <a href="../../part-11/chapter-02/70-vectors.html" data-book-link data-unit="70-vectors">امتیاز <bdi dir="rtl">بردار</bdi>ی از کجا معنا پیدا می‌کند؟</a> · <a href="../../part-11/chapter-03/71-grounding.html" data-book-link data-unit="71-grounding">منبع داریم؛ آیا پاسخ واقعاً از آن پشتیبانی می‌شود؟</a></p><pre data-code-language="python"><code><span class="syntax-string">&quot;&quot;&quot;Small inspectable retrieval components, not a semantic-search service.
+
+The default index is exact cosine search over lexical count vectors. The
+optional four-word teaching experiment trains its own embeddings explicitly;
+it neither downloads weights nor changes the default index.
+&quot;&quot;&quot;</span>
+<span class="syntax-keyword">from</span> collections <span class="syntax-keyword">import</span> Counter
+<span class="syntax-keyword">from</span> dataclasses <span class="syntax-keyword">import</span> dataclass
+<span class="syntax-keyword">import</span> math
+<span class="syntax-keyword">import</span> re
+<span class="syntax-keyword">from</span> typing <span class="syntax-keyword">import</span> Iterable
+
+
+@dataclass(frozen=<span class="syntax-keyword">True</span>)
+<span class="syntax-keyword">class</span> Document:
+    id: str
+    text: str
+
+    <span class="syntax-keyword">def</span> __post_init__(self):
+        <span class="syntax-keyword">if</span> <span class="syntax-keyword">not</span> isinstance(self.id, str) <span class="syntax-keyword">or</span> <span class="syntax-keyword">not</span> self.id.strip():
+            <span class="syntax-keyword">raise</span> ValueError(<span class="syntax-string">&quot;A document needs a nonempty ID&quot;</span>)
+        <span class="syntax-keyword">if</span> <span class="syntax-keyword">not</span> isinstance(self.text, str):
+            <span class="syntax-keyword">raise</span> ValueError(<span class="syntax-string">&quot;Document text must be a string&quot;</span>)
+
+
+@dataclass(frozen=<span class="syntax-keyword">True</span>)
+<span class="syntax-keyword">class</span> Chunk:
+    id: str
+    document_id: str
+    text: str
+    start: int
+    end: int
+
+
+@dataclass(frozen=<span class="syntax-keyword">True</span>)
+<span class="syntax-keyword">class</span> SearchHit:
+    chunk: Chunk
+    score: float
+
+
+@dataclass(frozen=<span class="syntax-keyword">True</span>)
+<span class="syntax-keyword">class</span> GroundedAnswer:
+    text: str
+    citations: tuple[str, ...]
+    abstained: bool
+
+
+COURSE_DOCUMENTS = (
+    Document(<span class="syntax-string">&quot;practice&quot;</span>, <span class="syntax-string">&quot;تمرین درس در Jupyter انجام می‌شود. پیش از اجرا نتیجه را پیش‌بینی کنید.&quot;</span>),
+    Document(<span class="syntax-string">&quot;checkpoint&quot;</span>, <span class="syntax-string">&quot;Checkpoint وضعیت مدل و واژگان را نگه می‌دارد. فایل را فقط از منبع قابل اعتماد باز کنید.&quot;</span>),
+    Document(<span class="syntax-string">&quot;evaluation&quot;</span>, <span class="syntax-string">&quot;ارزیابی روی متن ندیده انجام می‌شود. کاهش Loss آموزش تضمین پاسخ درست نیست.&quot;</span>),
+)
+
+
+<span class="syntax-keyword">def</span> chunk_document(document: Document, *, chunk_words: int = <span class="syntax-number">24</span>,
+                   overlap_words: int = <span class="syntax-number">4</span>) -&gt; list[Chunk]:
+    <span class="syntax-string">&quot;&quot;&quot;Whitespace-word chunks with exact Python-string offsets into the source.
+
+    Words here are a splitting convenience, NOT the model&#x27;s tokens. We keep
+    original whitespace inside each span. Offsets count Unicode code points.
+    &quot;&quot;&quot;</span>
+    <span class="syntax-keyword">if</span> <span class="syntax-keyword">not</span> isinstance(document, Document):
+        <span class="syntax-keyword">raise</span> ValueError(<span class="syntax-string">&quot;Expected a Document&quot;</span>)
+    <span class="syntax-keyword">if</span> (type(chunk_words) <span class="syntax-keyword">is</span> <span class="syntax-keyword">not</span> int <span class="syntax-keyword">or</span> chunk_words &lt;= <span class="syntax-number">0</span> <span class="syntax-keyword">or</span>
+            type(overlap_words) <span class="syntax-keyword">is</span> <span class="syntax-keyword">not</span> int <span class="syntax-keyword">or</span> <span class="syntax-keyword">not</span> <span class="syntax-number">0</span> &lt;= overlap_words &lt; chunk_words):
+        <span class="syntax-keyword">raise</span> ValueError(<span class="syntax-string">&quot;Require 0 &lt;= overlap_words &lt; chunk_words&quot;</span>)
+    words = list(re.finditer(<span class="syntax-string">r&quot;\S+&quot;</span>, document.text))
+    chunks = []
+    <span class="syntax-keyword">for</span> first <span class="syntax-keyword">in</span> range(<span class="syntax-number">0</span>, len(words), chunk_words-overlap_words):
+        last = min(first+chunk_words, len(words))
+        start, end = words[first].start(), words[last-<span class="syntax-number">1</span>].end()
+        chunks.append(Chunk(<span class="syntax-string">f&quot;{document.id}:{start}-{end}&quot;</span>, document.id,
+                            document.text[start:end], start, end))
+        <span class="syntax-keyword">if</span> last == len(words):
+            <span class="syntax-keyword">break</span>
+    <span class="syntax-keyword">return</span> chunks
+
+
+<span class="syntax-keyword">def</span> terms(text: str) -&gt; list[str]:
+    <span class="syntax-string">&quot;&quot;&quot;Casefolded word-like units, with ZWNJ retained inside Persian words.
+
+    No stemming, synonym expansion, or Persian/Arabic character normalization.
+    This is a search convention, separate from CharacterTokenizer.
+    &quot;&quot;&quot;</span>
+    <span class="syntax-keyword">if</span> <span class="syntax-keyword">not</span> isinstance(text, str):
+        <span class="syntax-keyword">raise</span> ValueError(<span class="syntax-string">&quot;Search text must be a string&quot;</span>)
+    <span class="syntax-keyword">return</span> re.findall(<span class="syntax-string">r&quot;[^\W_]+(?:\u200c[^\W_]+)*&quot;</span>, text.casefold())
+
+
+<span class="syntax-keyword">def</span> _validate_search(chunks, k):
+    <span class="syntax-keyword">if</span> type(k) <span class="syntax-keyword">is</span> <span class="syntax-keyword">not</span> int <span class="syntax-keyword">or</span> k &lt;= <span class="syntax-number">0</span>:
+        <span class="syntax-keyword">raise</span> ValueError(<span class="syntax-string">&quot;k must be a positive integer&quot;</span>)
+    chunks = tuple(chunks)
+    <span class="syntax-keyword">if</span> any(<span class="syntax-keyword">not</span> isinstance(chunk, Chunk) <span class="syntax-keyword">for</span> chunk <span class="syntax-keyword">in</span> chunks):
+        <span class="syntax-keyword">raise</span> ValueError(<span class="syntax-string">&quot;Expected Chunk records&quot;</span>)
+    <span class="syntax-keyword">if</span> len({chunk.id <span class="syntax-keyword">for</span> chunk <span class="syntax-keyword">in</span> chunks}) != len(chunks):
+        <span class="syntax-keyword">raise</span> ValueError(<span class="syntax-string">&quot;Chunk IDs must be unique&quot;</span>)
+    <span class="syntax-keyword">return</span> chunks
+
+
+<span class="syntax-keyword">def</span> keyword_search(query: str, chunks: Iterable[Chunk], *, k: int = <span class="syntax-number">3</span>) -&gt; list[SearchHit]:
+    <span class="syntax-string">&quot;&quot;&quot;Rank by fraction of distinct query terms present; omit zero-overlap hits.&quot;&quot;&quot;</span>
+    chunks = _validate_search(chunks, k)
+    wanted = set(terms(query))
+    <span class="syntax-keyword">if</span> <span class="syntax-keyword">not</span> wanted:
+        <span class="syntax-keyword">return</span> []
+    hits = [SearchHit(chunk, len(wanted &amp; set(terms(chunk.text)))/len(wanted))
+            <span class="syntax-keyword">for</span> chunk <span class="syntax-keyword">in</span> chunks]
+    <span class="syntax-keyword">return</span> sorted((hit <span class="syntax-keyword">for</span> hit <span class="syntax-keyword">in</span> hits <span class="syntax-keyword">if</span> hit.score &gt; <span class="syntax-number">0</span>),
+                  key=<span class="syntax-keyword">lambda</span> hit: (-hit.score, hit.chunk.id))[:k]
+
+
+<span class="syntax-keyword">def</span> cosine_similarity(left, right) -&gt; float:
+    <span class="syntax-string">&quot;&quot;&quot;Cosine with an explicit zero-vector convention: return zero similarity.&quot;&quot;&quot;</span>
+    <span class="syntax-keyword">if</span> len(left) != len(right):
+        <span class="syntax-keyword">raise</span> ValueError(<span class="syntax-string">&quot;Vector dimensions differ&quot;</span>)
+    <span class="syntax-keyword">if</span> <span class="syntax-keyword">not</span> all(math.isfinite(value) <span class="syntax-keyword">for</span> value <span class="syntax-keyword">in</span> (*left, *right)):
+        <span class="syntax-keyword">raise</span> ValueError(<span class="syntax-string">&quot;Vectors must be finite&quot;</span>)
+    left_scale = max((abs(value) <span class="syntax-keyword">for</span> value <span class="syntax-keyword">in</span> left), default=<span class="syntax-number">0</span>)
+    right_scale = max((abs(value) <span class="syntax-keyword">for</span> value <span class="syntax-keyword">in</span> right), default=<span class="syntax-number">0</span>)
+    <span class="syntax-keyword">if</span> left_scale == <span class="syntax-number">0</span> <span class="syntax-keyword">or</span> right_scale == <span class="syntax-number">0</span>:
+        <span class="syntax-keyword">return</span> <span class="syntax-number">0.0</span>
+    <span class="syntax-comment"># Scaling each vector leaves cosine unchanged and avoids squaring enormous</span>
+    <span class="syntax-comment"># or tiny finite values before normalization.</span>
+    left_unit_scale = [value/left_scale <span class="syntax-keyword">for</span> value <span class="syntax-keyword">in</span> left]
+    right_unit_scale = [value/right_scale <span class="syntax-keyword">for</span> value <span class="syntax-keyword">in</span> right]
+    left_norm = math.sqrt(sum(value*value <span class="syntax-keyword">for</span> value <span class="syntax-keyword">in</span> left_unit_scale))
+    right_norm = math.sqrt(sum(value*value <span class="syntax-keyword">for</span> value <span class="syntax-keyword">in</span> right_unit_scale))
+    score = sum((a/left_norm)*(b/right_norm)
+                <span class="syntax-keyword">for</span> a, b <span class="syntax-keyword">in</span> zip(left_unit_scale, right_unit_scale))
+    <span class="syntax-keyword">return</span> max(-<span class="syntax-number">1.0</span>, min(<span class="syntax-number">1.0</span>, score))  <span class="syntax-comment"># Bound floating-point round-off.</span>
+
+
+<span class="syntax-keyword">class</span> VectorIndex:
+    <span class="syntax-string">&quot;&quot;&quot;A shared lexical vocabulary and exact scan, with no learned semantics.&quot;&quot;&quot;</span>
+    <span class="syntax-keyword">def</span> __init__(self, chunks: Iterable[Chunk]):
+        self.chunks = _validate_search(chunks, <span class="syntax-number">1</span>)
+        self.vocabulary = tuple(sorted({term <span class="syntax-keyword">for</span> chunk <span class="syntax-keyword">in</span> self.chunks <span class="syntax-keyword">for</span> term <span class="syntax-keyword">in</span> terms(chunk.text)}))
+        self.vectors = tuple(self.encode(chunk.text) <span class="syntax-keyword">for</span> chunk <span class="syntax-keyword">in</span> self.chunks)
+
+    <span class="syntax-keyword">def</span> encode(self, text: str) -&gt; tuple[int, ...]:
+        counts = Counter(terms(text))
+        <span class="syntax-keyword">return</span> tuple(counts[term] <span class="syntax-keyword">for</span> term <span class="syntax-keyword">in</span> self.vocabulary)
+
+    <span class="syntax-keyword">def</span> search(self, query: str, *, k: int = <span class="syntax-number">3</span>, min_score: float = <span class="syntax-number">0.0</span>) -&gt; list[SearchHit]:
+        _validate_search(self.chunks, k)
+        <span class="syntax-keyword">if</span> <span class="syntax-keyword">not</span> math.isfinite(min_score) <span class="syntax-keyword">or</span> <span class="syntax-keyword">not</span> <span class="syntax-number">0</span> &lt;= min_score &lt;= <span class="syntax-number">1</span>:
+            <span class="syntax-keyword">raise</span> ValueError(<span class="syntax-string">&quot;min_score must be finite and between zero and one&quot;</span>)
+        query_vector = self.encode(query)
+        hits = [SearchHit(chunk, cosine_similarity(query_vector, vector))
+                <span class="syntax-keyword">for</span> chunk, vector <span class="syntax-keyword">in</span> zip(self.chunks, self.vectors)]
+        <span class="syntax-keyword">return</span> sorted((hit <span class="syntax-keyword">for</span> hit <span class="syntax-keyword">in</span> hits <span class="syntax-keyword">if</span> hit.score &gt; <span class="syntax-number">0</span> <span class="syntax-keyword">and</span> hit.score &gt;= min_score),
+                      key=<span class="syntax-keyword">lambda</span> hit: (-hit.score, hit.chunk.id))[:k]
+
+
+<span class="syntax-keyword">def</span> answer_from_hits(hits: Iterable[SearchHit], *, min_score: float = <span class="syntax-number">0.0</span>) -&gt; GroundedAnswer:
+    <span class="syntax-string">&quot;&quot;&quot;Quote selected evidence exactly; not a learned answer or truth verifier.
+
+    Multiple passages remain separate, including contradictions. Existence of a
+    citation is traceability, not proof that a passage is correct or relevant.
+    &quot;&quot;&quot;</span>
+    <span class="syntax-keyword">if</span> <span class="syntax-keyword">not</span> math.isfinite(min_score) <span class="syntax-keyword">or</span> <span class="syntax-keyword">not</span> <span class="syntax-number">0</span> &lt;= min_score &lt;= <span class="syntax-number">1</span>:
+        <span class="syntax-keyword">raise</span> ValueError(<span class="syntax-string">&quot;min_score must be finite and between zero and one&quot;</span>)
+    selected = [hit <span class="syntax-keyword">for</span> hit <span class="syntax-keyword">in</span> hits <span class="syntax-keyword">if</span> hit.score &gt; <span class="syntax-number">0</span> <span class="syntax-keyword">and</span> hit.score &gt;= min_score]
+    <span class="syntax-keyword">if</span> <span class="syntax-keyword">not</span> selected:
+        <span class="syntax-keyword">return</span> GroundedAnswer(<span class="syntax-string">&quot;شاهد کافی در سندهای داده‌شده پیدا نشد.&quot;</span>, (), <span class="syntax-keyword">True</span>)
+    <span class="syntax-keyword">if</span> len({hit.chunk.id <span class="syntax-keyword">for</span> hit <span class="syntax-keyword">in</span> selected}) != len(selected):
+        <span class="syntax-keyword">raise</span> ValueError(<span class="syntax-string">&quot;Duplicate evidence IDs&quot;</span>)
+    text = <span class="syntax-string">&quot;\n&quot;</span>.join(<span class="syntax-string">f&quot;[{hit.chunk.id}] {hit.chunk.text}&quot;</span> <span class="syntax-keyword">for</span> hit <span class="syntax-keyword">in</span> selected)
+    <span class="syntax-keyword">return</span> GroundedAnswer(text, tuple(hit.chunk.id <span class="syntax-keyword">for</span> hit <span class="syntax-keyword">in</span> selected), <span class="syntax-keyword">False</span>)
+
+
+<span class="syntax-keyword">def</span> train_tiny_embeddings(*, steps: int = <span class="syntax-number">100</span>):
+    <span class="syntax-string">&quot;&quot;&quot;An explicitly supervised, four-term toy representation-learning experiment.
+
+    Positive pairs (save/keep and calculate/multiply) are *provided relevance
+    labels*, not knowledge discovered from a corpus. There is no held-out claim.
+    Returns (words, initial_vectors, trained_vectors, initial_loss, final_loss).
+    PyTorch is imported only when the learner explicitly runs this experiment.
+    &quot;&quot;&quot;</span>
+    <span class="syntax-keyword">if</span> type(steps) <span class="syntax-keyword">is</span> <span class="syntax-keyword">not</span> int <span class="syntax-keyword">or</span> steps &lt; <span class="syntax-number">0</span>:
+        <span class="syntax-keyword">raise</span> ValueError(<span class="syntax-string">&quot;steps must be a nonnegative integer&quot;</span>)
+    <span class="syntax-keyword">import</span> torch
+    <span class="syntax-keyword">from</span> torch <span class="syntax-keyword">import</span> nn
+    <span class="syntax-keyword">from</span> torch.nn <span class="syntax-keyword">import</span> functional <span class="syntax-keyword">as</span> F
+
+    words = (<span class="syntax-string">&quot;ذخیره&quot;</span>, <span class="syntax-string">&quot;نگهداری&quot;</span>, <span class="syntax-string">&quot;حساب&quot;</span>, <span class="syntax-string">&quot;ضرب&quot;</span>)
+    initial = torch.tensor([[<span class="syntax-number">1.</span>, <span class="syntax-number">0.2</span>], [-<span class="syntax-number">0.2</span>, <span class="syntax-number">1.</span>], [-<span class="syntax-number">1.</span>, <span class="syntax-number">0.2</span>], [<span class="syntax-number">0.2</span>, -<span class="syntax-number">1.</span>]])
+    table = nn.Embedding.from_pretrained(initial.clone(), freeze=<span class="syntax-keyword">False</span>)
+    left = torch.tensor([<span class="syntax-number">0</span>, <span class="syntax-number">2</span>, <span class="syntax-number">0</span>, <span class="syntax-number">1</span>])
+    right = torch.tensor([<span class="syntax-number">1</span>, <span class="syntax-number">3</span>, <span class="syntax-number">2</span>, <span class="syntax-number">3</span>])
+    targets = torch.tensor([<span class="syntax-number">1.</span>, <span class="syntax-number">1.</span>, -<span class="syntax-number">1.</span>, -<span class="syntax-number">1.</span>])
+    optimizer = torch.optim.SGD(table.parameters(), lr=<span class="syntax-number">0.2</span>)
+
+    <span class="syntax-keyword">def</span> loss():
+        scores = F.cosine_similarity(table(left), table(right), dim=-<span class="syntax-number">1</span>)
+        <span class="syntax-keyword">return</span> ((scores-targets)**<span class="syntax-number">2</span>).mean()
+
+    first = loss().item()
+    <span class="syntax-keyword">for</span> _ <span class="syntax-keyword">in</span> range(steps):
+        optimizer.zero_grad(set_to_none=<span class="syntax-keyword">True</span>)
+        loss().backward()
+        optimizer.step()
+    <span class="syntax-keyword">return</span> words, initial.tolist(), table.weight.detach().tolist(), first, loss().item()</code></pre><nav class="pager learning-continuation" aria-label="ادامهٔ مسیر یادگیری"><div class="next-step"><p class="eyebrow">گام بعد <span></span></p><p class="next-context">قطعه‌های قابل بازیابی بسازیم، مرز آن‌ها را ببینیم و هر قطعه را به محل اصلی‌اش وصل کنیم.</p><a rel="next" data-next-step href="../../part-11/chapter-02/69-chunks.html" data-book-link data-unit="69-chunks">کد را در یک مسئله دنبال کنید: سند بلند را کجا ببریم که پاسخ گم نشود؟</a></div><div class="nearby-steps"><a data-return-section href="../index.html" data-book-link>همهٔ فایل‌های مرجع</a></div></nav></div><div class="reading-finish"><a href="../../journal.html" data-book-link>ثبت در دفتر آزمایش</a></div><details class="progress-panel"><summary>پیشرفت مسیر <span data-progress-count>0 / 107</span></summary><div class="progress-tools"><progress value="0" max="107" aria-label="درس‌ها و ایستگاه‌های انجام‌شده"></progress><button type="button" data-export>خروجی پیشرفت</button><label class="import-label">ورود پیشرفت <input type="file" accept=".json,application/json" data-import></label></div><details data-export-preview hidden><summary>نسخهٔ متنی پیشرفت؛ اگر دانلود انجام نشد، این <bdi dir="ltr">JSON</bdi> را کپی و در فایل نگه دارید</summary><pre><code data-export-code></code></pre></details><p class="progress-note">علامت انجام فقط با انتخاب شما ثبت می‌شود. برای نگهداری مطمئن یا انتقال به مرورگر دیگر، خروجی پیشرفت بگیرید. دفتر آزمایش جداست.</p><p class="status" role="status" aria-live="polite" data-status></p></details><footer class="footer"><span>از یک <a class="term-link" id="term-ref-token-1" data-term="token" href="../../glossary/token.html?return=..%2Fcode%2Fmini_gpt%2Fretrieval.py.html%23term-ref-token-1" title="توضیح Token"><bdi dir="ltr">Token</bdi></a>، تا یک مدل؛ از مدل، تا یک سامانه.</span><a href="../../guide.html" data-book-link>راهنما</a> · <a href="../../api.html" data-book-link>کد و منابع</a></footer></main></div>
+<noscript><p>خواندن و ناوبری بدون JavaScript هم کار می‌کند؛ کپی خودکار و ثبت پیشرفت به آن نیاز دارند.</p></noscript></body></html>

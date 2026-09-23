@@ -1,3 +1,437 @@
+# Complete model-to-system learning journey — 2026-09-23
+
+This is the current report. Reports below the historical divider describe earlier
+editions, not the current totals. The repository's `persian-educational-writer`
+skill guided the new Persian explanations: concrete failure first, a small
+experiment next, and an explicit boundary between a model and its surrounding
+software. The existing foundation was reviewed and preserved, not restarted.
+Pre-change evidence is retained in `.verification/before-system-journey.zip`.
+
+## Requested 24-point report
+
+### 1. Original curriculum structure
+
+76 lessons, 36 chapters, 10 parts, 10 checkpoints and 86 progress units. There
+were 88 notebooks: 76 primary labs and 12 optional reviews. The first nine parts
+already supplied a strong Python-to-Mini-GPT path. The final part introduced the
+training lifecycle, scale, cache, SFT, LoRA, preferences and a small RAG example,
+but did not provide a continuous, executable path through the surrounding system.
+
+### 2. Final curriculum structure
+
+92 lessons, 49 chapters, 15 parts, 15 checkpoints and 107 progress units;
+104 notebooks. Parts 1–9 remain in their existing order. Parts 10–15 now cover
+instruction-oriented training; context and grounded retrieval; conversation and
+external memory; tools and verification; bounded orchestration and evaluation;
+then performance, local serving and an integrated project. See
+[the complete inventory](JOURNEY_INVENTORY.md) and [prerequisite map](COVERAGE.md).
+All 76 previous lesson IDs and published URLs remain valid, including moved
+lessons whose legacy URL still contains `part-10`. Navigation, breadcrumbs and
+the teaching order use the new conceptual grouping.
+
+### 3. Lessons added
+
+| ID | Concrete educational purpose |
+| --- | --- |
+| `65a-sft-lab` | Actually pretrain and response-only fine-tune Mini-GPT; compare measured outcomes. |
+| `68-context` | Pack a complete serialized request within a model-token budget, with output reserve. |
+| `69-chunks` | Split documents with source IDs/offsets; inspect overlap and boundary failures. |
+| `70-vectors` | Build count vectors/cosine ranking, then train a tiny embedding example. |
+| `71-grounding` | Separate retrieved evidence, citations, supported answers and abstention. |
+| `72-history` | Serialize conversational roles and observe history growth. |
+| `73-summary` | Compare history with a lossy extractive summary and trace omissions. |
+| `74-memory` | Explicitly select, persist, retrieve and forget external records. |
+| `75-tools` | Validate structured proposals and dispatch only allowed local functions. |
+| `76-reasoning` | Decompose a task and distinguish calculation checks from solving the right problem. |
+| `77-candidates` | Compare candidates, voting, verification and inference budgets. |
+| `80-controller` | Connect model proposals, observations and tools in a bounded loop. |
+| `81-system-eval` | Evaluate components and full-system regressions separately. |
+| `82-performance` | Measure latency/throughput and inspect quantization error without invented speedups. |
+| `83-deployment` | Reuse a loaded model and enforce request/output limits locally. |
+| `84-capstone` | Integrate the components and deliver evidence, including real-model failures. |
+
+### 4. Lessons removed
+
+None. Obsolete claims that the project ends at the old RAG lesson or that no
+instruction-training implementation exists were removed, not entire lessons.
+
+### 5. Lessons merged
+
+None. Existing focused lessons did not need forced consolidation.
+
+### 6. Lessons split
+
+No existing lesson was mechanically split. The formerly broad final part was
+reorganized into six stages, using the existing lessons plus justified bridges.
+
+### 7. Existing lessons substantially improved
+
+The lifecycle (`62b-lifecycle`), SFT (`65-sft`), preferences (`66-preference`) and
+RAG (`67-rag`) endings/project connections now lead to executable follow-on work.
+The scale/cache lessons are taught after system integration. Shared introduction,
+roadmap, laboratory directory, project map and final checkpoints were updated.
+All 92 lessons gained workload metadata. The first 69 lesson records and their
+order are otherwise exactly unchanged; all 31 original model Python files are
+byte-identical to this pass's backup. Original lesson code was not rewritten.
+
+### 8. Reasons for major curriculum changes
+
+Instruction behavior needs a measured training example, not only a loss mask.
+Retrieval needs a context budget before a larger index. Persistent memory needs
+history and an honest account of summary loss first. A controller needs validated
+tools, observable failures and verification before it deserves an agent-like
+loop. Performance claims need a defined workload after that system exists.
+These dependencies determine the order; fashionable frameworks do not.
+
+### 9. Final Mini-GPT/project evolution
+
+The existing 23 runnable core milestones remain unchanged. Later lessons are
+labelled project extensions, not fictitious additional milestone commands.
+The same Mini-GPT architecture continues through response-only training and a
+real generation adapter. Nine small runtime modules add instruction training,
+context, retrieval, memory, tools, reasoning, orchestration, evaluation and
+performance around it. Nothing silently replaces a failed model with an answer.
+
+The default SFT experiment uses 40 pretraining and 160 fine-tuning steps. In the
+verified CPU run, training response loss went from 2.196958 to 0.002498 and exact
+answer accuracy from 0.5 to 1.0; two held-out *rewritings of the same facts* went
+from loss 2.241845 to 0.005010 and accuracy 0.5 to 1.0. This measures a tiny
+yes/no task, not new-fact generalization or general instruction following.
+
+The 64-position demo cannot hold the controller protocol. The capstone therefore
+also provides a separately configured 2048-position miniature, allocated before
+training with an explicit vocabulary. Its short 2+4-step experiment actually
+passes a 675-token prompt through generation, but the observed response
+`ببنببببن` fails the action schema. Its longest training sequence is only 42
+positions. Larger allocated context is not evidence of long-context competence.
+The failed result is kept; it is never replaced by a scripted success.
+
+### 10. RAG coverage
+
+External question/document scenario → existing keyword retrieval → stable chunks
+and overlap → count-vector cosine ranking → a tiny learned embedding contrast →
+context packing → source citations/grounding → abstention and evaluation.
+No vector database or service is required. The learned four-term example has no
+held-out semantic benchmark; its decreasing loss is not proof of useful semantic
+retrieval. The extractive baseline and scripted integration fixtures are clearly
+identified as non-generative teaching aids.
+
+### 11. Memory coverage
+
+History, summary, persistent records and retrieval-based selection are distinct
+from learned weights and KV cache. Summary provenance/omitted turns expose loss.
+The controller sees only explicitly selected memory keys; default selection is
+empty. Writes and forgetting are explicit. The caller must provide an authorized
+user's store: this is not a production identity/access-control implementation.
+
+### 12. Reasoning coverage
+
+Manual decomposition, candidate plans, executable checking, incorrect-premise
+failures, disagreement, voting/self-consistency and bounded inference spending.
+Training changes weights; extra inference calls do not. Fluent intermediate
+text is not a faithful trace of hidden computation. Majority agreement is not
+correctness, especially with correlated candidates. Small deterministic examples
+isolate these ideas without claiming to train a frontier reasoning model.
+
+### 13. Tool/function calling coverage
+
+The model proposes data; Python validates and executes. Strict JSON/schema and
+duplicate-key/nonfinite rejection precede a three-function arithmetic allowlist.
+Arguments and calls are bounded; errors and actual results return as observations.
+No `eval`, shell, network, arbitrary filesystem access or framework dependency is
+used by the teaching tools. The model itself does not execute a function.
+
+### 14. Agent/system architecture coverage
+
+`run_assistant` connects explicit context/retrieval/memory, a backend proposal,
+validation, dispatch, observations, verification and termination. Step/tool limits,
+repeated-action detection, missing-context and invalid-action stops are observable.
+Required protocol and prior tool results cannot silently disappear when packing.
+`MiniGPTBackend` uses the real tokenizer/model/generation; `ScriptedFixture`
+tests controller behavior only. “Agent” is presented as variable ecosystem usage,
+not a universal definition. Prompt delimiters are not a security boundary.
+
+### 15. Evaluation coverage
+
+Existing held-out loss/perplexity and generation experiments continue. New small
+datasets distinguish raw retrieval recall from evidence actually retained in the
+final context, exact answer checks, allowed citations, tool behavior, verification
+and full-system outcomes. A finish event without an independent verifier remains
+unverified. Regression cases include malformed actions, exhausted budgets,
+unsupported answers and memory/context omissions. Evidence is reported per layer.
+
+### 16. Performance/deployment coverage
+
+Scale and KV-cache teaching precede measurement, quantization error and local
+request handling. CPU median latency and throughput have stated boundaries;
+model loading, HTTP/network time and queueing are excluded. The toy quantizer
+stores `int8` even when simulating four-bit levels: it is not packed four-bit
+storage or a demonstrated acceleration. No real KV cache was added to the core.
+`InferenceSession` reuses a loaded model and rejects invalid/oversize inputs; it
+is not an authenticated concurrent public inference server. The book remains a
+static deployment artifact with local-only Jupyter. No public deployment was made.
+
+### 17. Notebook changes
+
+16 new independent primary notebooks retain the established prediction, student
+TODO, explicit incomplete checks, reference implementation, comparison, variation,
+break/fix and project-connection contract. Existing 88 notebooks retain all 751
+code cells; 749 are identical, and only the first two optional review setup cells
+drop premature PyTorch imports. IDs and lesson/HTML mapping metadata are preserved.
+Current totals: 104 notebooks, 879 code cells and 1107 Markdown cells. Lesson time
+estimates are shared with notebook headers. All 104 pass independently in student
+and solution mode, including 11 generated figures in each mode. Student execution
+does not fill in the learner's TODOs or disguise unfinished work as success.
+
+### 18. Terminology changes
+
+The generated glossary grows from 231 to 268 entries. New definitions cover
+context budgets, chunks, cosine ranking, grounding, abstention, provenance,
+history/summary/persistent memory, tools, verification and controller concepts.
+Existing conventional Persian choices and searchable aliases are retained.
+English technical identities are paired with functional Persian explanations;
+API names stay code. The SFT/RAG glossary project links now point to actual
+extensions. No claim is made that a newly invented Persian translation is the
+community standard. Earlier usage evidence remains in the historical report and
+the source glossary's explicit usage-decision ledger.
+
+### 19. RTL/LTR and visual fixes
+
+The shared protected-aware formatter remains in use for HTML and all notebooks.
+Persian remains RTL; code, shapes and short math remain LTR-isolated. New time
+headers reuse the restrained page design, with a collapsed optional breakdown
+and responsive rows. The homepage's ambiguous “remove the cover” wording now
+explicitly names Mask, avoiding an accidental Vector glossary link. Browser
+checks cover early foundations, Attention, Mini-GPT, context/grounding, memory,
+reasoning, controller and capstone pages at desktop/narrow widths. No global
+nowrap, blanket nonbreaking spaces or new display dependency was introduced.
+
+### 20. Reading/learning-time methodology
+
+One source module assigns every lesson an explicit activity profile. It combines
+prose reading, difficulty-adjusted concept/manual work, code tracing, notebook
+experimentation/debugging, exercises/self-testing and prerequisite recall.
+Profile selection accounts for mathematical novelty and integration burden;
+reading alone is a small part of most labs. Checkpoints add separate synthesis
+time. Exact minute endpoints aggregate; displayed large ranges round outward.
+[The method and assumptions](LEARNING_TIME.md) are public in the book and docs.
+These are editorial planning ranges, not measurements of Persian learners.
+
+### 21. Total estimated book learning time
+
+Core path including all 15 checkpoints: **5960–10460 minutes**, or
+**99 hours 20 minutes–174 hours 20 minutes**, displayed as **99–174.5 hours**.
+This excludes optional review notebooks (45–90 minutes each), initial setup,
+long training runs, papers, open-ended projects and breaks. Setup may require
+roughly 1–3 hours but troubleshooting can exceed that. No completion guarantee
+or fixed calendar-week promise is made.
+
+### 22. Per-Part estimated time
+
+| Part | Scope | Display range, hours |
+| --- | --- | --- |
+| 1 | Python problem/model foundations | 4–8 |
+| 2 | Numbers, probability and change | 8.5–15.5 |
+| 3 | Computation tools and first network | 8–14.5 |
+| 4 | Text and learned representations | 6–11 |
+| 5 | Single-Head Attention | 9–16.5 |
+| 6 | Multiple heads and Transformer block | 8–14.5 |
+| 7 | Complete language model | 5–9 |
+| 8 | Training practice | 10–18 |
+| 9 | Generation, failures and experiments | 9.5–17.5 |
+| 10 | Instruction-oriented training | 5–9.5 |
+| 11 | Context and grounded retrieval | 5.5–10 |
+| 12 | Conversation and external memory | 4.5–8 |
+| 13 | Tools, reasoning and verification | 4–7.5 |
+| 14 | Model inside a system | 4–7 |
+| 15 | Cost, local execution and capstone | 6.5–12 |
+
+Each includes its checkpoint. Rounded display ranges should not be re-summed;
+the book total uses exact minute endpoints, which are tested and recorded in
+[JOURNEY_INVENTORY.md](JOURNEY_INVENTORY.md).
+
+### 23. Validation/build results
+
+The current staging build passes: 614 HTML pages, 92 lessons, 49 chapters,
+107 progress units, 72115 local links/assets and 103 compiled Python files.
+89 model/system/example tests and the Mini-GPT smoke test pass. All 92 lesson
+examples are covered by the shared registry. 70 site/launcher/release/editorial
+tests pass. The 104 student and 104 solution runs have no uncaught errors; every
+recorded source hash matches its current notebook. Reports are retained locally
+as `.verification/journey-student.json` and `journey-solutions.json`.
+
+The downloadable project inventory includes all 40 runtime modules, all 9 model
+test files and all 104 notebooks. Final release preparation reran all 70 site
+tests, the generated-source consistency checks, full HTML validation, JavaScript
+syntax checks and all 29 JavaScript tests successfully. The public inventory is
+727 files. The release archive SHA-256 is
+`f843ac50c45d54e47f0b56eae6cd1935d8db10e6df3b6351a4f9a740cccd6908`;
+`release/manifest.json` records every exact public-file hash. No files were
+silently deleted and nothing was published.
+
+The actual SFT and capstone notebooks were opened in authenticated local
+JupyterLab. At 1280 and 625 CSS-pixel widths, the capstone's visible Persian
+paragraphs are RTL/right-aligned, code editors are LTR, and the document has no
+horizontal overflow. The 90–150-minute lesson/lab estimate is visible and says
+not to count the notebook twice. All QA-opened documents were closed, incidental
+unsaved metadata discarded, and generated-source/hash checks passed again. The
+owned local launcher was restarted with the expanded catalog; the released
+capstone's laboratory link opened the matching notebook successfully. The local
+book and authenticated Jupyter remain available on ports 8000 and 8888; the
+temporary staging preview was stopped.
+Checks use Python 3.11.0, PyTorch 2.14.0+cpu and JupyterLab 4.6.4.
+
+### 24. Remaining weaknesses or ambiguities
+
+This is an educational miniature, not a reliable general assistant. Tiny SFT
+accuracy measures only the declared toy task; real-model controller failures
+remain visible. The embedding exercise has no semantic generalization benchmark.
+The memory store has no production authorization/encryption; the controller has
+no complete prompt-injection defense; local inference has no HTTP authentication,
+queue/concurrency or hard per-request timeout. KV cache, packed quantization,
+distributed inference, GPU behavior and real-world throughput are not claimed
+implemented or validated. Learning times need calibration with actual learners.
+Representative browser inspection is not a claim that every frontend/device was
+visually tested. A native Persian teaching/editorial review can still improve
+pacing and terminology; no automatic check proves educational effectiveness.
+
+## Research sources and why they were used
+
+- [Rice workload-estimation resources](https://cte.rice.edu/resources/workload-estimator):
+  supports separating task type, reading purpose and difficulty. It does not
+  validate our Persian reading rates or exact lesson durations.
+- [InstructGPT](https://arxiv.org/abs/2203.02155),
+  [LoRA](https://arxiv.org/abs/2106.09685) and
+  [DPO](https://arxiv.org/abs/2305.18290): maintain the distinction between
+  instruction supervision, parameter-efficient adaptation and preference data.
+  The course's tiny experiments are not replications of these large-scale results.
+- [RAG](https://arxiv.org/abs/2005.11401) and
+  [Sentence-BERT](https://arxiv.org/abs/1908.10084): ground the external-retrieval
+  and learned shared-vector explanations; random vectors are not semantic search.
+- [Chain-of-thought prompting](https://arxiv.org/abs/2201.11903),
+  [self-consistency](https://arxiv.org/abs/2203.11171) and
+  [ReAct](https://arxiv.org/abs/2210.03629): motivate decomposition, candidate
+  aggregation and interleaved observations/actions, without importing a framework.
+- [Unfaithful explanations](https://arxiv.org/abs/2305.04388): motivates the
+  explicit warning that visible reasoning text is not guaranteed faithful.
+
+These sources support technical boundaries, not a claim that the English-first
+new terms have one universally accepted Persian translation. Existing Persian
+usage sources and deliberate retained spellings remain recorded below.
+
+---
+
+# Historical report: final Persian reader, terminology and typography audit — 2026-09-23
+
+This is a refinement of the current book, not a restart. The repository's
+persian-educational-writer skill guided paragraph-level motivation, natural prose
+and restraint: good explanations and the existing Mini-GPT progression were kept.
+The source snapshot for this pass is .verification/before-final-reader-pass.zip;
+older audit counts below describe earlier work.
+
+## Concrete final report
+
+| Item | Result |
+| --- | --- |
+| 1. Lessons audited | All 76, in continuous context: 43 records refined, 33 retained. IDs, sequence, chapters and routes preserved. |
+| 2. Notebooks audited | All 88: 76 one-to-one lesson labs plus 12 optional reviews. All 947 Markdown cells reviewed/formatted; all 751 code cells preserved. Seven original review Markdown cells received additional factual clarifications. |
+| 3. Important terminology decisions | 60 explicit decisions, including deliberate keeps, in FINAL_TERM_REVIEW. The full inventory covers 231 concepts; 21 research-backed/uncertainty decisions reference 20 recorded sources. These are not substitution counts or frequency estimates. |
+| 4. Major terminology changes | کاراکتر in Python prose, with Character, Unicode Code point, Token and Token ID explicitly distinguished. Consistent Attention Head, Mask/Causal Mask, Embedding and recognizable Transformer terminology. |
+| 5. English intentionally retained | Token, Tokenizer, Tokenization, Embedding, Q/K/V, Attention, Transformer, Loss, Optimizer, Checkpoint, Inference, Logits, Softmax, Dropout, Batch, Epoch, SFT, LoRA, Quantization and Perplexity remain recognizable English identities. Literal API spelling remains code, not a term to capitalize. |
+| 6. Persianized forms retained | کاراکتر is the prose choice. توکن, توکن‌سازی, امبدینگ, ترنسفورمر, گرادیان, ماسک and چک‌پوینت remain accepted introductory/search forms where applicable, not competing names randomly alternated in paragraphs. Established mathematical Persian and Encoder/رمزگذار, Decoder/رمزگشا glosses stay. |
+| 7. Literal/uncommon wording replaced | نویسه/نویسه‌ای becomes کاراکتر/کاراکترمحور in explanatory prose. Unnecessary تبدیل‌گر glosses are removed. Vague پوشش and سر references in lessons and shared educational UI/docs are clarified as Mask and Head. Ordinary خطا and نشانه are not automatically Loss and Token; an explicit regression protects نشانهٔ بهترشدن. |
+| 8. Reader-level fixes | Distinguish all parameters from trainable parameters; explain Batch-weighted Loss correctly; keep Vocabulary inside the Checkpoint; separate Causal Mask from SFT target selection. Remove misleading “first PyTorch notebook”; compare embeddings with W_V using real variable names; explain that changing Value projection can leave Attention coefficients fixed. Glossary summaries no longer depend on orphaned “this/that” referents. |
+| 9. RTL alignment | Shared notebook renderer explicitly right-aligns Persian headings, paragraphs, lists and callouts instead of merely setting direction. No blanket right-alignment or global injected stylesheet. |
+| 10. Mixed directions | Code, formulas, short arrays/shapes and complete short dot-product expressions have LTR isolation. Backticks are protected before HTML parsing/term normalization, including 0<p<=1 and unknown-token spellings. English-only paragraphs and mixed table cells are classified separately. |
+| 11. Line breaks | Only short Persian label-plus-first-word groups are kept together. English compounds are not split by that rule. Emphasis remains inline; long prose and code retain responsive wrapping. No global nowrap or blanket nonbreaking spaces. |
+| 12. HTML/CSS | One protected-aware typography policy serves HTML and notebooks. Existing attributes/styles are merged, not duplicated; code/math/script/style subtrees remain opaque. Browser QA caught Jupyter stripping logical padding/border styles: scoped physical RTL equivalents now handle lists and quote borders. |
+| 13. Glossary | 224 → 231 entries: Character, Code point, Hyperparameter, Language model, Causal language model, Generation and Mask added. Clearer Positional Embedding, Weight Decay, Resume, Perplexity, Teacher forcing and related standalone definitions; old search aliases retained without making them canonical prose. |
+| 14. Validation | Full student and solution execution: 88 + 88 fresh kernels, 11 figures per pass, no uncaught errors. Student TODOs correctly remain INCOMPLETE; reference exercises pass. 39 model tests and smoke test pass. Final static release checks and exact inventory are recorded below. |
+| 15. Remaining ambiguity | Do not force a single Persian name for Perplexity, Quantization, Regularization, Context Window, Gate or Pre-Norm without human editorial review. Independent sources disagree or are sparse; keep English and a precise functional explanation. |
+
+All 66 nonempty lesson code examples and 34 formula blocks are unchanged.
+All 31 Mini-GPT Python source files are byte-identical to the pre-pass snapshot.
+No new dependency, training algorithm, exercise answer or notebook fallback was
+introduced. All 32 API table names and the 76 diagram payloads are preserved.
+Notebook header prose may change, but primary lesson/HTML/path identities do not.
+
+## Evidence and terminology reasoning
+
+Usage evidence is not an endorsement of every technical claim on a source page,
+nor a statistical claim about the whole Persian AI community. The complete URL,
+confidence and decision ledger is in book_src/glossary.py: USAGE_SOURCES,
+USAGE_DECISIONS and terminology_inventory(). That inventory also records
+definitions, aliases, lesson IDs and notebook paths.
+
+- Character: the authored Persian Python text by Javad Vahidi and Ramazan
+  Abbasnejad repeatedly uses کاراکتر in its string chapter
+  ([faculty-hosted PDF](https://professor.masoudkargar.ir/ProfessorFile/-647a8664163678388262411520611003714.pdf)).
+  The independent [Bardia AI course](https://bardia.ai/ai-course/) also uses it.
+  [Python's Unicode HOWTO](https://docs.python.org/3/howto/unicode.html) supplies
+  the technical boundary between code points and visible characters.
+- Token, Tokenization, Embedding and Transformer: the
+  [Howsam authored Transformer article](https://howsam.org/transformer/comment-page-2/)
+  and [Bardia course](https://bardia.ai/ai-course/) support recognizable
+  transliterations. Howsam evidence was accessible through indexed article text;
+  direct retrieval of that page was intermittent. Keep English-first names plus
+  Persian explanations rather than infer a universally dominant spelling.
+- Checkpoint: an [author's Persian model card](https://huggingface.co/aria-haman/haman-fa-article-graph-llm-125m/blob/main/README.fa.md)
+  uses چک‌پوینت; the independent
+  [Yaadestan reproducibility lesson](https://yaadestan.com/courses/zharfa/lessons/t2/s06-reproducibility)
+  uses checkpoint. Explain saved state, not a literal photograph; keep English
+  first. The latter was checked through indexed lesson text.
+- Perplexity: [Tehran computational-linguistics coursework](https://dsp-lab.ir/wp-content/uploads/2025/05/CL-HW3-1403-2.pdf)
+  uses سرگشتی, while the independent Bardia course retains English. That variation
+  argues against replacing every occurrence with one claimed conventional gloss.
+- Quantization: [Sharif MLSD coursework](https://sharifmlsd.github.io/assets/MLSD_HW2.pdf)
+  retains English; Bardia uses a transliteration. Explain reduced-precision
+  representation; do not declare کم‌بیت‌سازی the field's canonical term.
+- Regularization: [Sharif's authored lesson 13](https://www.youtube.com/watch?v=38Ih1rLG_sw)
+  uses تنظیم مدل; Khayyam Salehi's independently authored course announcement
+  (URL recorded in USAGE_SOURCES) uses منظم‌سازی. Keep Regularization and explain
+  its role, without turning the explanatory phrase محدودسازی into a formal name.
+
+## Visual verification and limits
+
+Actual JupyterLab and book pages were inspected at 1280, 900 and 625 CSS-pixel
+viewport widths. In the token notebook, computed Persian paragraph/heading
+alignment changed from left/start to right, while code stayed LTR/left.
+The scores lesson keeps complete dot-product expressions together and in the
+correct order. The opening lesson's Persian table and inline definitions were
+inspected; the SFT lesson supplies advanced mixed-direction content.
+
+A disposable, non-curriculum Jupyter fixture exercises lists, blockquotes,
+English-only text, mixed table cells, code, math and emphasis. This matters
+because those element types are not all present in the authored Markdown cells.
+At narrow widths the Jupyter file sidebar may leave too little reading room;
+the fixture is also checked with that sidebar collapsed. This pass does not
+redesign Jupyter's own application chrome. Browser styling/geometry checks and
+repeat-render tests complement, rather than replace, human reading.
+
+Fresh-kernel reports are retained locally in
+.verification/final-reader-student.json and
+.verification/final-reader-solutions.json. Rendering uses JupyterLab 4.6.4;
+execution used Python 3.11.0 / PyTorch 2.14.0+cpu. GPU behavior and other notebook
+frontends are not claimed verified. No public deployment was performed.
+
+## Final static release checks
+
+The complete release gate passes: 64 site/launcher/release/editorial tests,
+29 JavaScript tests, all five JavaScript syntax checks, 507 HTML pages,
+48,073 local links/assets, and 80 compiled Python files. No broken local targets,
+duplicate IDs, missing navigation or remote display dependencies were found.
+The release contains 604 public files; release/manifest.json and SHA256SUMS.txt
+record the exact archive identity. The regenerated 88-notebook source check also
+passes after closing Jupyter and removing its incidental metadata edits.
+
+The disposable visual fixture and its checkpoint were removed after inspection;
+neither is curriculum content or included in the release. Authored notebooks
+remain output-free. The browser check confirmed a 3px right quote border and no
+left border after the sanitizer-compatible fix, with no prose overflow at the
+tested reading widths. This is local verification, not public hosting validation.
+
+## Earlier audit record
+
 # Current learning and terminology audit — 2026-09-22
 
 This pass continued the existing project. It did not restart the book or replace

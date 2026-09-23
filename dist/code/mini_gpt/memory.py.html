@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="fa" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>mini_gpt/memory.py | از Python تا Mini-GPT</title><meta name="description" content="کتاب فارسیِ ساخت تدریجی یک مدل زبان؛ درس، آزمایش، کد و خودسنجی.">
+<link rel="stylesheet" href="../../assets/book.css?v=d3be336a7feb">
+<link rel="preload" href="../../assets/fonts/Vazirmatn.woff2" as="font" type="font/woff2" crossorigin>
+<script src="../../assets/manifest.js?v=d3be336a7feb" defer></script><script src="../../assets/book.js?v=d3be336a7feb" defer></script><script src="../../assets/experience.js?v=d3be336a7feb" defer></script></head>
+<body data-page-kind="reference" data-theme="model" data-mode="reference" data-unit-id="" data-root="../../index.html"><a class="skip" href="#main">رفتن به متن</a>
+<header class="topbar"><a class="brand" href="../../index.html" data-book-link>از <bdi dir="ltr">Python</bdi> تا <bdi dir="ltr" class="nowrap">Mini-GPT</bdi></a>
+<div class="header-actions"><nav class="atlas" aria-label="اطلس مسیر"><details><summary>فهرست درس‌ها</summary><div class="atlas-content"><label>پیداکردن درس <input type="search" data-lesson-search placeholder="مثلاً بلوک یا mask"></label><div data-search-results aria-live="polite"></div><div class="atlas-grid"><details><summary>بخش 1 · مسئله را با Python لمس کنیم</summary><a href="../../part-01/index.html" data-book-link>صفحهٔ بخش</a><ol><li><a href="../../part-01/chapter-01/index.html" data-book-link>مسئلهٔ یادگیری</a></li><li><a href="../../part-01/chapter-02/index.html" data-book-link>متن به <bdi dir="ltr">Token</bdi></a></li><li><a href="../../part-01/chapter-03/index.html" data-book-link>اولین ادامه‌دهنده</a></li><li><a href="../../part-01/chapter-04/index.html" data-book-link>شواهد یادگیری</a></li><li><a href="../../part-01/checkpoint.html" data-book-link data-unit="checkpoint-01">ایستگاه عملی</a></li></ol></details><details><summary>بخش 2 · عدد، احتمال و تغییر</summary><a href="../../part-02/index.html" data-book-link>صفحهٔ بخش</a><ol><li><a href="../../part-02/chapter-01/index.html" data-book-link>ساختار عددها</a></li><li><a href="../../part-02/chapter-02/index.html" data-book-link>ترکیب عددها</a></li><li><a href="../../part-02/chapter-03/index.html" data-book-link>از شمارش تا اطمینان</a></li><li><a href="../../part-02/chapter-04/index.html" data-book-link>سنجش پیش‌بینی</a></li><li><a href="../../part-02/chapter-05/index.html" data-book-link>تغییر <bdi dir="ltr">Parameter</bdi></a></li><li><a href="../../part-02/chapter-06/index.html" data-book-link>از محاسبه تا شبکه</a></li><li><a href="../../part-02/checkpoint.html" data-book-link data-unit="checkpoint-02">ایستگاه عملی</a></li></ol></details><details><summary>بخش 3 · ابزار محاسبه و اولین شبکه</summary><a href="../../part-03/index.html" data-book-link>صفحهٔ بخش</a><ol><li><a href="../../part-03/chapter-01/index.html" data-book-link>آشنایی با ابزار</a></li><li><a href="../../part-03/chapter-02/index.html" data-book-link>حساب محورها</a></li><li><a href="../../part-03/chapter-03/index.html" data-book-link>اولین یادگیری عصبی</a></li><li><a href="../../part-03/chapter-04/index.html" data-book-link>گردش داده</a></li><li><a href="../../part-03/checkpoint.html" data-book-link data-unit="checkpoint-03">ایستگاه عملی</a></li></ol></details><details><summary>بخش 4 · متن و نمایش یادگرفتنی</summary><a href="../../part-04/index.html" data-book-link>صفحهٔ بخش</a><ol><li><a href="../../part-04/chapter-01/index.html" data-book-link>متن قابل اعتماد</a></li><li><a href="../../part-04/chapter-02/index.html" data-book-link>نمونهٔ آموزش</a></li><li><a href="../../part-04/chapter-03/index.html" data-book-link>نمایش یادگرفتنی</a></li><li><a href="../../part-04/checkpoint.html" data-book-link data-unit="checkpoint-04">ایستگاه عملی</a></li></ol></details><details><summary>بخش 5 · Single-Head <bdi dir="ltr">Attention</bdi></summary><a href="../../part-05/index.html" data-book-link>صفحهٔ بخش</a><ol><li><a href="../../part-05/chapter-01/index.html" data-book-link>پرسش و اطلاعات</a></li><li><a href="../../part-05/chapter-02/index.html" data-book-link><bdi dir="ltr">Attention</bdi> با عدد</a></li><li><a href="../../part-05/chapter-03/index.html" data-book-link>محدودیت اطلاعات</a></li><li><a href="../../part-05/checkpoint.html" data-book-link data-unit="checkpoint-05">ایستگاه عملی</a></li></ol></details><details><summary>بخش 6 · از چند <bdi dir="ltr">Head</bdi> تا بلوک</summary><a href="../../part-06/index.html" data-book-link>صفحهٔ بخش</a><ol><li><a href="../../part-06/chapter-01/index.html" data-book-link>چند نگاه هم‌زمان</a></li><li><a href="../../part-06/chapter-02/index.html" data-book-link>پردازش هر موقعیت</a></li><li><a href="../../part-06/chapter-03/index.html" data-book-link>پایداری بلوک</a></li><li><a href="../../part-06/chapter-04/index.html" data-book-link>مونتاژ معماری</a></li><li><a href="../../part-06/checkpoint.html" data-book-link data-unit="checkpoint-06">ایستگاه عملی</a></li></ol></details><details><summary>بخش 7 · <bdi dir="rtl">مدل زبانی</bdi> کامل</summary><a href="../../part-07/index.html" data-book-link>صفحهٔ بخش</a><ol><li><a href="../../part-07/chapter-01/index.html" data-book-link>از نمایش به پیش‌بینی</a></li><li><a href="../../part-07/chapter-02/index.html" data-book-link>ردیابی کل مدل</a></li><li><a href="../../part-07/checkpoint.html" data-book-link data-unit="checkpoint-07">ایستگاه عملی</a></li></ol></details><details><summary>بخش 8 · زندگی روزمرهٔ آموزش</summary><a href="../../part-08/index.html" data-book-link>صفحهٔ بخش</a><ol><li><a href="../../part-08/chapter-01/index.html" data-book-link>آموزش روزمره</a></li><li><a href="../../part-08/chapter-02/index.html" data-book-link>ذخیره و ادامه</a></li><li><a href="../../part-08/chapter-03/index.html" data-book-link>خواندن نتیجه</a></li><li><a href="../../part-08/checkpoint.html" data-book-link data-unit="checkpoint-08">ایستگاه عملی</a></li></ol></details><details><summary>بخش 9 · تولید، خرابی و آزمایش</summary><a href="../../part-09/index.html" data-book-link>صفحهٔ بخش</a><ol><li><a href="../../part-09/chapter-01/index.html" data-book-link>یک <bdi dir="ltr">Token</bdi> در هر گام</a></li><li><a href="../../part-09/chapter-02/index.html" data-book-link>کنترل انتخاب</a></li><li><a href="../../part-09/chapter-03/index.html" data-book-link>حدود تولید</a></li><li><a href="../../part-09/chapter-04/index.html" data-book-link>آزمایش علّی و موقعیتی</a></li><li><a href="../../part-09/chapter-05/index.html" data-book-link>کارگاه خطا</a></li><li><a href="../../part-09/checkpoint.html" data-book-link data-unit="checkpoint-09">ایستگاه عملی</a></li></ol></details><details><summary>بخش 10 · از ادامه‌دهنده به پاسخ‌گو</summary><a href="../../part-10/index.html" data-book-link>صفحهٔ بخش</a><ol><li><a href="../../part-10/chapter-01/index.html" data-book-link>مسیر تغییر رفتار</a></li><li><a href="../../part-10/chapter-02/index.html" data-book-link>از ادامه‌دهنده به دستیار</a></li><li><a href="../../part-10/checkpoint.html" data-book-link data-unit="checkpoint-10">ایستگاه عملی</a></li></ol></details><details><summary>بخش 11 · زمینه و پاسخ مستند</summary><a href="../../part-11/index.html" data-book-link>صفحهٔ بخش</a><ol><li><a href="../../part-11/chapter-01/index.html" data-book-link>ساخت ورودی</a></li><li><a href="../../part-11/chapter-02/index.html" data-book-link>یافتن شاهد</a></li><li><a href="../../part-11/chapter-03/index.html" data-book-link>پاسخ مستند</a></li><li><a href="../../part-11/checkpoint.html" data-book-link data-unit="checkpoint-11">ایستگاه عملی</a></li></ol></details><details><summary>بخش 12 · گفت‌وگو و حافظهٔ بیرونی</summary><a href="../../part-12/index.html" data-book-link>صفحهٔ بخش</a><ol><li><a href="../../part-12/chapter-01/index.html" data-book-link>حافظهٔ گفت‌وگو</a></li><li><a href="../../part-12/chapter-02/index.html" data-book-link>حافظهٔ پایدار</a></li><li><a href="../../part-12/checkpoint.html" data-book-link data-unit="checkpoint-12">ایستگاه عملی</a></li></ol></details><details><summary>بخش 13 · ابزار، حل مسئله و وارسی</summary><a href="../../part-13/index.html" data-book-link>صفحهٔ بخش</a><ol><li><a href="../../part-13/chapter-01/index.html" data-book-link>اجرای کنترل‌شده</a></li><li><a href="../../part-13/chapter-02/index.html" data-book-link>حل و وارسی</a></li><li><a href="../../part-13/checkpoint.html" data-book-link data-unit="checkpoint-13">ایستگاه عملی</a></li></ol></details><details><summary>بخش 14 · مدل درون یک سامانه</summary><a href="../../part-14/index.html" data-book-link>صفحهٔ بخش</a><ol><li><a href="../../part-14/chapter-01/index.html" data-book-link>مدل درون سامانه</a></li><li><a href="../../part-14/chapter-02/index.html" data-book-link>سنجش سامانه</a></li><li><a href="../../part-14/checkpoint.html" data-book-link data-unit="checkpoint-14">ایستگاه عملی</a></li></ol></details><details><summary>بخش 15 · هزینه، اجرا و پروژهٔ یکپارچه</summary><a href="../../part-15/index.html" data-book-link>صفحهٔ بخش</a><ol><li><a href="../../part-15/chapter-01/index.html" data-book-link>حافظه و محاسبه</a></li><li><a href="../../part-15/chapter-02/index.html" data-book-link>هزینهٔ اجرا</a></li><li><a href="../../part-15/chapter-03/index.html" data-book-link>اجرای قابل تکرار</a></li><li><a href="../../part-15/chapter-04/index.html" data-book-link>پروژهٔ یکپارچه</a></li><li><a href="../../part-15/checkpoint.html" data-book-link data-unit="checkpoint-15">ایستگاه عملی</a></li></ol></details></div></div></details></nav><details class="book-tools"><summary>میز کار</summary><nav class="toplinks" aria-label="فضاهای کتاب"><a href="../../guide.html" data-book-link>راهنمای آغاز</a><a href="../../lab.html" data-book-link>بازرس مدل</a><a href="../../notebooks.html" data-book-link>آزمایشگاه‌های Jupyter</a><a href="../../journal.html" data-book-link>دفتر آزمایش</a><a href="../../project.html" data-book-link>پروژه</a><a href="../../glossary.html" data-book-link>واژه‌ها</a><a href="../../api.html" data-book-link>مرجع کد</a></nav></details></div></header>
+<div class="layout"><main id="main"><nav class="breadcrumbs" aria-label="مسیر صفحه"><a href="../../index.html" data-book-link>خانه</a> <span aria-hidden="true">/</span> <span aria-current="page">mini_gpt/memory.py</span></nav>
+<header class="page-masthead"><p class="eyebrow">از Python تا Mini-GPT</p><h1>mini_gpt/memory.py</h1></header><div class="page-content"><p>این فایل مرجع است. متن فارسی درون کد ممکن است به‌علت چیدمان چپ‌به‌راست جدا دیده شود؛ نسخهٔ دانلودی <a class="term-link" id="term-ref-utf-8-1" data-term="utf-8" href="../../glossary/utf-8.html?return=..%2Fcode%2Fmini_gpt%2Fmemory.py.html%23term-ref-utf-8-1" title="توضیح UTF-8"><bdi dir="ltr">UTF-8</bdi></a> است.</p><p><a href="../../api.html" data-book-link>توضیح نام‌ها و دستورها</a> · <a href="../../project.html" data-book-link>دریافت همهٔ فایل‌ها</a></p><p>درس‌های مرتبط: <a href="../../part-12/chapter-01/72-history.html" data-book-link data-unit="72-history">چرا دستیار پرسش قبلی را از یاد برد؟</a> · <a href="../../part-12/chapter-01/73-summary.html" data-book-link data-unit="73-summary">خلاصه کوتاه‌تر شد؛ چه چیزی را از دست دادیم؟</a> · <a href="../../part-12/chapter-02/74-memory.html" data-book-link data-unit="74-memory">چه چیزی را برای جلسهٔ بعد نگه داریم؟</a></p><pre data-code-language="python"><code><span class="syntax-string">&quot;&quot;&quot;Explicit external conversation state; neither weights nor a KV cache.
+
+Only save(path) and load(path) access a caller-supplied local file. The store
+does not infer facts, grant consent, or promote assistant guesses into records.
+&quot;&quot;&quot;</span>
+<span class="syntax-keyword">from</span> dataclasses <span class="syntax-keyword">import</span> asdict, dataclass
+<span class="syntax-keyword">import</span> json
+<span class="syntax-keyword">from</span> pathlib <span class="syntax-keyword">import</span> Path
+
+
+@dataclass(frozen=<span class="syntax-keyword">True</span>)
+<span class="syntax-keyword">class</span> Message:
+    role: str
+    content: str
+
+    <span class="syntax-keyword">def</span> __post_init__(self):
+        <span class="syntax-keyword">if</span> self.role <span class="syntax-keyword">not</span> <span class="syntax-keyword">in</span> {<span class="syntax-string">&quot;user&quot;</span>, <span class="syntax-string">&quot;assistant&quot;</span>}:
+            <span class="syntax-keyword">raise</span> ValueError(<span class="syntax-string">&quot;History roles are user or assistant in this example&quot;</span>)
+        <span class="syntax-keyword">if</span> <span class="syntax-keyword">not</span> isinstance(self.content, str) <span class="syntax-keyword">or</span> <span class="syntax-keyword">not</span> self.content.strip():
+            <span class="syntax-keyword">raise</span> ValueError(<span class="syntax-string">&quot;Message content must be nonempty text&quot;</span>)
+
+
+<span class="syntax-keyword">def</span> format_history(messages) -&gt; str:
+    <span class="syntax-string">&quot;&quot;&quot;A visible serialization, not a model-specific chat template.&quot;&quot;&quot;</span>
+    messages = tuple(messages)
+    <span class="syntax-keyword">if</span> any(<span class="syntax-keyword">not</span> isinstance(message, Message) <span class="syntax-keyword">for</span> message <span class="syntax-keyword">in</span> messages):
+        <span class="syntax-keyword">raise</span> ValueError(<span class="syntax-string">&quot;Expected Message records&quot;</span>)
+    <span class="syntax-keyword">return</span> json.dumps([asdict(message) <span class="syntax-keyword">for</span> message <span class="syntax-keyword">in</span> messages],
+                      ensure_ascii=<span class="syntax-keyword">False</span>, separators=(<span class="syntax-string">&quot;,&quot;</span>, <span class="syntax-string">&quot;:&quot;</span>))
+
+
+@dataclass(frozen=<span class="syntax-keyword">True</span>)
+<span class="syntax-keyword">class</span> Summary:
+    text: str
+    source_turns: tuple[int, ...]
+    omitted_turns: tuple[int, ...]
+
+
+<span class="syntax-keyword">def</span> summarize_history(messages, *, max_chars: int) -&gt; Summary:
+    <span class="syntax-string">&quot;&quot;&quot;Keep the first nonempty line of each turn if the whole line fits.
+
+    This intentionally limited extractive baseline is deterministic. It can
+    omit qualifications on later lines. source_turns records provenance, not
+    a guarantee that all information in those turns was preserved.
+    max_chars counts Python code points, NOT model tokens.
+    &quot;&quot;&quot;</span>
+    <span class="syntax-keyword">if</span> type(max_chars) <span class="syntax-keyword">is</span> <span class="syntax-keyword">not</span> int <span class="syntax-keyword">or</span> max_chars &lt; <span class="syntax-number">0</span>:
+        <span class="syntax-keyword">raise</span> ValueError(<span class="syntax-string">&quot;max_chars must be a nonnegative integer&quot;</span>)
+    messages = tuple(messages)
+    format_history(messages)  <span class="syntax-comment"># Validate without mutating anything.</span>
+    lines, included, omitted = [], [], []
+    <span class="syntax-keyword">for</span> number, message <span class="syntax-keyword">in</span> enumerate(messages, <span class="syntax-number">1</span>):
+        first = next(line.strip() <span class="syntax-keyword">for</span> line <span class="syntax-keyword">in</span> message.content.splitlines() <span class="syntax-keyword">if</span> line.strip())
+        line = <span class="syntax-string">f&quot;{number}:{message.role}: {first}&quot;</span>
+        <span class="syntax-keyword">if</span> len(<span class="syntax-string">&quot;\n&quot;</span>.join(lines+[line])) &lt;= max_chars:
+            lines.append(line)
+            included.append(number)
+        <span class="syntax-keyword">else</span>:
+            omitted.append(number)
+    <span class="syntax-keyword">return</span> Summary(<span class="syntax-string">&quot;\n&quot;</span>.join(lines), tuple(included), tuple(omitted))
+
+
+@dataclass(frozen=<span class="syntax-keyword">True</span>)
+<span class="syntax-keyword">class</span> MemoryRecord:
+    key: str
+    value: str
+    source: str
+
+    <span class="syntax-keyword">def</span> __post_init__(self):
+        <span class="syntax-keyword">if</span> <span class="syntax-keyword">not</span> all(isinstance(value, str) <span class="syntax-keyword">and</span> value.strip()
+                   <span class="syntax-keyword">for</span> value <span class="syntax-keyword">in</span> (self.key, self.value, self.source)):
+            <span class="syntax-keyword">raise</span> ValueError(<span class="syntax-string">&quot;Memory records require nonempty key, value and source&quot;</span>)
+
+
+<span class="syntax-keyword">class</span> MemoryStore:
+    <span class="syntax-string">&quot;&quot;&quot;A key-based store with explicit replacement/deletion and JSON persistence.&quot;&quot;&quot;</span>
+    <span class="syntax-keyword">def</span> __init__(self, records=()):
+        self._records = {}
+        <span class="syntax-keyword">for</span> record <span class="syntax-keyword">in</span> records:
+            <span class="syntax-keyword">if</span> <span class="syntax-keyword">not</span> isinstance(record, MemoryRecord) <span class="syntax-keyword">or</span> record.key <span class="syntax-keyword">in</span> self._records:
+                <span class="syntax-keyword">raise</span> ValueError(<span class="syntax-string">&quot;Initial memory records need unique keys&quot;</span>)
+            self.upsert(record)
+
+    <span class="syntax-keyword">def</span> upsert(self, record: MemoryRecord):
+        <span class="syntax-keyword">if</span> <span class="syntax-keyword">not</span> isinstance(record, MemoryRecord):
+            <span class="syntax-keyword">raise</span> ValueError(<span class="syntax-string">&quot;Expected a MemoryRecord&quot;</span>)
+        self._records[record.key] = record
+
+    <span class="syntax-keyword">def</span> forget(self, key: str) -&gt; bool:
+        <span class="syntax-keyword">return</span> self._records.pop(key, <span class="syntax-keyword">None</span>) <span class="syntax-keyword">is</span> <span class="syntax-keyword">not</span> <span class="syntax-keyword">None</span>
+
+    <span class="syntax-keyword">def</span> records(self) -&gt; tuple[MemoryRecord, ...]:
+        <span class="syntax-keyword">return</span> tuple(self._records.values())
+
+    <span class="syntax-keyword">def</span> save(self, path):
+        <span class="syntax-string">&quot;&quot;&quot;Explicitly write/replace exactly the caller-selected JSON file.&quot;&quot;&quot;</span>
+        Path(path).write_text(json.dumps({<span class="syntax-string">&quot;version&quot;</span>: <span class="syntax-number">1</span>, <span class="syntax-string">&quot;records&quot;</span>: [
+            asdict(record) <span class="syntax-keyword">for</span> record <span class="syntax-keyword">in</span> self.records()
+        ]}, ensure_ascii=<span class="syntax-keyword">False</span>, indent=<span class="syntax-number">2</span>), encoding=<span class="syntax-string">&quot;utf-8&quot;</span>)
+
+    @classmethod
+    <span class="syntax-keyword">def</span> load(cls, path):
+        value = json.loads(Path(path).read_text(encoding=<span class="syntax-string">&quot;utf-8&quot;</span>))
+        <span class="syntax-keyword">if</span> (<span class="syntax-keyword">not</span> isinstance(value, dict) <span class="syntax-keyword">or</span> set(value) != {<span class="syntax-string">&quot;version&quot;</span>, <span class="syntax-string">&quot;records&quot;</span>}
+                <span class="syntax-keyword">or</span> type(value[<span class="syntax-string">&quot;version&quot;</span>]) <span class="syntax-keyword">is</span> <span class="syntax-keyword">not</span> int <span class="syntax-keyword">or</span> value[<span class="syntax-string">&quot;version&quot;</span>] != <span class="syntax-number">1</span>
+                <span class="syntax-keyword">or</span> <span class="syntax-keyword">not</span> isinstance(value[<span class="syntax-string">&quot;records&quot;</span>], list)):
+            <span class="syntax-keyword">raise</span> ValueError(<span class="syntax-string">&quot;Invalid memory format&quot;</span>)
+        records = []
+        <span class="syntax-keyword">for</span> row <span class="syntax-keyword">in</span> value[<span class="syntax-string">&quot;records&quot;</span>]:
+            <span class="syntax-keyword">if</span> <span class="syntax-keyword">not</span> isinstance(row, dict) <span class="syntax-keyword">or</span> set(row) != {<span class="syntax-string">&quot;key&quot;</span>, <span class="syntax-string">&quot;value&quot;</span>, <span class="syntax-string">&quot;source&quot;</span>}:
+                <span class="syntax-keyword">raise</span> ValueError(<span class="syntax-string">&quot;Invalid memory record&quot;</span>)
+            records.append(MemoryRecord(**row))
+        <span class="syntax-keyword">return</span> cls(records)</code></pre><nav class="pager learning-continuation" aria-label="ادامهٔ مسیر یادگیری"><div class="next-step"><p class="eyebrow">گام بعد <span></span></p><p class="next-context">تاریخچه را به‌عنوان دادهٔ برنامه نگه داریم و ببینیم چه بخشی از آن واقعاً وارد درخواست بعدی می‌شود.</p><a rel="next" data-next-step href="../../part-12/chapter-01/72-history.html" data-book-link data-unit="72-history">کد را در یک مسئله دنبال کنید: چرا دستیار پرسش قبلی را از یاد برد؟</a></div><div class="nearby-steps"><a data-return-section href="../index.html" data-book-link>همهٔ فایل‌های مرجع</a></div></nav></div><div class="reading-finish"><a href="../../journal.html" data-book-link>ثبت در دفتر آزمایش</a></div><details class="progress-panel"><summary>پیشرفت مسیر <span data-progress-count>0 / 107</span></summary><div class="progress-tools"><progress value="0" max="107" aria-label="درس‌ها و ایستگاه‌های انجام‌شده"></progress><button type="button" data-export>خروجی پیشرفت</button><label class="import-label">ورود پیشرفت <input type="file" accept=".json,application/json" data-import></label></div><details data-export-preview hidden><summary>نسخهٔ متنی پیشرفت؛ اگر دانلود انجام نشد، این <bdi dir="ltr">JSON</bdi> را کپی و در فایل نگه دارید</summary><pre><code data-export-code></code></pre></details><p class="progress-note">علامت انجام فقط با انتخاب شما ثبت می‌شود. برای نگهداری مطمئن یا انتقال به مرورگر دیگر، خروجی پیشرفت بگیرید. دفتر آزمایش جداست.</p><p class="status" role="status" aria-live="polite" data-status></p></details><footer class="footer"><span>از یک <a class="term-link" id="term-ref-token-1" data-term="token" href="../../glossary/token.html?return=..%2Fcode%2Fmini_gpt%2Fmemory.py.html%23term-ref-token-1" title="توضیح Token"><bdi dir="ltr">Token</bdi></a>، تا یک مدل؛ از مدل، تا یک سامانه.</span><a href="../../guide.html" data-book-link>راهنما</a> · <a href="../../api.html" data-book-link>کد و منابع</a></footer></main></div>
+<noscript><p>خواندن و ناوبری بدون JavaScript هم کار می‌کند؛ کپی خودکار و ثبت پیشرفت به آن نیاز دارند.</p></noscript></body></html>

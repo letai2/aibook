@@ -107,7 +107,7 @@
     object(config, ["vocab_size", "context_length", "embedding_dim", "num_heads", "num_layers", "dropout"], "تنظیمات");
     const N = config.vocab_size, C = config.embedding_dim, H = config.num_heads, L = config.num_layers;
     integer(N, 2, 100000, "اندازهٔ واژگان"); integer(C, 1, 8192, "ویژگی‌ها");
-    integer(H, 1, 256, "سرها"); integer(L, 1, 256, "لایه‌ها");
+    integer(H, 1, 256, "Headها"); integer(L, 1, 256, "لایه‌ها");
     integer(config.context_length, 1, 1000000, "زمینهٔ مدل");
     if (C % H !== 0 || typeof config.dropout !== "number" || config.dropout < 0 || config.dropout >= 1) fail("تنظیمات مدل");
     const D = C / H;
@@ -149,7 +149,7 @@
     if (a.head_dim !== D) fail("ویژگی هر سر");
     for (const key of ["q", "k", "v", "weighted_values"]) matrix(a[key], T, D, key);
     for (const key of ["raw_scores", "scaled_scores"]) matrix(a[key], T, T, key);
-    matrix(a.mask, T, T, "پوشش", (value, label) => { if (typeof value !== "boolean") fail(label); });
+    matrix(a.mask, T, T, "Mask", (value, label) => { if (typeof value !== "boolean") fail(label); });
     matrix(a.masked_scores, T, T, "امتیاز پوشیده", (value, label) => { if (value !== null) finite(value, label); });
     if (!Array.isArray(a.weights) || a.weights.length !== T) fail("سطرهای وزن");
     a.weights.forEach((row, index) => {

@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="fa" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>mini_gpt/tools.py | از Python تا Mini-GPT</title><meta name="description" content="کتاب فارسیِ ساخت تدریجی یک مدل زبان؛ درس، آزمایش، کد و خودسنجی.">
+<link rel="stylesheet" href="../../assets/book.css?v=d3be336a7feb">
+<link rel="preload" href="../../assets/fonts/Vazirmatn.woff2" as="font" type="font/woff2" crossorigin>
+<script src="../../assets/manifest.js?v=d3be336a7feb" defer></script><script src="../../assets/book.js?v=d3be336a7feb" defer></script><script src="../../assets/experience.js?v=d3be336a7feb" defer></script></head>
+<body data-page-kind="reference" data-theme="model" data-mode="reference" data-unit-id="" data-root="../../index.html"><a class="skip" href="#main">رفتن به متن</a>
+<header class="topbar"><a class="brand" href="../../index.html" data-book-link>از <bdi dir="ltr">Python</bdi> تا <bdi dir="ltr" class="nowrap">Mini-GPT</bdi></a>
+<div class="header-actions"><nav class="atlas" aria-label="اطلس مسیر"><details><summary>فهرست درس‌ها</summary><div class="atlas-content"><label>پیداکردن درس <input type="search" data-lesson-search placeholder="مثلاً بلوک یا mask"></label><div data-search-results aria-live="polite"></div><div class="atlas-grid"><details><summary>بخش 1 · مسئله را با Python لمس کنیم</summary><a href="../../part-01/index.html" data-book-link>صفحهٔ بخش</a><ol><li><a href="../../part-01/chapter-01/index.html" data-book-link>مسئلهٔ یادگیری</a></li><li><a href="../../part-01/chapter-02/index.html" data-book-link>متن به <bdi dir="ltr">Token</bdi></a></li><li><a href="../../part-01/chapter-03/index.html" data-book-link>اولین ادامه‌دهنده</a></li><li><a href="../../part-01/chapter-04/index.html" data-book-link>شواهد یادگیری</a></li><li><a href="../../part-01/checkpoint.html" data-book-link data-unit="checkpoint-01">ایستگاه عملی</a></li></ol></details><details><summary>بخش 2 · عدد، احتمال و تغییر</summary><a href="../../part-02/index.html" data-book-link>صفحهٔ بخش</a><ol><li><a href="../../part-02/chapter-01/index.html" data-book-link>ساختار عددها</a></li><li><a href="../../part-02/chapter-02/index.html" data-book-link>ترکیب عددها</a></li><li><a href="../../part-02/chapter-03/index.html" data-book-link>از شمارش تا اطمینان</a></li><li><a href="../../part-02/chapter-04/index.html" data-book-link>سنجش پیش‌بینی</a></li><li><a href="../../part-02/chapter-05/index.html" data-book-link>تغییر <bdi dir="ltr">Parameter</bdi></a></li><li><a href="../../part-02/chapter-06/index.html" data-book-link>از محاسبه تا شبکه</a></li><li><a href="../../part-02/checkpoint.html" data-book-link data-unit="checkpoint-02">ایستگاه عملی</a></li></ol></details><details><summary>بخش 3 · ابزار محاسبه و اولین شبکه</summary><a href="../../part-03/index.html" data-book-link>صفحهٔ بخش</a><ol><li><a href="../../part-03/chapter-01/index.html" data-book-link>آشنایی با ابزار</a></li><li><a href="../../part-03/chapter-02/index.html" data-book-link>حساب محورها</a></li><li><a href="../../part-03/chapter-03/index.html" data-book-link>اولین یادگیری عصبی</a></li><li><a href="../../part-03/chapter-04/index.html" data-book-link>گردش داده</a></li><li><a href="../../part-03/checkpoint.html" data-book-link data-unit="checkpoint-03">ایستگاه عملی</a></li></ol></details><details><summary>بخش 4 · متن و نمایش یادگرفتنی</summary><a href="../../part-04/index.html" data-book-link>صفحهٔ بخش</a><ol><li><a href="../../part-04/chapter-01/index.html" data-book-link>متن قابل اعتماد</a></li><li><a href="../../part-04/chapter-02/index.html" data-book-link>نمونهٔ آموزش</a></li><li><a href="../../part-04/chapter-03/index.html" data-book-link>نمایش یادگرفتنی</a></li><li><a href="../../part-04/checkpoint.html" data-book-link data-unit="checkpoint-04">ایستگاه عملی</a></li></ol></details><details><summary>بخش 5 · Single-Head <bdi dir="ltr">Attention</bdi></summary><a href="../../part-05/index.html" data-book-link>صفحهٔ بخش</a><ol><li><a href="../../part-05/chapter-01/index.html" data-book-link>پرسش و اطلاعات</a></li><li><a href="../../part-05/chapter-02/index.html" data-book-link><bdi dir="ltr">Attention</bdi> با عدد</a></li><li><a href="../../part-05/chapter-03/index.html" data-book-link>محدودیت اطلاعات</a></li><li><a href="../../part-05/checkpoint.html" data-book-link data-unit="checkpoint-05">ایستگاه عملی</a></li></ol></details><details><summary>بخش 6 · از چند <bdi dir="ltr">Head</bdi> تا بلوک</summary><a href="../../part-06/index.html" data-book-link>صفحهٔ بخش</a><ol><li><a href="../../part-06/chapter-01/index.html" data-book-link>چند نگاه هم‌زمان</a></li><li><a href="../../part-06/chapter-02/index.html" data-book-link>پردازش هر موقعیت</a></li><li><a href="../../part-06/chapter-03/index.html" data-book-link>پایداری بلوک</a></li><li><a href="../../part-06/chapter-04/index.html" data-book-link>مونتاژ معماری</a></li><li><a href="../../part-06/checkpoint.html" data-book-link data-unit="checkpoint-06">ایستگاه عملی</a></li></ol></details><details><summary>بخش 7 · <bdi dir="rtl">مدل زبانی</bdi> کامل</summary><a href="../../part-07/index.html" data-book-link>صفحهٔ بخش</a><ol><li><a href="../../part-07/chapter-01/index.html" data-book-link>از نمایش به پیش‌بینی</a></li><li><a href="../../part-07/chapter-02/index.html" data-book-link>ردیابی کل مدل</a></li><li><a href="../../part-07/checkpoint.html" data-book-link data-unit="checkpoint-07">ایستگاه عملی</a></li></ol></details><details><summary>بخش 8 · زندگی روزمرهٔ آموزش</summary><a href="../../part-08/index.html" data-book-link>صفحهٔ بخش</a><ol><li><a href="../../part-08/chapter-01/index.html" data-book-link>آموزش روزمره</a></li><li><a href="../../part-08/chapter-02/index.html" data-book-link>ذخیره و ادامه</a></li><li><a href="../../part-08/chapter-03/index.html" data-book-link>خواندن نتیجه</a></li><li><a href="../../part-08/checkpoint.html" data-book-link data-unit="checkpoint-08">ایستگاه عملی</a></li></ol></details><details><summary>بخش 9 · تولید، خرابی و آزمایش</summary><a href="../../part-09/index.html" data-book-link>صفحهٔ بخش</a><ol><li><a href="../../part-09/chapter-01/index.html" data-book-link>یک <bdi dir="ltr">Token</bdi> در هر گام</a></li><li><a href="../../part-09/chapter-02/index.html" data-book-link>کنترل انتخاب</a></li><li><a href="../../part-09/chapter-03/index.html" data-book-link>حدود تولید</a></li><li><a href="../../part-09/chapter-04/index.html" data-book-link>آزمایش علّی و موقعیتی</a></li><li><a href="../../part-09/chapter-05/index.html" data-book-link>کارگاه خطا</a></li><li><a href="../../part-09/checkpoint.html" data-book-link data-unit="checkpoint-09">ایستگاه عملی</a></li></ol></details><details><summary>بخش 10 · از ادامه‌دهنده به پاسخ‌گو</summary><a href="../../part-10/index.html" data-book-link>صفحهٔ بخش</a><ol><li><a href="../../part-10/chapter-01/index.html" data-book-link>مسیر تغییر رفتار</a></li><li><a href="../../part-10/chapter-02/index.html" data-book-link>از ادامه‌دهنده به دستیار</a></li><li><a href="../../part-10/checkpoint.html" data-book-link data-unit="checkpoint-10">ایستگاه عملی</a></li></ol></details><details><summary>بخش 11 · زمینه و پاسخ مستند</summary><a href="../../part-11/index.html" data-book-link>صفحهٔ بخش</a><ol><li><a href="../../part-11/chapter-01/index.html" data-book-link>ساخت ورودی</a></li><li><a href="../../part-11/chapter-02/index.html" data-book-link>یافتن شاهد</a></li><li><a href="../../part-11/chapter-03/index.html" data-book-link>پاسخ مستند</a></li><li><a href="../../part-11/checkpoint.html" data-book-link data-unit="checkpoint-11">ایستگاه عملی</a></li></ol></details><details><summary>بخش 12 · گفت‌وگو و حافظهٔ بیرونی</summary><a href="../../part-12/index.html" data-book-link>صفحهٔ بخش</a><ol><li><a href="../../part-12/chapter-01/index.html" data-book-link>حافظهٔ گفت‌وگو</a></li><li><a href="../../part-12/chapter-02/index.html" data-book-link>حافظهٔ پایدار</a></li><li><a href="../../part-12/checkpoint.html" data-book-link data-unit="checkpoint-12">ایستگاه عملی</a></li></ol></details><details><summary>بخش 13 · ابزار، حل مسئله و وارسی</summary><a href="../../part-13/index.html" data-book-link>صفحهٔ بخش</a><ol><li><a href="../../part-13/chapter-01/index.html" data-book-link>اجرای کنترل‌شده</a></li><li><a href="../../part-13/chapter-02/index.html" data-book-link>حل و وارسی</a></li><li><a href="../../part-13/checkpoint.html" data-book-link data-unit="checkpoint-13">ایستگاه عملی</a></li></ol></details><details><summary>بخش 14 · مدل درون یک سامانه</summary><a href="../../part-14/index.html" data-book-link>صفحهٔ بخش</a><ol><li><a href="../../part-14/chapter-01/index.html" data-book-link>مدل درون سامانه</a></li><li><a href="../../part-14/chapter-02/index.html" data-book-link>سنجش سامانه</a></li><li><a href="../../part-14/checkpoint.html" data-book-link data-unit="checkpoint-14">ایستگاه عملی</a></li></ol></details><details><summary>بخش 15 · هزینه، اجرا و پروژهٔ یکپارچه</summary><a href="../../part-15/index.html" data-book-link>صفحهٔ بخش</a><ol><li><a href="../../part-15/chapter-01/index.html" data-book-link>حافظه و محاسبه</a></li><li><a href="../../part-15/chapter-02/index.html" data-book-link>هزینهٔ اجرا</a></li><li><a href="../../part-15/chapter-03/index.html" data-book-link>اجرای قابل تکرار</a></li><li><a href="../../part-15/chapter-04/index.html" data-book-link>پروژهٔ یکپارچه</a></li><li><a href="../../part-15/checkpoint.html" data-book-link data-unit="checkpoint-15">ایستگاه عملی</a></li></ol></details></div></div></details></nav><details class="book-tools"><summary>میز کار</summary><nav class="toplinks" aria-label="فضاهای کتاب"><a href="../../guide.html" data-book-link>راهنمای آغاز</a><a href="../../lab.html" data-book-link>بازرس مدل</a><a href="../../notebooks.html" data-book-link>آزمایشگاه‌های Jupyter</a><a href="../../journal.html" data-book-link>دفتر آزمایش</a><a href="../../project.html" data-book-link>پروژه</a><a href="../../glossary.html" data-book-link>واژه‌ها</a><a href="../../api.html" data-book-link>مرجع کد</a></nav></details></div></header>
+<div class="layout"><main id="main"><nav class="breadcrumbs" aria-label="مسیر صفحه"><a href="../../index.html" data-book-link>خانه</a> <span aria-hidden="true">/</span> <span aria-current="page">mini_gpt/tools.py</span></nav>
+<header class="page-masthead"><p class="eyebrow">از Python تا Mini-GPT</p><h1>mini_gpt/tools.py</h1></header><div class="page-content"><p>این فایل مرجع است. متن فارسی درون کد ممکن است به‌علت چیدمان چپ‌به‌راست جدا دیده شود؛ نسخهٔ دانلودی <a class="term-link" id="term-ref-utf-8-1" data-term="utf-8" href="../../glossary/utf-8.html?return=..%2Fcode%2Fmini_gpt%2Ftools.py.html%23term-ref-utf-8-1" title="توضیح UTF-8"><bdi dir="ltr">UTF-8</bdi></a> است.</p><p><a href="../../api.html" data-book-link>توضیح نام‌ها و دستورها</a> · <a href="../../project.html" data-book-link>دریافت همهٔ فایل‌ها</a></p><p>درس‌های مرتبط: <a href="../../part-13/chapter-01/75-tools.html" data-book-link data-unit="75-tools">نوشتنِ نام یک تابع، اجرای آن نیست</a></p><pre data-code-language="python"><code><span class="syntax-string">&quot;&quot;&quot;A deliberately tiny, offline tool boundary: data is never executable code.&quot;&quot;&quot;</span>
+
+<span class="syntax-keyword">from</span> dataclasses <span class="syntax-keyword">import</span> dataclass
+<span class="syntax-keyword">import</span> json
+
+
+MAX_ARGUMENT = <span class="syntax-number">1_000_000</span>
+OPERATIONS = (<span class="syntax-string">&quot;add&quot;</span>, <span class="syntax-string">&quot;subtract&quot;</span>, <span class="syntax-string">&quot;multiply&quot;</span>)
+TOOL_SCHEMA = {
+    <span class="syntax-string">&quot;type&quot;</span>: <span class="syntax-string">&quot;object&quot;</span>,
+    <span class="syntax-string">&quot;required&quot;</span>: [<span class="syntax-string">&quot;name&quot;</span>, <span class="syntax-string">&quot;arguments&quot;</span>],
+    <span class="syntax-string">&quot;additionalProperties&quot;</span>: <span class="syntax-keyword">False</span>,
+    <span class="syntax-string">&quot;properties&quot;</span>: {
+        <span class="syntax-string">&quot;name&quot;</span>: {<span class="syntax-string">&quot;enum&quot;</span>: list(OPERATIONS)},
+        <span class="syntax-string">&quot;arguments&quot;</span>: {
+            <span class="syntax-string">&quot;type&quot;</span>: <span class="syntax-string">&quot;object&quot;</span>, <span class="syntax-string">&quot;required&quot;</span>: [<span class="syntax-string">&quot;a&quot;</span>, <span class="syntax-string">&quot;b&quot;</span>], <span class="syntax-string">&quot;additionalProperties&quot;</span>: <span class="syntax-keyword">False</span>,
+            <span class="syntax-string">&quot;properties&quot;</span>: {key: {<span class="syntax-string">&quot;type&quot;</span>: <span class="syntax-string">&quot;integer&quot;</span>, <span class="syntax-string">&quot;minimum&quot;</span>: -MAX_ARGUMENT,
+                                  <span class="syntax-string">&quot;maximum&quot;</span>: MAX_ARGUMENT} <span class="syntax-keyword">for</span> key <span class="syntax-keyword">in</span> (<span class="syntax-string">&quot;a&quot;</span>, <span class="syntax-string">&quot;b&quot;</span>)},
+        },
+    },
+}
+
+
+<span class="syntax-keyword">class</span> ToolError(ValueError):
+    <span class="syntax-string">&quot;&quot;&quot;An invalid request, not permission to execute a fallback command.&quot;&quot;&quot;</span>
+
+
+<span class="syntax-keyword">def</span> strict_object(text):
+    <span class="syntax-string">&quot;&quot;&quot;Parse one bounded JSON object; duplicate keys and nonfinite numbers fail.&quot;&quot;&quot;</span>
+    <span class="syntax-keyword">if</span> <span class="syntax-keyword">not</span> isinstance(text, str) <span class="syntax-keyword">or</span> <span class="syntax-keyword">not</span> <span class="syntax-number">1</span> &lt;= len(text) &lt;= <span class="syntax-number">4096</span>:
+        <span class="syntax-keyword">raise</span> ToolError(<span class="syntax-string">&quot;expected 1..4096 characters of JSON&quot;</span>)
+
+    <span class="syntax-keyword">def</span> pairs(items):
+        result = {}
+        <span class="syntax-keyword">for</span> key, value <span class="syntax-keyword">in</span> items:
+            <span class="syntax-keyword">if</span> key <span class="syntax-keyword">in</span> result:
+                <span class="syntax-keyword">raise</span> ToolError(<span class="syntax-string">&quot;duplicate JSON key&quot;</span>)
+            result[key] = value
+        <span class="syntax-keyword">return</span> result
+
+    <span class="syntax-keyword">def</span> invalid_constant(_):
+        <span class="syntax-keyword">raise</span> ToolError(<span class="syntax-string">&quot;nonfinite JSON number&quot;</span>)
+
+    <span class="syntax-keyword">try</span>:
+        result = json.loads(text, object_pairs_hook=pairs, parse_constant=invalid_constant)
+    <span class="syntax-keyword">except</span> (json.JSONDecodeError, RecursionError) <span class="syntax-keyword">as</span> error:
+        <span class="syntax-keyword">raise</span> ToolError(<span class="syntax-string">&quot;invalid JSON object&quot;</span>) <span class="syntax-keyword">from</span> error
+    <span class="syntax-keyword">if</span> type(result) <span class="syntax-keyword">is</span> <span class="syntax-keyword">not</span> dict:
+        <span class="syntax-keyword">raise</span> ToolError(<span class="syntax-string">&quot;expected a JSON object&quot;</span>)
+    <span class="syntax-keyword">return</span> result
+
+
+@dataclass(frozen=<span class="syntax-keyword">True</span>)
+<span class="syntax-keyword">class</span> ToolCall:
+    name: str
+    a: int
+    b: int
+
+    <span class="syntax-keyword">def</span> payload(self):
+        <span class="syntax-keyword">return</span> {<span class="syntax-string">&quot;name&quot;</span>: self.name, <span class="syntax-string">&quot;arguments&quot;</span>: {<span class="syntax-string">&quot;a&quot;</span>: self.a, <span class="syntax-string">&quot;b&quot;</span>: self.b}}
+
+
+@dataclass(frozen=<span class="syntax-keyword">True</span>)
+<span class="syntax-keyword">class</span> ToolResult:
+    ok: bool
+    name: str = <span class="syntax-string">&quot;&quot;</span>
+    value: int | <span class="syntax-keyword">None</span> = <span class="syntax-keyword">None</span>
+    error: str = <span class="syntax-string">&quot;&quot;</span>
+
+
+<span class="syntax-keyword">def</span> validate_call(payload):
+    <span class="syntax-keyword">if</span> isinstance(payload, str):
+        payload = strict_object(payload)
+    <span class="syntax-keyword">if</span> type(payload) <span class="syntax-keyword">is</span> <span class="syntax-keyword">not</span> dict <span class="syntax-keyword">or</span> set(payload) != {<span class="syntax-string">&quot;name&quot;</span>, <span class="syntax-string">&quot;arguments&quot;</span>}:
+        <span class="syntax-keyword">raise</span> ToolError(<span class="syntax-string">&quot;a call needs exactly name and arguments&quot;</span>)
+    name, arguments = payload[<span class="syntax-string">&quot;name&quot;</span>], payload[<span class="syntax-string">&quot;arguments&quot;</span>]
+    <span class="syntax-keyword">if</span> type(name) <span class="syntax-keyword">is</span> <span class="syntax-keyword">not</span> str <span class="syntax-keyword">or</span> name <span class="syntax-keyword">not</span> <span class="syntax-keyword">in</span> OPERATIONS:
+        <span class="syntax-keyword">raise</span> ToolError(<span class="syntax-string">&quot;tool is not allowlisted&quot;</span>)
+    <span class="syntax-keyword">if</span> type(arguments) <span class="syntax-keyword">is</span> <span class="syntax-keyword">not</span> dict <span class="syntax-keyword">or</span> set(arguments) != {<span class="syntax-string">&quot;a&quot;</span>, <span class="syntax-string">&quot;b&quot;</span>}:
+        <span class="syntax-keyword">raise</span> ToolError(<span class="syntax-string">&quot;arguments need exactly a and b&quot;</span>)
+    <span class="syntax-keyword">for</span> value <span class="syntax-keyword">in</span> arguments.values():
+        <span class="syntax-comment"># bool is an int subclass in Python, but is not a valid duration here.</span>
+        <span class="syntax-keyword">if</span> type(value) <span class="syntax-keyword">is</span> <span class="syntax-keyword">not</span> int <span class="syntax-keyword">or</span> abs(value) &gt; MAX_ARGUMENT:
+            <span class="syntax-keyword">raise</span> ToolError(<span class="syntax-string">&quot;arguments must be bounded integers, not bool or strings&quot;</span>)
+    <span class="syntax-keyword">return</span> ToolCall(name, arguments[<span class="syntax-string">&quot;a&quot;</span>], arguments[<span class="syntax-string">&quot;b&quot;</span>])
+
+
+<span class="syntax-keyword">def</span> execute_tool(payload):
+    <span class="syntax-string">&quot;&quot;&quot;Return a structured observation, including validation failures.&quot;&quot;&quot;</span>
+    <span class="syntax-keyword">try</span>:
+        call = validate_call(payload)
+    <span class="syntax-keyword">except</span> ToolError <span class="syntax-keyword">as</span> error:
+        <span class="syntax-keyword">return</span> ToolResult(<span class="syntax-keyword">False</span>, error=str(error))
+    <span class="syntax-keyword">if</span> call.name == <span class="syntax-string">&quot;add&quot;</span>:
+        value = call.a + call.b
+    <span class="syntax-keyword">elif</span> call.name == <span class="syntax-string">&quot;subtract&quot;</span>:
+        value = call.a - call.b
+    <span class="syntax-keyword">else</span>:
+        value = call.a * call.b
+    <span class="syntax-keyword">return</span> ToolResult(<span class="syntax-keyword">True</span>, call.name, value)</code></pre><nav class="pager learning-continuation" aria-label="ادامهٔ مسیر یادگیری"><div class="next-step"><p class="eyebrow">گام بعد <span></span></p><p class="next-context">درخواست محاسبه را به دادهٔ ساخت‌یافته تبدیل می‌کنیم و مرز پیشنهاد مدل با اجرای Python را می‌سازیم.</p><a rel="next" data-next-step href="../../part-13/chapter-01/75-tools.html" data-book-link data-unit="75-tools">کد را در یک مسئله دنبال کنید: نوشتنِ نام یک تابع، اجرای آن نیست</a></div><div class="nearby-steps"><a data-return-section href="../index.html" data-book-link>همهٔ فایل‌های مرجع</a></div></nav></div><div class="reading-finish"><a href="../../journal.html" data-book-link>ثبت در دفتر آزمایش</a></div><details class="progress-panel"><summary>پیشرفت مسیر <span data-progress-count>0 / 107</span></summary><div class="progress-tools"><progress value="0" max="107" aria-label="درس‌ها و ایستگاه‌های انجام‌شده"></progress><button type="button" data-export>خروجی پیشرفت</button><label class="import-label">ورود پیشرفت <input type="file" accept=".json,application/json" data-import></label></div><details data-export-preview hidden><summary>نسخهٔ متنی پیشرفت؛ اگر دانلود انجام نشد، این <bdi dir="ltr">JSON</bdi> را کپی و در فایل نگه دارید</summary><pre><code data-export-code></code></pre></details><p class="progress-note">علامت انجام فقط با انتخاب شما ثبت می‌شود. برای نگهداری مطمئن یا انتقال به مرورگر دیگر، خروجی پیشرفت بگیرید. دفتر آزمایش جداست.</p><p class="status" role="status" aria-live="polite" data-status></p></details><footer class="footer"><span>از یک <a class="term-link" id="term-ref-token-1" data-term="token" href="../../glossary/token.html?return=..%2Fcode%2Fmini_gpt%2Ftools.py.html%23term-ref-token-1" title="توضیح Token"><bdi dir="ltr">Token</bdi></a>، تا یک مدل؛ از مدل، تا یک سامانه.</span><a href="../../guide.html" data-book-link>راهنما</a> · <a href="../../api.html" data-book-link>کد و منابع</a></footer></main></div>
+<noscript><p>خواندن و ناوبری بدون JavaScript هم کار می‌کند؛ کپی خودکار و ثبت پیشرفت به آن نیاز دارند.</p></noscript></body></html>
