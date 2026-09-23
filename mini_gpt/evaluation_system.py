@@ -89,15 +89,15 @@ def course_fixture_suite():
     cases = (
         EvalCase("course-evidence", "Checkpoint", answer,
                  relevant_ids=(source,), expected_citations=(source,)),
-        EvalCase("arithmetic", "دو گام و سه گام، جمعاً چند گام؟", "5",
+        EvalCase("arithmetic", "Two steps plus three steps: how many steps?", "5",
                  expected_tools=({"name": "add", "arguments": {"a": 2, "b": 3}, "value": 5},)),
-        EvalCase("unknown", "تعداد قمرهای سیارهٔ خیالی زتا چند است؟", "اطلاعات کافی ندارم"),
+        EvalCase("unknown", "How many moons does the fictional planet Zeta have?", "Insufficient information"),
     )
     proposals = {
         "course-evidence": [{"action": "finish", "answer": answer, "citations": [source]}],
         "arithmetic": [{"action": "tool", "name": "add", "arguments": {"a": 2, "b": 3}},
                        {"action": "finish", "answer": "5", "citations": []}],
-        "unknown": [{"action": "finish", "answer": "اطلاعات کافی ندارم", "citations": []}],
+        "unknown": [{"action": "finish", "answer": "Insufficient information", "citations": []}],
     }
 
     def run_case(case):

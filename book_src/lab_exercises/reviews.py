@@ -10,13 +10,13 @@ EXERCISES = {
         goal="از معنای ضرب ماتریسی برای پیش‌بینی محل و مقدار تغییر خروجی استفاده کنید.",
         prerequisite="نمونهٔ سطر و ستون در همین دفتر را اجرا کرده باشید.",
         predict="اگر فقط `A[i,k]` به اندازهٔ `delta` زیاد شود، چه ارتباطی میان تغییر سطر `i` خروجی و سطر `k` ماتریس `B` وجود دارد؟",
-        setup="a = [[1.,2.,3.],[4.,5.,6.]]\nb = [[1.,2.],[3.,4.],[5.,6.]]\nprint('A:',a,'B:',b)",
+        setup="review_a = [[1.,2.,3.],[4.,5.,6.]]\nreview_b = [[1.,2.],[3.,4.],[5.,6.]]\nprint('A:',review_a,'B:',review_b)",
         task="تابع `product_change(rows,b,i,k,delta)` فقط ماتریس اختلاف خروجی را با `list` برگرداند. `rows` تعداد سطرهای `A` است؛ بدون ساخت `A` یا تکرار `matmul`، سهم تغییر یک خانه را حساب کنید.",
         starter="def product_change(rows, b, i, k, delta):\n    # TODO\n    return None",
-        checks="result = product_change(2,b,0,1,2.)\nif result is None: return False\nassert result == [[6.,8.],[0.,0.]]\nassert product_change(3,[[2.,-1.,4.]],2,0,-0.5) == [[0.,0.,0.],[0.,0.,0.],[-1.,0.5,-2.]]\nassert product_change(1,b,0,2,0.) == [[0.,0.]]\nreturn True",
+        checks="result = product_change(2,review_b,0,1,2.)\nif result is None: return False\nassert result == [[6.,8.],[0.,0.]]\nassert product_change(3,[[2.,-1.,4.]],2,0,-0.5) == [[0.,0.,0.],[0.,0.,0.],[-1.,0.5,-2.]]\nassert product_change(1,review_b,0,2,0.) == [[0.,0.]]\nreturn True",
         solution="def product_change(rows, b, i, k, delta):\n    result = [[0. for _ in b[0]] for _ in range(rows)]\n    result[i] = [delta*value for value in b[k]]\n    return result",
         vary="فقط `delta` را از ۱ به ۲ و منفی ۱ تغییر دهید. محل اثر ثابت است؛ مقدار و علامت آن چه می‌شود؟",
-        vary_code="for delta in (1.,2.,-1.):\n    print('delta and changed output row:',delta,[delta*value for value in b[1]])",
+        vary_code="for delta in (1.,2.,-1.):\n    print('delta and changed output row:',delta,[delta*value for value in review_b[1]])",
         debug="با `[[0]*cols]*rows` همهٔ سطرها یک شیء می‌شوند. تابع `zero_matrix(rows,cols)` را اصلاح کنید تا دست‌کاری یک سطر به دیگری سرایت نکند.",
         bug_code="wrong = [[0.]*2]*3\nwrong[0][0] = 9.\nprint('aliased rows:',wrong)",
         fix="def zero_matrix(rows, cols):\n    # TODO\n    return None",
@@ -31,7 +31,7 @@ EXERCISES = {
         goal="اثر تغییر Target را از اثر تغییر Logits جدا کنید.",
         prerequisite="Softmax و Loss یک هدف در بخش‌های قبلی همین دفتر را بشناسید.",
         predict="Logits برابر `[2,1,0]` ثابت‌اند. اگر هدف از کلاس صفر به دو برود، اختلاف Loss چقدر است؟ لازم است Softmax را دوباره حساب کنیم؟",
-        setup="logits = [2.,1.,0.]\nprint('fixed logits:',logits)",
+        setup="import math\nlogits = [2.,1.,0.]\nprint('fixed logits:',logits)",
         task="تابع `target_loss_change(logits, old_target, new_target)` مقدار Loss جدید منهای قبلی را فقط از امتیازها حساب کند؛ نرمال‌ساز در تفاضل حذف می‌شود. ورودی‌ها شناسهٔ معتبر کلاس‌اند.",
         starter="def target_loss_change(logits, old_target, new_target):\n    # TODO\n    return None",
         checks="result = target_loss_change(logits,0,2)\nif result is None: return False\nassert result == 2.\nassert target_loss_change([1002.,1001.,1000.],0,2) == 2.\nassert target_loss_change([-3.,4.,1.],2,1) == -3.\nassert target_loss_change(logits,1,1) == 0.\nreturn True",
@@ -39,9 +39,9 @@ EXERCISES = {
         vary="فقط شناسهٔ هدف را تغییر دهید؛ امتیاز و احتمال ثابت باشند. مقدار منفیِ اختلاف Loss چه معنایی دارد؟",
         vary_code="maximum = max(logits)\nnormalizer = maximum+math.log(sum(math.exp(z-maximum) for z in logits))\nfor target in range(len(logits)):\n    print('target, loss:',target,normalizer-logits[target])",
         debug="شمارهٔ کلاس اندازهٔ پاسخ نیست؛ کد خراب فاصلهٔ عددی دو ID را Loss می‌نامد. تابع `surprise(probabilities,target)` باید منفی لگاریتم احتمال هدف را برگرداند؛ همهٔ احتمال‌ها در این تمرین مثبت‌اند.",
-        bug_code="probabilities = [0.1,0.2,0.7]\nprint('wrong ID distance:',abs(0-2),'actual target-0 surprise:',-math.log(probabilities[0]))",
+        bug_code="review_probabilities = [0.1,0.2,0.7]\nprint('wrong ID distance:',abs(0-2),'actual target-0 surprise:',-math.log(review_probabilities[0]))",
         fix="def surprise(probabilities, target):\n    # TODO\n    return None",
-        fix_checks="result = surprise(probabilities,0)\nif result is None: return False\nassert math.isclose(result,-math.log(0.1))\nassert surprise([1.],0) == 0.\nassert math.isclose(surprise([0.8,0.2],1),-math.log(0.2))\nreturn True",
+        fix_checks="result = surprise(review_probabilities,0)\nif result is None: return False\nassert math.isclose(result,-math.log(0.1))\nassert surprise([1.],0) == 0.\nassert math.isclose(surprise([0.8,0.2],1),-math.log(0.2))\nreturn True",
         fix_solution="def surprise(probabilities, target):\n    return -math.log(probabilities[target])",
         connection="در `MiniGPT` نیز Target یک شناسهٔ Vocabulary است؛ اختلاف عددی IDها هیچ معنای شباهت زبانی ندارد. Cross entropy احتمال همان شناسهٔ هدف را مصرف می‌کند.",
         takeaway="چطور یک توزیع یکسان می‌تواند برای دو Target، دو Loss متفاوت داشته باشد؟",
@@ -110,18 +110,18 @@ EXERCISES = {
         title="تکرار شناسه، جمع‌شدن سهم یک سطر",
         goal="از تعداد تکرار Tokenها، Gradient یک Embedding ساده را پیش‌بینی کنید.",
         prerequisite="Tokenizer و lookup و آزمایش `sum` در همین دفتر را دیده‌اید؛ این Loss هدف آموزش زبان نیست.",
-        predict="اگر شناسهٔ ۱ سه بار و شناسهٔ ۲ یک بار دیده شود، مشتق `sum` خروجی نسبت به هر ویژگیِ این دو سطر چیست؟",
-        setup="from torch import nn\nfrom mini_gpt.tokenizer import CharacterTokenizer\ntokenizer = CharacterTokenizer.from_text('سلام مدل')\nids = torch.tensor([[1,1,2],[3,1,2]])\nprint('IDs:',ids,'vocabulary size:',tokenizer.vocab_size)",
+        predict="اگر شناسهٔ ۱ سه بار و شناسهٔ ۲ دو بار دیده شود، مشتق `sum` خروجی نسبت به هر ویژگیِ این دو سطر چیست؟",
+        setup="from torch import nn\nfrom mini_gpt.tokenizer import CharacterTokenizer\nreview_tokenizer = CharacterTokenizer.from_text('hello model')\nreview_ids = torch.tensor([[1,1,2],[3,1,2]])\nprint('IDs:',review_ids,'vocabulary size:',review_tokenizer.vocab_size)",
         task="تابع `lookup_gradient_counts(ids,vocab_size,channels)` مشتقِ پیش‌بینی‌شدهٔ `embedding(ids).sum()` را به شکل `(V,C)` برگرداند. بدون Autograd، تعداد حضور هر ID را در همهٔ ویژگی‌های همان سطر بگذارید.",
         starter="def lookup_gradient_counts(ids, vocab_size, channels):\n    # TODO\n    return None",
-        checks="result = lookup_gradient_counts(ids,tokenizer.vocab_size,4)\nif result is None: return False\nfor tokens,C in ((ids,4),(torch.tensor([[0,2,0,2]]),3)):\n    table = nn.Embedding(tokenizer.vocab_size,C)\n    table(tokens).sum().backward()\n    torch.testing.assert_close(lookup_gradient_counts(tokens,tokenizer.vocab_size,C),table.weight.grad)\nassert torch.equal(result[1],torch.full((4,),3.))\nreturn True",
+        checks="result = lookup_gradient_counts(review_ids,review_tokenizer.vocab_size,4)\nif result is None: return False\nfor tokens,C in ((review_ids,4),(torch.tensor([[0,2,0,2]]),3)):\n    table = nn.Embedding(review_tokenizer.vocab_size,C)\n    table(tokens).sum().backward()\n    torch.testing.assert_close(lookup_gradient_counts(tokens,review_tokenizer.vocab_size,C),table.weight.grad)\nassert torch.equal(result[1],torch.full((4,),3.))\nassert torch.equal(result[2],torch.full((4,),2.))\nreturn True",
         solution="def lookup_gradient_counts(ids, vocab_size, channels):\n    counts = torch.bincount(ids.reshape(-1),minlength=vocab_size).float()\n    return counts[:,None].expand(vocab_size,channels).clone()",
         vary="فقط یک ID دیگر با مقدار ۱ اضافه کنید. برای این Loss خاص، همهٔ ویژگی‌های همان سطر یک واحد سهم بیشتر می‌گیرند؛ این قانون عمومی هر Loss زبانی نیست.",
-        vary_code="before = torch.bincount(ids.flatten(),minlength=tokenizer.vocab_size)\nafter = torch.bincount(torch.cat((ids.flatten(),torch.tensor([1]))),minlength=tokenizer.vocab_size)\nprint('row count change:',after-before)",
+        vary_code="before = torch.bincount(review_ids.flatten(),minlength=review_tokenizer.vocab_size)\nafter = torch.bincount(torch.cat((review_ids.flatten(),torch.tensor([1]))),minlength=review_tokenizer.vocab_size)\nprint('row count change:',after-before)",
         debug="نسخهٔ خراب ID صفر را از شمارش حذف می‌کند چون آن را «نبود داده» می‌پندارد. در Tokenizer پروژه، صفر سطر واقعی Unknown است. تابع `count_all_ids(ids,vocab_size)` همهٔ شناسه‌ها را بشمارد.",
-        bug_code="unknown_ids = torch.tensor([0,1,0,2])\nprint('wrong: omitted unknown occurrences:',torch.bincount(unknown_ids[unknown_ids!=0],minlength=tokenizer.vocab_size))",
+        bug_code="unknown_ids = torch.tensor([0,1,0,2])\nprint('wrong: omitted unknown occurrences:',torch.bincount(unknown_ids[unknown_ids!=0],minlength=review_tokenizer.vocab_size))",
         fix="def count_all_ids(ids, vocab_size):\n    # TODO\n    return None",
-        fix_checks="result = count_all_ids(unknown_ids,tokenizer.vocab_size)\nif result is None: return False\nassert result[0].item() == 2\nassert result.sum().item() == 4\nassert count_all_ids(torch.tensor([[2,2,1]]),4).tolist() == [0,1,2,0]\nreturn True",
+        fix_checks="result = count_all_ids(unknown_ids,review_tokenizer.vocab_size)\nif result is None: return False\nassert result[0].item() == 2\nassert result.sum().item() == 4\nassert count_all_ids(torch.tensor([[2,2,1]]),4).tolist() == [0,1,2,0]\nreturn True",
         fix_solution="def count_all_ids(ids, vocab_size):\n    return torch.bincount(ids.reshape(-1),minlength=vocab_size)",
         connection="`CharacterTokenizer` واقعی، Unknown را با ID صفر نگه می‌دارد. Token Embedding این سطر را مانند سطرهای دیگر می‌خواند؛ شناسه‌ها Gradient ندارند، اما سطرهای خوانده‌شده می‌توانند داشته باشند.",
         takeaway="کدام ویژگیِ `sum` باعث شد Gradient هر سطر فقط به تعداد تکرار آن وابسته باشد؟ در Loss واقعی چه چیزی علاوه بر تعداد تکرار اثر دارد؟",
@@ -224,27 +224,27 @@ EXERCISES = {
         setup='''
         from mini_gpt.config import ModelConfig
         from mini_gpt.model import MiniGPT
-        config = ModelConfig(9,6,8,2,1,0.)
-        model = MiniGPT(config).eval()
-        ids,targets = torch.tensor([[1,2,3],[2,3,4]]),torch.tensor([[2,3,4],[3,4,5]])
-        initial_state = {name:value.detach().clone() for name,value in model.state_dict().items()}
-        before = {name:p.detach().clone() for name,p in model.named_parameters()}
-        optimizer = torch.optim.SGD(model.parameters(),lr=0.01)
-        optimizer.zero_grad(set_to_none=True)
-        model(ids,targets)[1].backward(); optimizer.step()
-        after = {name:p.detach().clone() for name,p in model.named_parameters()}
+        review_config = ModelConfig(9,6,8,2,1,0.)
+        review_model = MiniGPT(review_config).eval()
+        review_ids,review_targets = torch.tensor([[1,2,3],[2,3,4]]),torch.tensor([[2,3,4],[3,4,5]])
+        review_initial_state = {name:value.detach().clone() for name,value in review_model.state_dict().items()}
+        review_before = {name:p.detach().clone() for name,p in review_model.named_parameters()}
+        review_optimizer = torch.optim.SGD(review_model.parameters(),lr=0.01)
+        review_optimizer.zero_grad(set_to_none=True)
+        review_model(review_ids,review_targets)[1].backward(); review_optimizer.step()
+        review_after = {name:p.detach().clone() for name,p in review_model.named_parameters()}
         print("one controlled SGD step; no additional training run")
         ''',
         task="تابع `parameter_changes(before,after)` دیکشنری نام پارامتر به `float` اندازهٔ تغییر آن برگرداند؛ اندازه ریشهٔ مجموع مربع اختلاف همهٔ مؤلفه‌هاست. ورودی‌ها Snapshotهای هم‌کلیدند و نباید تغییر کنند.",
         starter="def parameter_changes(before, after):\n    # TODO\n    return None",
-        checks="result = parameter_changes(before,after)\nif result is None: return False\nassert set(result) == set(before)\nfor name in before:\n    assert math.isclose(result[name],(after[name]-before[name]).norm().item(),abs_tol=1e-8)\nassert result['language_model_head.weight'] > 0\na = {'matrix':torch.zeros(2,2),'same':torch.ones(1)}\nb = {'matrix':torch.tensor([[3.,0.],[0.,4.]]),'same':torch.ones(1)}\nassert parameter_changes(a,b) == {'matrix':5.,'same':0.}\nreturn True",
+        checks="result = parameter_changes(review_before,review_after)\nif result is None: return False\nassert set(result) == set(review_before)\nfor name in review_before:\n    assert math.isclose(result[name],(review_after[name]-review_before[name]).norm().item(),abs_tol=1e-8)\nassert result['language_model_head.weight'] > 0\na = {'matrix':torch.zeros(2,2),'same':torch.ones(1)}\nb = {'matrix':torch.tensor([[3.,0.],[0.,4.]]),'same':torch.ones(1)}\nassert parameter_changes(a,b) == {'matrix':5.,'same':0.}\nreturn True",
         solution="def parameter_changes(before, after):\n    return {name:(after[name]-before[name]).norm().item() for name in before}",
-        vary="فقط Learning rate یک گام SGD را از صفر به ۰٫۰۱ و ۰٫۰۲ تغییر دهید. هر اجرا از همان `initial_state`، همان Batch و Dropout صفر آغاز شود.",
-        vary_code="for rate in (0.,0.01,0.02):\n    candidate = MiniGPT(config).eval(); candidate.load_state_dict(initial_state)\n    original = candidate.language_model_head.weight.detach().clone()\n    optimizer = torch.optim.SGD(candidate.parameters(),lr=rate)\n    candidate(ids,targets)[1].backward(); optimizer.step()\n    print('rate, head update norm:',rate,(candidate.language_model_head.weight-original).norm().item())",
+        vary="فقط Learning rate یک گام SGD را از صفر به ۰٫۰۱ و ۰٫۰۲ تغییر دهید. هر اجرا از همان `review_initial_state`، همان Batch و Dropout صفر آغاز شود.",
+        vary_code="for review_rate in (0.,0.01,0.02):\n    review_candidate = MiniGPT(review_config).eval(); review_candidate.load_state_dict(review_initial_state)\n    review_original = review_candidate.language_model_head.weight.detach().clone()\n    review_optimizer = torch.optim.SGD(review_candidate.parameters(),lr=review_rate)\n    review_candidate(review_ids,review_targets)[1].backward(); review_optimizer.step()\n    print('review_rate, head update norm:',review_rate,(review_candidate.language_model_head.weight-review_original).norm().item())",
         debug="Snapshot خراب فقط `detach` شده و حافظه را با پارامتر شریک است. تابع `snapshot_parameters(model)` برای هر پارامتر مدل یک نسخهٔ مستقل و جدا از Graph بسازد.",
-        bug_code="wrong_snapshot = model.token_embedding.weight.detach()\nwith torch.no_grad(): model.token_embedding.weight.add_(0.1)\nprint('wrong reported change:',(model.token_embedding.weight-wrong_snapshot).abs().max().item())",
+        bug_code="review_wrong_snapshot = review_model.token_embedding.weight.detach()\nwith torch.no_grad(): review_model.token_embedding.weight.add_(0.1)\nprint('wrong reported change:',(review_model.token_embedding.weight-review_wrong_snapshot).abs().max().item())",
         fix="def snapshot_parameters(model):\n    # TODO\n    return None",
-        fix_checks="result = snapshot_parameters(model)\nif result is None: return False\nassert set(result) == {name for name,_ in model.named_parameters()}\nfor name,p in model.named_parameters():\n    assert not result[name].requires_grad\n    assert result[name].data_ptr() != p.data_ptr()\n    assert torch.equal(result[name],p)\nsaved = result['token_embedding.weight'].clone()\nwith torch.no_grad(): model.token_embedding.weight.add_(0.2)\nassert torch.equal(result['token_embedding.weight'],saved)\nreturn True",
+        fix_checks="result = snapshot_parameters(review_model)\nif result is None: return False\nassert set(result) == {name for name,_ in review_model.named_parameters()}\nfor name,p in review_model.named_parameters():\n    assert not result[name].requires_grad\n    assert result[name].data_ptr() != p.data_ptr()\n    assert torch.equal(result[name],p)\nsaved = result['token_embedding.weight'].clone()\nwith torch.no_grad(): review_model.token_embedding.weight.add_(0.2)\nassert torch.equal(result['token_embedding.weight'],saved)\nreturn True",
         fix_solution="def snapshot_parameters(model):\n    return {name:p.detach().clone() for name,p in model.named_parameters()}",
         connection="گزارش از `MiniGPT` واقعی و یک step واقعی گرفته شد. تغییر وزن شاهد اجرای به‌روزرسانی است، ولی به‌تنهایی کاهش Validation Loss یا بهترشدن زبان را ثابت نمی‌کند.",
         takeaway="چرا گزارش «هیچ وزنی تغییر نکرد» ممکن است خطای ابزار اندازه‌گیری باشد، نه خطای Optimizer؟",
@@ -254,17 +254,17 @@ EXERCISES = {
         goal="از توزیع واقعی Sampling نمونه بگیرید و فراوانی‌ها را بدون ادعای برابری دقیق بررسی کنید.",
         prerequisite="Temperature، Top-K و توزیع گام اول در همین دفتر را بشناسید.",
         predict="اگر یک Token احتمال صفر داشته باشد، آیا باید در شمارش دیده شود؟ آیا Token با احتمال ۰٫۲ در ۱۰ نمونه حتماً دو بار ظاهر می‌شود؟",
-        setup="from mini_gpt.sampling import sampling_distribution\nlogits = torch.tensor([[2.,1.,0.,-1.]])\nprobabilities = sampling_distribution(logits,top_k=3)[0]\nprint('fixed one-step distribution:',probabilities)",
+        setup="from mini_gpt.sampling import sampling_distribution\nreview_logits = torch.tensor([[2.,1.,0.,-1.]])\nreview_probabilities = sampling_distribution(review_logits,top_k=3)[0]\nprint('fixed one-step distribution:',review_probabilities)",
         task="تابع `sample_counts(probabilities,draws,generator)` با `torch.multinomial` و `replacement=True` نمونه بگیرد و یک Tensor شمارش طول `V` برگرداند. `probabilities` یک بردار است؛ این‌ها تکرارِ مستقلِ همان گام ثابت‌اند، نه تولید یک دنبالهٔ جدید.",
         starter="def sample_counts(probabilities, draws, generator):\n    # TODO\n    return None",
-        checks="result = sample_counts(probabilities,100,torch.Generator().manual_seed(23))\nif result is None: return False\nassert result.shape == probabilities.shape and result.sum().item() == 100\nassert result[-1].item() == 0\nexpected_ids = torch.multinomial(probabilities,100,replacement=True,generator=torch.Generator().manual_seed(23))\nassert torch.equal(result,torch.bincount(expected_ids,minlength=4))\nassert sample_counts(torch.tensor([0.,1.,0.]),7,torch.Generator().manual_seed(2)).tolist() == [0,7,0]\nreturn True",
+        checks="result = sample_counts(review_probabilities,100,torch.Generator().manual_seed(23))\nif result is None: return False\nassert result.shape == review_probabilities.shape and result.sum().item() == 100\nassert result[-1].item() == 0\nexpected_ids = torch.multinomial(review_probabilities,100,replacement=True,generator=torch.Generator().manual_seed(23))\nassert torch.equal(result,torch.bincount(expected_ids,minlength=4))\nassert sample_counts(torch.tensor([0.,1.,0.]),7,torch.Generator().manual_seed(2)).tolist() == [0,7,0]\nreturn True",
         solution="def sample_counts(probabilities, draws, generator):\n    ids = torch.multinomial(probabilities,draws,replacement=True,generator=generator)\n    return torch.bincount(ids,minlength=probabilities.numel())",
         vary="فقط تعداد نمونه‌ها را از ۲۰ به ۲۰۰ و ۲۰۰۰ تغییر دهید. اختلاف تجربی را گزارش کنید؛ نزدیک‌شدن معمول را با کاهش قطعی و یکنواخت خطا در هر اجرای تصادفی اشتباه نگیرید.",
-        vary_code="for draws in (20,200,2000):\n    sampled = torch.multinomial(probabilities,draws,replacement=True,generator=torch.Generator().manual_seed(31))\n    frequency = torch.bincount(sampled,minlength=4).float()/draws\n    print('draws, frequency, maximum error:',draws,frequency,(frequency-probabilities).abs().max().item())",
+        vary_code="for draws in (20,200,2000):\n    sampled = torch.multinomial(review_probabilities,draws,replacement=True,generator=torch.Generator().manual_seed(31))\n    frequency = torch.bincount(sampled,minlength=4).float()/draws\n    print('draws, frequency, maximum error:',draws,frequency,(frequency-review_probabilities).abs().max().item())",
         debug="کد خراب `argmax` را بارها تکرار می‌کند و آن را Sampling می‌نامد. تابع `draw_ids(probabilities,draws,generator)` شناسه‌های نمونه‌برداری‌شده را برگرداند؛ از `generator` داده‌شده استفاده کنید.",
-        bug_code="wrong = probabilities.argmax().repeat(20)\nprint('greedy is not repeated random sampling:',torch.bincount(wrong,minlength=4))",
+        bug_code="wrong = review_probabilities.argmax().repeat(20)\nprint('greedy is not repeated random sampling:',torch.bincount(wrong,minlength=4))",
         fix="def draw_ids(probabilities, draws, generator):\n    # TODO\n    return None",
-        fix_checks="result = draw_ids(probabilities,40,torch.Generator().manual_seed(7))\nif result is None: return False\nexpected = torch.multinomial(probabilities,40,replacement=True,generator=torch.Generator().manual_seed(7))\nassert torch.equal(result,expected)\nassert draw_ids(torch.tensor([0.,0.,1.]),3,torch.Generator().manual_seed(1)).tolist() == [2,2,2]\nreturn True",
+        fix_checks="result = draw_ids(review_probabilities,40,torch.Generator().manual_seed(7))\nif result is None: return False\nexpected = torch.multinomial(review_probabilities,40,replacement=True,generator=torch.Generator().manual_seed(7))\nassert torch.equal(result,expected)\nassert draw_ids(torch.tensor([0.,0.,1.]),3,torch.Generator().manual_seed(1)).tolist() == [2,2,2]\nreturn True",
         fix_solution="def draw_ids(probabilities, draws, generator):\n    return torch.multinomial(probabilities,draws,replacement=True,generator=generator)",
         connection="توزیع از `sampling_distribution` واقعی پروژه گرفته شد. در `generate` پس از هر انتخاب، Context و Logits دوباره تغییر می‌کنند؛ پس فراوانی Tokenهای یک متن بلند، آزمایش همین توزیع ثابت نیست.",
         takeaway="برای مقایسهٔ منصفانهٔ قانون انتخاب، چرا دفتر ابتدا یک مجموعه Logits ثابت را بررسی می‌کند و بعد سراغ ادامهٔ متن می‌رود؟",

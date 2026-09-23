@@ -12,6 +12,14 @@ CPU laboratories. No framework, remote model or API key is required. Existing
 notebook paths and all previous lesson URLs remain stable. Learning-time ranges
 in the book already include the corresponding lab; do not add them twice.
 
+Synthetic code examples use ASCII text. The explicit Unicode/ZWNJ experiments
+in `02-token`, `21-tokenizer` and review `06_tokens_embeddings`, plus prompts
+for the Persian corpus in reviews `11_train_inspect`/`12_sampling`, are deliberate
+exceptions. Persian teaching prose and comments remain Persian. Regression tests
+check these exceptions and replay earlier computations after the five review
+extensions that formerly overwrote original variables. Each notebook still has
+an explicit top-to-bottom setup; arbitrary cell order is not promised.
+
 ## Install once; launch with one command
 
 Use one Python 3.11+ environment for the book, notebooks, and Mini-GPT.
@@ -96,8 +104,8 @@ metadata or a student fallback. Do not look there before trying.
 Each notebook has a prediction note and a final explanation area. Record what
 you expected, what actually happened, and why the repair changes the result.
 Advanced SFT, LoRA, DPO, RAG and KV-cache experiments are explicitly small teaching
-implementations; they are not claims that the production Mini-GPT implements
-these systems.
+implementations in or around the educational Mini-GPT. They do not make it a
+production-ready LLM system.
 
 ## Portability and source hygiene
 
@@ -145,9 +153,15 @@ do not prove that its sanitizer retained a property.
 python -B -m tools.build_notebooks --check
 python -B -m tools.verify_notebooks --mode student
 python -B -m tools.verify_notebooks --mode solutions
+python -B -m unittest discover -s tests/notebooks -v
 python -B -m unittest discover -s tests -v
 python -B -m tools.prepare_release
 ```
+
+The optional `tests/notebooks` suite requires the notebook dependencies and
+checks verifier cleanup on both success and failure. The verifier explicitly
+stops each client channel before shutting down its kernel and releasing ports;
+otherwise heartbeat threads and sockets accumulate across a whole-course run.
 
 Student verification executes authored notebooks unchanged in fresh kernels and
 requires explicit incomplete exercise status. Solution verification replaces only

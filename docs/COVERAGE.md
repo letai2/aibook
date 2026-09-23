@@ -6,8 +6,10 @@ builders, mappings, glossary, project code and tests were inspected centrally.
 This is an editorial/code review, not a learner-outcome study. The current full
 report is [REVIEW.md](REVIEW.md); historical reports remain below it.
 
-The first69 lessons keep their previous content/order. The former advanced ending
-is extended, with all76 lesson IDs/URLs preserved. Sixteen new lessons have
+The first 69 lessons keep their established progression. The final continuity
+pass made targeted ASCII-demo and notebook-state repairs without adding lessons.
+The earlier expansion extended the former advanced ending, with all 76 lesson
+IDs/URLs preserved. Its sixteen new lessons have
 independent TODO/repair labs; scale/cache move after system construction and RAG
 after context budgeting. Exact counts and estimates are in
 [JOURNEY_INVENTORY.md](JOURNEY_INVENTORY.md).

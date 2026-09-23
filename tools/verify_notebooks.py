@@ -70,9 +70,17 @@ def verify(root: Path, report: Path | None = None, html_output: Path | None = No
                 client.execute()
             finally:
                 # nbclient does not own an explicitly supplied KernelManager.
-                if manager.has_kernel:
-                    manager.shutdown_kernel(now=True)
-                manager.cleanup_resources()
+                # Its client has a separate ZMQ context and heartbeat thread;
+                # stop those before the manager releases ports for reuse.
+                try:
+                    if client.kc is not None:
+                        client.kc.stop_channels()
+                finally:
+                    try:
+                        if manager.has_kernel:
+                            manager.shutdown_kernel(now=True)
+                    finally:
+                        manager.cleanup_resources()
             outputs = [output for cell in notebook.cells if cell.cell_type == 'code'
                        for output in cell.outputs]
             if any(output.output_type == 'error' for output in outputs):

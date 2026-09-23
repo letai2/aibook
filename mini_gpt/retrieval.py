@@ -46,9 +46,9 @@ class GroundedAnswer:
 
 
 COURSE_DOCUMENTS = (
-    Document("practice", "تمرین درس در Jupyter انجام می‌شود. پیش از اجرا نتیجه را پیش‌بینی کنید."),
-    Document("checkpoint", "Checkpoint وضعیت مدل و واژگان را نگه می‌دارد. فایل را فقط از منبع قابل اعتماد باز کنید."),
-    Document("evaluation", "ارزیابی روی متن ندیده انجام می‌شود. کاهش Loss آموزش تضمین پاسخ درست نیست."),
+    Document("practice", "Run the lesson exercise in Jupyter. Predict the result before running it."),
+    Document("checkpoint", "Checkpoint stores model state and vocabulary. Open files only from a trusted source."),
+    Document("evaluation", "Evaluate on unseen text. Lower training loss does not guarantee a correct answer."),
 )
 
 
@@ -163,7 +163,7 @@ def answer_from_hits(hits: Iterable[SearchHit], *, min_score: float = 0.0) -> Gr
         raise ValueError("min_score must be finite and between zero and one")
     selected = [hit for hit in hits if hit.score > 0 and hit.score >= min_score]
     if not selected:
-        return GroundedAnswer("شاهد کافی در سندهای داده‌شده پیدا نشد.", (), True)
+        return GroundedAnswer("No sufficient evidence was found in the supplied documents.", (), True)
     if len({hit.chunk.id for hit in selected}) != len(selected):
         raise ValueError("Duplicate evidence IDs")
     text = "\n".join(f"[{hit.chunk.id}] {hit.chunk.text}" for hit in selected)
@@ -184,7 +184,7 @@ def train_tiny_embeddings(*, steps: int = 100):
     from torch import nn
     from torch.nn import functional as F
 
-    words = ("ذخیره", "نگهداری", "حساب", "ضرب")
+    words = ("save", "keep", "calculate", "multiply")
     initial = torch.tensor([[1., 0.2], [-0.2, 1.], [-1., 0.2], [0.2, -1.]])
     table = nn.Embedding.from_pretrained(initial.clone(), freeze=False)
     left = torch.tensor([0, 2, 0, 1])

@@ -10,10 +10,10 @@ from .stages.v0 import transition_counts
 
 
 TITLES = [
-    "شمارش ادامهٔ نویسه", "نشانه‌بند", "واژگان و شناسه", "بردار نمایش", "اطلاعات موقعیت",
-    "توجه تک‌سر بدون پوشش؛ نمونهٔ نادرست برای آموزش علّی", "پوشش آینده", "توجه چندسر",
+    "شمارش ادامهٔ کاراکتر", "Tokenizer", "واژگان و شناسه", "Embedding", "اطلاعات موقعیت",
+    "Single-Head Attention بدون Mask؛ نمونهٔ نادرست برای آموزش علّی", "Causal Mask", "Multi-Head Attention",
     "شبکهٔ پیش‌خور", "مسیر جمع", "نرمال‌سازی ویژگی‌ها", "یک بلوک کامل", "چند بلوک",
-    "سر مدل زبان", "یک حلقهٔ آموزش کوچک", "ارزیابی بدون تغییر وزن", "ذخیره و بارگذاری",
+    "Language-model head", "یک حلقهٔ آموزش کوچک", "ارزیابی بدون تغییر وزن", "ذخیره و بارگذاری",
     "تولید پیاپی", "نمونه‌گیری", "دمای نمونه‌گیری", "نگه‌داشتن k گزینه", "جرم احتمال p",
     "Mini-GPT آموزشی یکپارچه",
 ]
@@ -24,7 +24,7 @@ def run_milestone(number, *, checkpoint=None):
         raise ValueError("milestone must be an integer from 0 to 22")
     if checkpoint is not None and number < 16:
         raise ValueError("--checkpoint is available from milestone 16")
-    text = "سلام مدل سلام مدل سلام مدل سلام مدل "
+    text = "hello model hello model hello model hello model "
     tokenizer = CharacterTokenizer.from_text(text)
     token_ids = tokenizer.encode(text)
     report = {"milestone": number, "title": TITLES[number], "fixture_text": text,
@@ -112,7 +112,7 @@ def run_milestone(number, *, checkpoint=None):
             report["final_training_loss"] = loss.item()
         if number >= 15:
             # دادهٔ تمرینی جدا اما مصنوعی/هم‌خانواده است؛ معیار تعمیم عمومی نیست.
-            validation_ids = tokenizer.encode("مدل سلام مدل سلام مدل ")
+            validation_ids = tokenizer.encode("model hello model hello model ")
             loader = DataLoader(NextTokenDataset(validation_ids, config.context_length), batch_size=3)
             report["validation_loss"] = evaluate(model, loader, torch.device("cpu"))
         if number >= 16:

@@ -98,7 +98,7 @@ print("Word spans:", [(m.group(), m.start(), m.end()) for m in re.finditer(r"\\S
         check=_check('chunk_spans(text, 4, 1)', '''assert [text[a:b] for a,b in result] == ["one two three four", "four five six seven"]
 assert [text[a:b] for a,b in chunk_spans(text,4,0)] == ["one two three four", "five six seven"]
 assert chunk_spans("",4,1) == []
-assert chunk_spans("  الف\\tب  ",8,0) == [(2,7)]
+assert chunk_spans("  abc\\td  ",8,0) == [(2,7)]
 try:
     chunk_spans(text,4,4)
 except ValueError:
@@ -158,7 +158,7 @@ for bad in [wrong_chunk, Chunk("missing","z","CPU",0,3), Chunk("range","a","CPU"
         title="بردار شمارشی و بردار آموزش‌دیده را با هم اشتباه نگیریم",
         goal="Cosine و رتبه‌بندی را پیاده کنید و تغییر واقعی یک Embedding را روی جفت‌های آموزشی ببینید.",
         prerequisite="06-dot، 19-network، 25-embedding و 69-chunks؛ PyTorch از همان محیط پروژه استفاده می‌شود.",
-        predict="پرسش «ذخیره» با سند «نگهداری» هیچ واژهٔ مشترکی ندارد. چرا عددهای تصادفی به‌تنهایی این شکست را حل نمی‌کنند؟ پس از آموزش همین جفت، دربارهٔ واژه‌های ندیده چه ادعایی هنوز نمی‌توان کرد؟",
+        predict="پرسش `save` با سند `keep` هیچ واژهٔ مشترکی ندارد. چرا عددهای تصادفی به‌تنهایی این شکست را حل نمی‌کنند؟ پس از آموزش همین جفت، دربارهٔ واژه‌های ندیده چه ادعایی هنوز نمی‌توان کرد؟",
         setup='''import math
 from collections import Counter
 from mini_gpt.retrieval import train_tiny_embeddings, VectorIndex, Document, chunk_document
@@ -196,16 +196,16 @@ for steps in [0, 100]:
     names, before, after, first, final = train_tiny_embeddings(steps=steps)
     print(steps, "related:", cosine_similarity(after[0],after[1]),
           "unrelated:", cosine_similarity(after[0],after[2]), "loss:",final)
-chunks = chunk_document(Document("guide", "نگهداری"),chunk_words=4,overlap_words=0)
+chunks = chunk_document(Document("guide", "keep"),chunk_words=4,overlap_words=0)
 index = VectorIndex(chunks)
-assert index.search("ذخیره") == []
-print("Count-vector retrieval for unseen synonym:", index.search("ذخیره"))
+assert index.search("save") == []
+print("Count-vector retrieval for unseen synonym:", index.search("save"))
 ''',
         debug="دو Vector تنها وقتی قابل مقایسه‌اند که ستون‌های متناظر معنای یکسان داشته باشند. کد خراب Vocabulary پرسش را جدا مرتب می‌کند. تابع `encode_shared(text, vocabulary)` شمارش واژه‌های جداشده با فاصله را دقیقاً به ترتیب Vocabulary داده‌شده برگرداند؛ واژه‌های بیرون آن سهمی ندارند.",
-        bug_code='''vocabulary = ["ذخیره", "مدل"]
+        bug_code='''vocabulary = ["save", "model"]
 document_vector = [1, 0]
 wrong_query_order = list(reversed(vocabulary))
-wrong_query = [int(word == "ذخیره") for word in wrong_query_order]
+wrong_query = [int(word == "save") for word in wrong_query_order]
 print("Document axes:", vocabulary, "Query axes:", wrong_query_order, "Wrong query:", wrong_query)
 assert sum(a*b for a,b in zip(document_vector,wrong_query)) == 0
 ''',
@@ -213,10 +213,10 @@ assert sum(a*b for a,b in zip(document_vector,wrong_query)) == 0
     # TODO: preserve the supplied shared column order
     return None
 ''',
-        fix_check=_check('encode_shared("ذخیره", vocabulary)', '''assert result == [1,0]
-assert encode_shared("مدل ذخیره مدل",vocabulary) == [1,2]
-assert encode_shared("ناشناخته",vocabulary) == [0,0]
-assert encode_shared("مدل",list(reversed(vocabulary))) == [1,0]''', True),
+        fix_check=_check('encode_shared("save", vocabulary)', '''assert result == [1,0]
+assert encode_shared("model save model",vocabulary) == [1,2]
+assert encode_shared("unknown",vocabulary) == [0,0]
+assert encode_shared("model",list(reversed(vocabulary))) == [1,0]''', True),
         fix_solution='''def encode_shared(text, vocabulary):
     counts = Counter(text.split())
     return [counts[word] for word in vocabulary]
@@ -260,10 +260,10 @@ for invalid in [[("gpu","Use CPU")],[("missing","CPU")],[("cpu","")]]:
     return tuple(identifiers)
 ''',
         vary="فقط سند دوم را به جمله‌ای متعارض با سند اول تغییر دهید. روش نقل مستقیم را اجرا کنید و هر دو منبع را ببینید؛ این تابع تعارض را خودکار حل نمی‌کند و خروجی آن را پاسخ تولیدشدهٔ مدل ننامید.",
-        vary_code='''docs = [Document("old","تمرین فقط با CPU اجرا می‌شود."),
-        Document("new","تمرین فقط با GPU اجرا می‌شود.")]
+        vary_code='''docs = [Document("old","Run this exercise only on CPU."),
+        Document("new","Run this exercise only on GPU.")]
 chunks = [c for d in docs for c in chunk_document(d,chunk_words=20,overlap_words=0)]
-answer = answer_from_hits(keyword_search("تمرین",chunks))
+answer = answer_from_hits(keyword_search("exercise",chunks))
 print("Extractive passages; conflict not resolved:",answer.text)
 assert len(answer.citations) == 2
 ''',

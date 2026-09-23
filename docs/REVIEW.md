@@ -1,7 +1,239 @@
-# Complete model-to-system learning journey — 2026-09-23
+# Final continuity and code-hygiene audit — 2026-09-23
 
-This is the current report. Reports below the historical divider describe earlier
-editions, not the current totals. The repository's `persian-educational-writer`
+This section describes the **current** repository. The expansion report below
+is historical: its old experiment numbers and byte-identity claims do not apply
+to the revised ASCII fixtures. This pass inspected the complete current course,
+not just that report. The pre-change source/notebooks/configuration snapshot is
+`.verification/before-continuity-hygiene.zip`.
+
+## Scope and judgment
+
+All 92 lessons, 49 chapters, 15 parts, 15 checkpoints, 104 notebooks, 40 Mini-GPT
+Python files, builders, terminology, RTL/LTR handling, tests, documentation,
+release artifacts and `.openai` configuration were reviewed. The existing
+`persian-educational-writer` skill guided concrete prerequisite/shape checks and
+small continuity repairs, not wholesale rewriting. No lessons, chapters or
+parts were added, removed, merged or reordered. All 76 legacy IDs/URLs remain.
+There are still 107 progress units and 23 executable core Mini-GPT milestones.
+
+The course supplies a complete implementation path for a Python programmer;
+that is a source-and-execution finding, not proof that every beginner will learn
+at the estimated pace. Optional reviews still follow the concepts they combine.
+Advanced labs demand more independent work, but none needs an external model,
+API account, GPU, another notebook's variables, or an unintroduced framework.
+
+## Zero-to-GPT: concrete evidence and prerequisites
+
+Each lesson ID below maps to `notebooks/lessons/<ID>/lab.ipynb`. These are actual
+dedicated notebooks, not links to one broad notebook standing in for a chapter.
+
+| Step | Lesson/notebook IDs | Earlier knowledge used; audit result |
+| --- | --- | --- |
+| Raw text and next-token task | `01-learning`, `02-token`, `03-counts` | Python strings/dictionaries; counting adjacent symbols precedes neural architecture. Changed incidental example data, not the learning objective. |
+| Tokenizer, vocabulary, IDs, sequence length | `02-token`, `21-tokenizer`, `22-bpe` | Lists, indexing, unknown-ID convention; retained the distinction between character/code-point tokenization and production subword tokenization. |
+| Read/split the actual corpus | `04-splits`, `24-data-contract`, `47-loop` | Train/validation roles and a train-only vocabulary; `mini_gpt/data.py` reads the intentionally Persian `data/sample.txt`. No split/vocabulary redesign. |
+| Sequences and shifted input/target pairs | `23-shift` | Token IDs and slicing; repaired the lab bridge: `abcde` → `[1,2,3,4,5]` → real `NextTokenDataset` → decoded `abc`/`bcd`. Learner still implements `make_windows`, including boundaries. |
+| Embeddings and position | `25-embedding`, `26-positions` | Tensor indexing, learned parameters and shapes; preserved token identity versus magnitude and token versus position embeddings. |
+| Sequence-model motivation | `26a-sequence-models`, `26b-sequence-memory`, `27-attention-why` | Existing embeddings and sequence order; retained token-only/fixed-window/recurrent limitations before direct weighted access. Removed the pure-Python recurrence lab's unnecessary Torch setup. |
+| Attention and causality | `28-qkv`–`34-causal-test` | Dot product, transpose, stable Softmax and weighted sums precede attention; variance is introduced just in time in `30-scaling`. Kept Q/K/V → scores → scaling → values → self-attention → causal mask/prefix-invariance test. |
+| Heads and Transformer blocks | `35-split-heads`–`42-families` | Reshape/transpose, nonlinear modules, chain rule and feature variance; retained split/merge, FFN, Residual, LayerNorm, block, stack and family boundaries. Corrected the cross-attention exercise's overly specific feature-count wording. |
+| LM head and logits | `43-lm-head`, `44-parameters`, `45-trace` | Linear projection and vocabulary; retained `(B,T,C)` → `(B,T,V)` and aligned flattening to `(B*T,V)`/`(B*T,)`. The complete model is traced, not introduced as a black box. |
+| Probabilities and loss | `08-probability`, `09-softmax`, `10-entropy`, `43-lm-head` | Ratios, logarithms and stable normalization; preserved logits versus probabilities, target indexing and Cross-Entropy. No duplicate loss lesson. |
+| Backpropagation and updates | `11-derivative`, `12-chain`, `12-sgd`, `12b-neuron`, `17-autograd`, `46-gradient-path` | Manual derivatives/shared paths before Autograd; preserved Loss → gradients → parameter update and the deliberately detached-path failure. |
+| Training loop | `19-network`, `20-loader`, `47-loop`, `49-rate`, `49b-schedule` | Module, batches, loss, gradients and optimizer; real `mini_gpt/train.py` integrates zero-grad, forward, backward, clipping and step. |
+| Evaluation, save/resume and integration | `48-evaluate`, `50-checkpoint`, `51-resume`, `52-first-run`, `53-curves` | Weighted means and train/eval mode; preserved independent evaluation, tokenizer identity, RNG/optimizer resume and real run inspection. |
+| Generation | `54-generate`–`57-prompts` | Last-position logits, sampling and context limits; clarified that lesson54's fresh model demonstrates mechanics, while the referenced trained-checkpoint CLI demonstrates learned text. |
+| Reconstruct and explain | `58-ablation`–`62-journal`, relevant checkpoints | Existing model/training/generation components; retained ablations, debugging, controlled experiments and the integrated Mini-GPT deliverable. |
+
+The causal-mask dependency is explicit: shifting targets does **not** by itself
+prevent future information leaking through the input window. Loss can fall for
+the wrong task. Training changes parameters; evaluation and generation do not.
+These existing explanations and executable checks were preserved.
+
+## Major transitions and modern system continuity
+
+| Transition | Existing evidence inspected | Disposition |
+| --- | --- | --- |
+| ML → Deep Learning → PyTorch | `01-model`, `01-learning`, manual `12b-neuron`, `13-torch`, `17-autograd`, `19-network` | Kept prediction/target/error, manual nonlinear neuron and layer-composition explanation before the library abstraction. |
+| PyTorch → NLP → tokenization → embeddings | `20-loader` through `26-positions` | Kept the prepared mathematical/tool prerequisites; strengthened only the raw-text-to-window join in23. |
+| Embeddings → Attention → Transformer → GPT | `26a-sequence-models` through `46-gradient-path` | Kept the existing reason-for-each-component progression; corrected42's exercise contract only. |
+| GPT → training → generation → pretraining | `47-loop` through `62b-lifecycle` | Kept the real CPU workflow. Lifecycle names the next-token training already performed; it does not introduce an unrelated second model. Clarified54's untrained mechanics example. |
+| Pretraining → SFT → PEFT/LoRA → preferences | `62b-lifecycle`, `65-sft`, `65a-sft-lab`, `65b-lora`, `66-preference` | Same Mini-GPT, actual response-only updates, LoRA's parameter-selection distinction, and preference-objective limits remain. Fixed largest-*visited*-training-sequence metadata and reran ASCII SFT measurements. |
+| SFT → context → retrieval/RAG | `68-context`, `67-rag`, `69-chunks`, `70-vectors`, `71-grounding` | Kept complete serialized token budgeting, provenance/offsets, ranking and grounding. ASCII source/query changes were coupled. Retrieval is inference-time information, not a parameter update. |
+| RAG → history → summary → memory | `72-history`, `73-summary`, `74-memory` | Kept role serialization, observable summary omissions and explicit external-memory writes/forgetting. History, context, persistent records, KV cache and weights remain distinct. |
+| Memory → tools → reasoning → verification | `75-tools`, `76-reasoning`, `77-candidates` | Kept proposal/schema/allow-list execution separation and verification of the actual problem.77 now counts real verifier calls for budgets1/3/5; majority vote is not treated as truth. |
+| Verification → controller → evaluation | `80-controller`, `81-system-eval` | Kept bounded request/action/observation loops, token/step limits and component-versus-system regression metrics. The scripted adapter remains explicitly separate from real model generation. |
+| Evaluation → performance → deployment | `63-scale`, `64-cache`, `82-performance`, `83-deployment`, `84-capstone` | Kept workload-defined CPU measurements, cache limits, local request validation and integrated delivery. Clarified exact code-point token counting for this CharacterTokenizer; no production-serving claim. |
+
+The final `84-capstone` lab traverses context assembly (retrieval/memory where
+applicable), model proposal, validated tool execution, observation, verification
+and bounded termination. `mini_gpt/assistant.py` exposes that trace. A proposal
+is not execution; an unchecked final answer is not verified; a verified
+calculation can still solve the wrong problem. Tiny vectors, yes/no SFT, local
+JSON memory, allow-listed tools and small regression sets are labelled teaching
+implementations, not substitutes for production infrastructure.
+
+## Targeted code hygiene and notebook repairs
+
+Generic text now uses ASCII in foundations/counts/BPE, the tiny training example,
+prompt comparisons, synthetic SFT/preferences, RAG documents/queries/answers,
+chunk/vector/grounding examples, deployment/capstone inputs, smoke/milestone
+fixtures and model/training/inspection tests. Related expected outputs, labels,
+queries and narrative examples changed together. The token opening diagram and
+glossary sample vocabulary were aligned too. No blind Unicode replacement ran.
+
+Five optional review extensions had genuine interactive-state collisions:
+`01_matrix_products` overwrote `b`; `02_probability_loss` overwrote
+`probabilities`; `06_tokens_embeddings` overwrote its original tokenizer/IDs;
+`11_train_inspect` replaced the trained model/config/optimizer; `12_sampling`
+overwrote sampling logits/probabilities. Extension variables are now isolated.
+`tests/test_lab_replay.py` executes original cells by stable IDs, runs each
+extension in learner and solution modes, and reruns original computations.
+It verifies object identity, weights and optimizer state, not just Run All.
+The NLP review's prediction now correctly says ID2 appears twice.
+
+The common notebook setup lost an unused `os` import; recurrence setup no
+longer imports Torch prematurely; review12 lost unused DataLoader/evaluate
+imports; system-evaluation setup lost unused deepcopy. Learner TODOs remain
+unfinished, repair exercises remain genuine, and answer code stays separate.
+Notebooks have explicit top-to-bottom setup, not a promise of arbitrary order.
+
+Intentional Persian retained:
+
+- All Persian prose, teaching comments, documentation and user-interface labels.
+- `02-token` space/ZWNJ comparison; `21-tokenizer` code-point/unknown-character
+  experiment; original NLP06 Persian/Arabic-yeh and ZWNJ checks.
+- `data/sample.txt`, corpus-backed review11/12 prompts, generation/inspection
+  CLI defaults/examples, and the matching real `data/inspection-sample.json`.
+- Explicit Unicode filenames/paths, Unicode chunk offsets and token splitting,
+  Persian RTL/terminology/font tests, and browser Unicode-token experiments.
+- Historical reports, backups and prior run artifacts as provenance.
+
+An AST-based regression checks executable string literals in every lesson,
+all exercise/reference/repair specifications and all 104 notebooks, plus the
+synthetic runtime/test modules. Exact, named exceptions preserve meaningful
+Unicode coverage. It ignores Persian comments/documentation, not arbitrary
+Persian demo data. Inline HTML examples and non-code demo payloads also received
+a separate manual scan. The corpus, inspection trace and `.openai/hosting.json`
+are byte-identical to the pre-pass snapshot.
+
+## Current experiment evidence: failures remain visible
+
+With the ASCII fixtures and the default CPU 40-pretraining/160-SFT run, training
+response CE changes **2.758798778 → 0.002418074**, exact match **0.5 → 1.0**.
+Held-out rewording CE changes **2.647394299 → 1.460187033**, but exact match
+remains **0.5 → 0.5**. Both held-out predictions are `n`; the first target is
+`y`. Rewordings concern the same facts, not independent new knowledge. Lower
+training loss is therefore not presented as general instruction following.
+
+The separate 2048-position, 2-pretraining/4-SFT controller experiment uses a
+773-character supplemental corpus and sends an actual 672-token prompt to the
+model. It calls generation once, produces 8 tokens (`yyyyyyyy`) and terminates
+with `invalid_action`. Its largest actually trained sequence is 56 tokens:
+allocation of 2048 positions does not imply those positions were trained.
+No expected answer or scripted adapter replaces the failed real output.
+The supplemental corpus supplies protocol characters, not successful action
+training. These results supersede the earlier Persian-fixture measurements.
+
+## Terminology, presentation, workload and metadata
+
+The shared glossary/formatter policy remains in place. A few CLI milestone
+titles and the generation warning now use the established Character/Tokenizer/
+Embedding/Attention terminology. Explanatory Persian synonyms in UI prose are
+not treated as accidental data. No new canonical-term conflict was found in
+the edited material; this is not a claim that every stylistic synonym is banned.
+
+The existing RTL prose and isolated LTR code/math treatment were preserved.
+Browser inspection exposed one real ordering issue in lesson42: linking the
+last word of “Generative Pre-trained Transformer” split the English run inside
+RTL prose. A surrounding `bdi dir="ltr"` now keeps the complete phrase in order,
+with its glossary link intact; an editorial regression covers the rendered
+markup. No CSS redesign was warranted. Final observations are recorded in the
+validation section below; structural/editorial checks cover the full build.
+
+The time-estimation method is unchanged: reading, reasoning, coding, experiment
+and checkpoint work are accounted for, rather than only word count. Current
+totals remain 5960–10460 minutes, displayed with the existing rounding as
+99–174.5 hours. Optional reviews are excluded to avoid double-counting; these
+are editorial planning ranges, not measured learner times.
+
+`.openai/hosting.json` binds the existing Sites project to static output `dist`.
+It is deployment metadata, not model-training configuration or an API secret.
+It was preserved without changing project identity, permissions or publishing.
+No dependency installation, environment reset, unrelated-file deletion, public
+deployment or Git history rewrite was needed.
+
+## Final validation evidence
+
+Environment: Windows, Python 3.11.0, PyTorch 2.14.0+cpu, the existing project
+virtual environment. No GPU or remote-host deployment was tested.
+
+| Gate actually run | Result |
+| --- | --- |
+| `python -B -m unittest discover -s tests -v` | **98 passed**, including all standalone lesson examples, all 23 milestones, exact resume, real SFT/controller boundaries and 7 interactive replay tests. |
+| `python -B -m mini_gpt.smoke_test` | **Passed**. |
+| `python -B -m unittest discover -s tests/site -v` | **75 passed**, including AST demo-data checks, the new GPT phrase-direction regression, navigation, terminology, workload, launcher and release safety. |
+| `python -B -m unittest discover -s tests/notebooks -v` | **5 passed**: cleanup after success, execution failure, channel-stop failure, shutdown failure and startup failure. |
+| JavaScript syntax | **5 files passed** `node --check`. |
+| JavaScript behavior | **29 passed**: 9 math/schema and 20 journal tests. |
+| Notebook schema/source/mapping | **104 passed**, 92 dedicated labs + 12 reviews; 1:1 lesson mapping; 879 authored code cells and 1107 Markdown cells; no saved outputs. |
+| Final fresh-kernel student run | **104/104 passed**, 983 executed cells including 104 appended completion assertions, 11 figures; 306.33 seconds summed per-notebook execution. |
+| Final fresh-kernel solution run | **104/104 passed**, 983 executed cells including 104 appended completion assertions, 11 figures; 326.94 seconds summed per-notebook execution. |
+| Full HTML/asset/source validation | **614 HTML pages**, 92 lessons, 49 chapters, 15 parts, 107 progress units;**72,131 links/assets**,**106 Python files compile**; no broken local targets, duplicate IDs or remote display assets. |
+| Curriculum/workload inventory | **Passed**; 15 checkpoints, 268 glossary entries, 76 legacy lesson URLs and 5960–10460 total minutes. |
+
+The final notebook reports are `.verification/continuity-clean-student.json`
+and `.verification/continuity-clean-solutions.json`; both record every input
+notebook's SHA-256, interpreter, execution count and figures. All 208 hashes
+match the final authored files. The learner run asserts unfinished exercise and
+repair statuses are False; the solution run asserts True. Neither writes
+solutions or execution outputs back into source notebooks. The earlier complete
+208-run reports and 104 HTML notebook renders are retained as additional evidence.
+Actual SFT/controller results and source hashes are in
+`.verification/continuity-experiments.json`, reproducible with the adjacent
+`continuity_experiments.py` script.
+
+The first complete run passed notebook assertions but emitted intermittent
+`DELIM not in msg_list` messages. Read-only process inspection found a genuine
+verifier leak: an explicitly supplied KernelManager meant nbclient did not
+stop its separate client channels. Hundreds of client threads and sockets
+accumulated. `tools/verify_notebooks.py` now stops channels before shutdown and
+always cleans manager resources, including exception paths. A three-kernel
+measurement stayed constant after warmup (6 native threads, 2 Python threads,
+4 internal event-loop sockets, no surviving kernels). All 208 final executions
+then completed with **zero Tracebacks or DELIM messages** in their saved logs.
+Stale heartbeat/port reuse is a plausible cause of the earlier delimiter
+messages, not a proven packet-level diagnosis. The installed kernel's warning
+about unencrypted TCP transport remains; inspected connections were loopback
+`127.0.0.1`. No dependency or security-setting change was made or hidden.
+
+Browser QA used the current local site and actual JupyterLab: lesson23's shifted
+pairs/formulas and notebook handoff, lesson42's architecture table and corrected
+GPT expansion, lesson65a's English questions within Persian prose, lesson77's
+reference code, and lesson84's system diagram. Persian text remained RTL,
+code/math LTR, with no page-wide overflow at the inspected 1280px viewport.
+The notebook opened with the project kernel, readable Markdown, ASCII setup
+and unfinished TODOs; only the QA-created kernel was stopped, without saving or
+altering learner content. No exhaustive device/browser matrix is claimed.
+
+The final documentation-inclusive `tools.prepare_release` run passed all gates
+and produced **727 public files**. The deployment ZIP, `dist`, and every entry
+in `release/manifest.json` were independently compared by SHA-256; the learning
+download also contains the final documentation, runtime, replay tests and labs.
+`release/book-site.zip` SHA-256:
+`7d7f4cd31bc5189e52bcc3a776df818813f69d5c297e2ff081620440564d3f91`.
+The final build log is `.verification/continuity-final-release.log`.
+Nothing was published. Educational limitations remain explicit:
+tiny SFT does not generalize reliably, real model action formatting fails in the
+observed short run, production-scale serving/security are out of scope, and
+time estimates have not been validated in a learner study.
+
+---
+
+# Historical expansion report: complete model-to-system journey — 2026-09-23
+
+This is the preceding expansion report, retained as history. Its numerical
+experiments describe the fixtures of that pass. The repository's `persian-educational-writer`
 skill guided the new Persian explanations: concrete failure first, a small
 experiment next, and an explicit boundary between a model and its surrounding
 software. The existing foundation was reviewed and preserved, not restarted.

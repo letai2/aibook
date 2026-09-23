@@ -112,11 +112,11 @@ Lesson("67-rag",10,"از ادامه‌دهنده به دستیار","چرا آو
 "رتبه‌بندی ساده محدودیت دارد: هم‌معنی‌ها را نمی‌فهمد و واژه‌های مشترکِ کم‌اهمیت ممکن است رتبه‌بندی را گمراه کنند. هدف جداکردن retrieval از generation است؛ مدل کوچک را بی‌دلیل دستیار اسناد معرفی نکنید.",
 "کدام مشکلات با بهبود بازیابی حل می‌شوند و کدام به خود مدل یا دادهٔ آموزشی مربوط‌اند؟",
 "گام بعدی پروژه، تبدیل یادداشت‌های درس به شاهد قابل بازیابی است. خروجی این کد زمینه است، نه پاسخ Mini-GPT؛ این مرز را در گزارش حفظ کنید.",
-code="""documents = ["مدل با داده آموزش می‌بیند", "باران امروز شدید است", "داده و خطا در آموزش مهم‌اند"]
-question = "مدل با چه داده آموزش می‌بیند"
+code="""documents = ["a model learns from training data", "rain is heavy today", "data and loss matter during training"]
+question = "what training data does a model use"
 words = set(question.split())
 ranked = sorted(documents,key=lambda text:len(words & set(text.split())),reverse=True)
-context = "سند: " + ranked[0] + "\\nپرسش: " + question
+context = "Document: " + ranked[0] + "\\nQuestion: " + question
 print(context)
 """,
 review="یک هفته بعد، به نسخهٔ صفر برگردید و تفاوت توان آن و مدل نهایی را با سه مثال و شکل تنسورها توضیح دهید."),

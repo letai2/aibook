@@ -24,12 +24,12 @@ class InspectionScheduleTests(unittest.TestCase):
     def setUp(self):
         torch.set_num_threads(1)
         torch.manual_seed(42)
-        self.tokenizer = CharacterTokenizer.from_text("سلام مدل ")
+        self.tokenizer = CharacterTokenizer.from_text("hello model ")
         self.model = MiniGPT(ModelConfig(self.tokenizer.vocab_size, 8, 16, 2, 2, .2))
 
     def test_shared_trace_matches_forward_and_attention_math(self):
         self.model.eval()
-        ids = torch.tensor([self.tokenizer.encode("سلام")])
+        ids = torch.tensor([self.tokenizer.encode("hello")])
         with torch.no_grad():
             ordinary = self.model(ids)[0]
             trace = {}
@@ -45,7 +45,7 @@ class InspectionScheduleTests(unittest.TestCase):
 
     def test_inspector_real_logits_strict_json_shapes_and_mode(self):
         self.model.train()
-        report = inspect_model(self.model, self.tokenizer, "سلام مدل سلام", layer=1, head=1,
+        report = inspect_model(self.model, self.tokenizer, "hello model hello", layer=1, head=1,
                                max_tokens=4, generate_tokens=4, greedy=True)
         self.assertTrue(self.model.training)
         self.assertTrue(report["input"]["truncated"])
@@ -68,7 +68,7 @@ class InspectionScheduleTests(unittest.TestCase):
                         {"generate_tokens": 0, "temperature": 0}):
             self.model.train()
             with self.assertRaises(ValueError):
-                inspect_model(self.model, self.tokenizer, "سلام", **options)
+                inspect_model(self.model, self.tokenizer, "hello", **options)
             self.assertTrue(self.model.training)
 
     def test_inspection_export_matches_checkpoint_and_refuses_overwrite(self):
@@ -78,7 +78,7 @@ class InspectionScheduleTests(unittest.TestCase):
             optimizer = torch.optim.AdamW(self.model.parameters())
             save_checkpoint(checkpoint, self.model, self.tokenizer, optimizer, 2, {"test": True},
                             torch.Generator().manual_seed(1), 2.0)
-            args = inspection_parser().parse_args(["--checkpoint", str(checkpoint), "--prompt", "سلام",
+            args = inspection_parser().parse_args(["--checkpoint", str(checkpoint), "--prompt", "hello",
                                                    "--output", str(root / "trace.json"), "--greedy"])
             with contextlib.redirect_stdout(io.StringIO()):
                 document = export_checkpoint(args)
@@ -117,7 +117,7 @@ class InspectionScheduleTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory, contextlib.redirect_stdout(io.StringIO()):
             root = Path(directory)
             corpus = root / "corpus.txt"
-            corpus.write_text("سلام مدل سلام دنیا " * 10, encoding="utf-8")
+            corpus.write_text("hello model hello world " * 10, encoding="utf-8")
             parser = build_parser()
             common = ["--text", str(corpus), "--context-length", "4", "--embedding-dim", "8",
                       "--num-heads", "2", "--num-layers", "1", "--batch-size", "2", "--threads", "1",

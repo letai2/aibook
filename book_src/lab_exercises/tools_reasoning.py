@@ -217,12 +217,24 @@ EXERCISES = {
         tied = len(winners) != 1
         return {'answer':None if tied else winners[0],'count':maximum,'total':len(answers),'tied':tied}
     ''',
-    vary="فقط تعداد Candidateهای دیده‌شده از یک فهرست ثابت را زیاد کنید. شمار نمونه را کنار پاسخ گزارش کنید؛ بهترشدن یا بدترشدن این مثال دستی، ادعای عمومی دربارهٔ Sampling مدل نیست.",
+    vary="فقط تعداد Candidateهای دیده‌شده از یک فهرست ثابت را زیاد کنید. پاسخ پرتکرار را با انتخابِ مبتنی بر Verifier مقایسه کنید و شمار فراخوانی‌های واقعی آن را هم گزارش کنید. این پیاده‌سازی حتی پاسخ‌های تکراری را دوباره بررسی می‌کند. بهترشدن یا بدترشدن این مثال دستی، ادعای عمومی دربارهٔ Sampling مدل نیست.",
     vary_code='''
+    from mini_gpt.reasoning import select_verified
     ordered_candidates = [85,135,135,85,85]
+    candidate_reports = []
     for budget in (1,3,5):
-        result = majority_answer(ordered_candidates[:budget])
-        print('candidate budget, selected answer, votes:',budget,result.answer,result.count)
+        visible_candidates = ordered_candidates[:budget]
+        result = majority_answer(visible_candidates)
+        verifier_inputs = []
+        def counted_verifier(answer):
+            verifier_inputs.append(answer)
+            return verify_study_answer([25,20],3,answer)
+        verified_answer = select_verified(visible_candidates,counted_verifier)
+        report = {'candidate_budget':budget,'voted_answer':result.answer,
+                  'votes':result.count,'verified_answer':verified_answer,
+                  'verifier_calls':len(verifier_inputs)}
+        candidate_reports.append(report)
+        print(report)
     ''',
     debug="کد خراب رأی را با Verification یکی گرفته است. تابع `choose_checked(answers,verifier)` فقط یک پاسخ متمایزِ پذیرفته‌شده را برگرداند؛ در نبود پاسخ یا پذیرش چند عدد متفاوت، `None` بدهد. تکرارِ یک پاسخ پذیرفته‌شده ابهام تازه‌ای نیست.",
     bug_code='''

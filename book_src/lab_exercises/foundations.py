@@ -99,7 +99,7 @@ for mapping in [{"science": 2, "sport": 7}, {"science": 100, "sport": 1}]:
     print(ids, "same topic:", ids[0] == ids[2], "ID distance:", abs(ids[0]-ids[1]))
 ''',
         debug='برای ساختن هدف از خود متن، جفت‌ها باید همسایه باشند. نسخهٔ خراب هر حرف را با خودش جفت می‌کند. تابع `next_pairs` را برای دنبالهٔ دلخواه اصلاح کنید.',
-        bug_code='''text = "بابا"
+        bug_code='''text = "baba"
 wrong_pairs = list(zip(text, text))
 print("Broken input/target pairs:", wrong_pairs)
 assert all(current == target for current, target in wrong_pairs)
@@ -108,7 +108,7 @@ assert all(current == target for current, target in wrong_pairs)
     # TODO: return adjacent (current, next) pairs
     return None
 ''',
-        fix_check=_check('next_pairs("بابا")', 'assert result == [("ب", "ا"), ("ا", "ب"), ("ب", "ا")]\nassert next_pairs([1, 2, 3]) == [(1, 2), (2, 3)]\nassert next_pairs("x") == []', True),
+        fix_check=_check('next_pairs("baba")', 'assert result == [("b", "a"), ("a", "b"), ("b", "a")]\nassert next_pairs([1, 2, 3]) == [(1, 2), (2, 3)]\nassert next_pairs("x") == []', True),
         fix_solution='''def next_pairs(sequence):
     return list(zip(sequence, sequence[1:]))
 ''',
@@ -120,7 +120,7 @@ assert all(current == target for current, target in wrong_pairs)
         goal='نگاشت قابل برگشت کاراکتر و شناسه بسازید و خرابی ترتیب واژگان را پیدا کنید.',
         prerequisite='درس‌های `01-model` و `01-learning`؛ دیکشنری و فهرست در Python.',
         predict='اگر فهرست واژگان را پس از Encoding برعکس کنیم ولی IDها را ثابت بگذاریم، طول متن بازگشتی تغییر می‌کند یا محتوا؟',
-        setup='''text = "سلام hello!"
+        setup='''text = "hello world!"
 vocabulary = sorted(set(text))
 to_id = {char: index for index, char in enumerate(vocabulary)}
 print("Vocabulary:", list(enumerate(vocabulary)))
@@ -140,7 +140,7 @@ assert decode(result, vocabulary) == text
 assert encode("", to_id) == [] and decode([], vocabulary) == ""
 assert encode("abba", {"a": 5, "b": 9}) == [5, 9, 9, 5]
 try:
-    encode("ژ", to_id)
+    encode("Z", to_id)
 except KeyError:
     pass
 else:
@@ -156,18 +156,18 @@ def decode(ids, vocabulary):
     print(repr(value), len(value), [ord(char) for char in value])
 ''',
         debug='جدول Encoding و فهرست Decoding باید یک ترتیب داشته باشند. تابع `mapping_for` را طوری بنویسید که ترتیب فهرست ورودی را حفظ کند، نه اینکه مستقلاً آن را مرتب کند.',
-        bug_code='''saved_vocabulary = ["ب", "ا"]
+        bug_code='''saved_vocabulary = ["b", "a"]
 wrong_mapping = {char: i for i, char in enumerate(sorted(saved_vocabulary))}
-ids = [wrong_mapping[char] for char in "با"]
+ids = [wrong_mapping[char] for char in "ba"]
 wrong_text = "".join(saved_vocabulary[i] for i in ids)
-print("Original: با; broken round trip:", wrong_text)
-assert wrong_text != "با"
+print("Original: ba; broken round trip:", wrong_text)
+assert wrong_text != "ba"
 ''',
         fix='''def mapping_for(vocabulary):
     # TODO: keep the supplied order
     return None
 ''',
-        fix_check=_check('mapping_for(["ب", "ا"])', 'assert result == {"ب": 0, "ا": 1}\nassert mapping_for(["z", "a", "q"]) == {"z": 0, "a": 1, "q": 2}', True),
+        fix_check=_check('mapping_for(["b", "a"])', 'assert result == {"b": 0, "a": 1}\nassert mapping_for(["z", "a", "q"]) == {"z": 0, "a": 1, "q": 2}', True),
         fix_solution='''def mapping_for(vocabulary):
     return {char: index for index, char in enumerate(vocabulary)}
 ''',
@@ -178,7 +178,7 @@ assert wrong_text != "با"
         title='حافظهٔ یک‌کاراکتری را آزمایش کنید',
         goal='جدول انتقال را خودتان بسازید و با نسخهٔ واقعی شمارشی مقایسه کنید.',
         prerequisite='درس `02-token` و دیکشنری؛ Sampling و Seed را در درس جاری بخوانید.',
-        predict='آیا دو متن آغازین متفاوت که هر دو به «م» ختم می‌شوند، با Seed یکسان ادامه‌های متفاوتی می‌گیرند؟',
+        predict='آیا دو متن آغازین متفاوت که هر دو به `m` ختم می‌شوند، با Seed یکسان ادامه‌های متفاوتی می‌گیرند؟',
         setup='''from collections import Counter, defaultdict
 from mini_gpt.stages.v0 import transition_counts, generate
 ids = [1, 0, 1, 0]
@@ -884,7 +884,7 @@ print("Vocabulary:", list(enumerate(vocabulary)))
     # TODO: encode known characters and map unknown ones to zero
     return None
 ''',
-        check=_check('encode_unknown(text, vocabulary)', 'assert result == tokenizer.encode(text)\nassert encode_unknown("ژچ", vocabulary) == [0, 0]\nassert encode_unknown("", vocabulary) == []\nassert encode_unknown("با", ["<|unk|>", "ب", "ا"]) == [1, 2]\nassert tokenizer.decode(result) == text'),
+        check=_check('encode_unknown(text, vocabulary)', 'assert result == tokenizer.encode(text)\nassert encode_unknown("ژچ", vocabulary) == [0, 0]\nassert encode_unknown("", vocabulary) == []\nassert encode_unknown("ba", ["<|unk|>", "b", "a"]) == [1, 2]\nassert tokenizer.decode(result) == text'),
         solution='''def encode_unknown(text, vocabulary):
     mapping = {token: index for index, token in enumerate(vocabulary)}
     return [mapping.get(char, 0) for char in text]
@@ -922,15 +922,15 @@ assert len(changed) == len(vocabulary) and changed != vocabulary
         predict='با ادغام جفت `a,a` در `aaaa`، چند قطعهٔ `aa` به دست می‌آید؟ آیا می‌توان هر سه جفت هم‌پوشان را نگه داشت؟',
         setup='''from collections import Counter
 tokens = list("aaaa")
-words = [("کار", 2), ("کارگر", 1), ("گرم", 1)]
-print("Initial pieces:", tokens)
+words = [("low", 2), ("lower", 1), ("warm", 1)]
+print("Initial pieces:", tokens, "Training words and counts:", words)
 ''',
         task='تابع `merge(tokens,pair)` از چپ به راست حرکت کند؛ دو قطعهٔ متناظر با `pair` را بچسباند و هر قطعهٔ ورودی را فقط یک بار مصرف کند. ورودی را تغییر ندهید.',
         starter='''def merge(tokens, pair):
     # TODO: merge non-overlapping adjacent pairs
     return None
 ''',
-        check=_check('merge(tokens, ("a", "a"))', 'assert result == ["aa", "aa"]\nassert merge(list("aaa"), ("a", "a")) == ["aa", "a"]\nassert merge(["کا", "ر", "گ", "ر"], ("کا", "ر")) == ["کار", "گ", "ر"]\nassert merge(["a", "b"], ("x", "y")) == ["a", "b"]\nassert tokens == list("aaaa")'),
+        check=_check('merge(tokens, ("a", "a"))', 'assert result == ["aa", "aa"]\nassert merge(list("aaa"), ("a", "a")) == ["aa", "a"]\nassert merge(["lo", "w", "e", "r"], ("lo", "w")) == ["low", "e", "r"]\nassert merge(["a", "b"], ("x", "y")) == ["a", "b"]\nassert tokens == list("aaaa")'),
         solution='''def merge(tokens, pair):
     output, index = [], 0
     while index < len(tokens):
@@ -942,10 +942,11 @@ print("Initial pieces:", tokens)
             index += 1
     return output
 ''',
-        vary='فقط فراوانی «گرم» را از یک به ده تغییر دهید. شمارش جفت‌ها را تازه بسازید و ببینید نخستین انتخاب چه تغییری می‌کند؛ قانون تساوی ثابت است.',
+        vary='فقط فراوانی `warm` را از یک به ده تغییر دهید. شمارش جفت‌ها را تازه بسازید و ببینید نخستین انتخاب چه تغییری می‌کند؛ قانون تساوی ثابت است.',
         vary_code='''for frequency in [1, 10]:
     counts = Counter()
-    for word, count in [("کار", 2), ("کارگر", 1), ("گرم", frequency)]:
+    for word, original_count in words:
+        count = frequency if word == "warm" else original_count
         for pair in zip(word, word[1:]):
             counts[pair] += count
     chosen = min(counts, key=lambda pair: (-counts[pair], pair))
@@ -992,10 +993,17 @@ assert pieces == ["ab", "c"]
         prerequisite='`20-loader` و `21-tokenizer`؛ برش Tensor.',
         predict='از پنج ID و `T=3` چند نمونه می‌سازیم؟ آخرین هدفِ آخرین نمونه از کدام خانهٔ دنبالهٔ خام می‌آید؟',
         setup='''import torch
+from mini_gpt.tokenizer import CharacterTokenizer
 from mini_gpt.dataset import NextTokenDataset
-ids, T = [1, 2, 3, 4, 5], 3
+text, T = "abcde", 3
+tokenizer = CharacterTokenizer.from_text(text)
+ids = tokenizer.encode(text)
+assert ids == [1, 2, 3, 4, 5]  # ID zero is reserved for Unknown.
 reference = NextTokenDataset(ids, T)
-print("Raw IDs:", ids, "Window length:", T)
+first_x, first_y = reference[0]
+print("Raw text:", text, "IDs:", ids, "Window length:", T)
+print("First input:", tokenizer.decode(first_x.tolist()),
+      "First target:", tokenizer.decode(first_y.tolist()))
 ''',
         task='تابع `make_windows(ids,T)` فهرست جفت‌های `(x,y)` را با `list`های Python بسازد. `T` باید `int` مثبت و طول `ids` بیشتر از `T` باشد؛ در غیر این صورت `ValueError` بدهید. هر هدف دقیقاً یک خانه جلوتر است.',
         starter='''def make_windows(ids, T):

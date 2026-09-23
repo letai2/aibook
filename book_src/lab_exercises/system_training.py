@@ -18,7 +18,7 @@ torch.set_num_threads(1)
 experiment = run_tiny_experiment(pretrain_steps=20, sft_steps=0)
 base, tokenizer = experiment.base, experiment.tokenizer
 print('base measurements:', experiment.reports['base_train'])
-print('The targets are one character: ب=yes, ن=no. This is not a general assistant.')
+print('The targets are one character: y=yes, n=no. This is not a general assistant.')
 """,
         "task": "تابع `fine_tune_copy(base, tokenizer, examples, steps, rate)` یک `deepcopy` از مدل بگیرد و با AdamW، نرخ `rate` و `weight_decay=0.0` آموزش دهد. نمونه‌ها غیرخالی‌اند؛ در گام `s` نمونهٔ `s % len(examples)` را با `encode_example` و `train_response_step` مصرف کنید. مدل تازه را برگردانید؛ حتی با `steps=0` باید مستقل باشد. دادهٔ Held-out وارد تابع نشود.",
         "starter": """def fine_tune_copy(base, tokenizer, examples, steps, rate):
@@ -40,8 +40,8 @@ print('The targets are one character: ب=yes, ن=no. This is not a general assis
     assert zero is not base and zero.token_embedding.weight is not base.token_embedding.weight
     assert all(torch.equal(zero.state_dict()[n],v) for n,v in base.state_dict().items())
     # The supplied data must be used: compare two opposite labels for one prompt.
-    a = (InstructionExample(TRAIN_EXAMPLES[0].instruction,'ب'),)
-    b = (InstructionExample(TRAIN_EXAMPLES[0].instruction,'ن'),)
+    a = (InstructionExample(TRAIN_EXAMPLES[0].instruction,'y'),)
+    b = (InstructionExample(TRAIN_EXAMPLES[0].instruction,'n'),)
     first = fine_tune_copy(base,tokenizer,a,3,0.01)
     second = fine_tune_copy(base,tokenizer,b,3,0.01)
     assert not torch.equal(first.language_model_head.weight,second.language_model_head.weight)
@@ -80,7 +80,7 @@ print('already a training question:',TRAIN_EXAMPLES[0].instruction)
         return False
     assert result is True
     assert prompts_disjoint(TRAIN_EXAMPLES,TRAIN_EXAMPLES) is False
-    altered = [InstructionExample(TRAIN_EXAMPLES[0].instruction,'ن')]
+    altered = [InstructionExample(TRAIN_EXAMPLES[0].instruction,'n')]
     assert prompts_disjoint(TRAIN_EXAMPLES,altered) is False
     assert prompts_disjoint([],HELDOUT_EXAMPLES) is True
     return True
@@ -99,8 +99,7 @@ print('PASS' if repair_complete else 'INCOMPLETE: prompts_disjoint')
         "goal": "نرخ موفقیت مشترک و میانگین معیارهای قابل اعمال را جدا حساب کنید؛ Regressionها را با نام نگه دارید.",
         "prerequisite": "خروجی `AssistantResult`، تفاوت Exact match با پشتیبانی معنایی، و سناریوی ثابت در برابر توان مدل.",
         "predict": "اگر یک مورد پاسخ درست ولی ابزار غلط داشته باشد، آیا `answer_exact` و `passed` باید یکسان باشند؟",
-        "setup": """from copy import deepcopy
-from dataclasses import replace
+        "setup": """from dataclasses import replace
 from mini_gpt.evaluation_system import (course_fixture_suite,evaluate_cases,score_result)
 
 cases,run_case = course_fixture_suite()
@@ -271,7 +270,7 @@ experiment = run_tiny_experiment(pretrain_steps=2,sft_steps=4)
 prompt = format_prompt(TRAIN_EXAMPLES[0].instruction)
 before = InferenceSession(experiment.tuned,experiment.tokenizer).request(prompt)
 with tempfile.TemporaryDirectory(prefix='aibook-deploy-') as directory:
-    path = Path(directory)/'مدل تمرین.pt'
+    path = Path(directory)/'practice-model.pt'
     save_instruction_bundle(path,experiment.tuned,experiment.tokenizer)
     restored,restored_tokenizer = load_instruction_bundle(path)
 after = InferenceSession(restored,restored_tokenizer,RequestLimits(128,8)).request(prompt)
@@ -313,8 +312,8 @@ for count in (1,4,9):
         print(count,'expected request rejection:',error)
 """,
         "debug": "نسخهٔ خراب Vocabularyها را به `set` تبدیل می‌کند؛ با این کار جابه‌جایی IDها پنهان می‌شود. `compatible_vocabulary(left_tokens,right_tokens)` فقط برای فهرست‌های هم‌ترتیب True بدهد. شباهت مجموعهٔ کاراکترها کافی نیست.",
-        "bug_code": """left_tokens = ['<|unk|>','ا','ب']
-right_tokens = ['<|unk|>','ب','ا']
+        "bug_code": """left_tokens = ['<|unk|>','a','y']
+right_tokens = ['<|unk|>','y','a']
 print('wrong unordered compatibility:',set(left_tokens)==set(right_tokens))
 print('ID 1 now means:',left_tokens[1],right_tokens[1])
 """,
@@ -328,7 +327,7 @@ print('ID 1 now means:',left_tokens[1],right_tokens[1])
         return False
     assert result is False
     assert compatible_vocabulary(left_tokens,list(left_tokens)) is True
-    assert compatible_vocabulary(left_tokens,left_tokens+['پ']) is False
+    assert compatible_vocabulary(left_tokens,left_tokens+['c']) is False
     assert compatible_vocabulary(experiment.tokenizer.id_to_token,restored_tokenizer.id_to_token) is True
     return True
 repair_complete = test_repair()
@@ -363,7 +362,7 @@ print('Actual proposals:',[e['text'] for e in actual.events if e['state']=='prop
 cases,runner = course_fixture_suite()
 print('SCRIPTED integration fixtures:',evaluate_cases(cases,runner))
 memory = MemoryStore()
-memory.upsert(MemoryRecord('style','توضیح کوتاه','explicit exercise preference; no personal data'))
+memory.upsert(MemoryRecord('style','brief explanation','explicit exercise preference; no personal data'))
 print('Explicit memory records:',memory.records())
 """,
         "task": "`run_checked_case(question, proposals, expected_answer, chunks, memory, memory_keys)` یک `ScriptedFixture` تازه از `proposals` بسازد و آن را به `run_assistant` بدهد. سندها، Store و فقط کلیدهای مجازِ `memory_keys` را عبور دهید. تابع وارسی فقط برابری دقیق متن با `expected_answer` را بررسی کند؛ خروجی همان `AssistantResult` باشد. این داور محدود، صحت عمومی یا پشتیبانی معنایی همهٔ ادعاها را نمی‌سنجد.",
@@ -375,7 +374,7 @@ print('Explicit memory records:',memory.records())
     proposals = [
         {'action':'tool','name':'add','arguments':{'a':2,'b':3}},
         {'action':'finish','answer':'5','citations':[]}]
-    result = run_checked_case('دو به علاوه سه؟',proposals,'5',[],memory,['style'])
+    result = run_checked_case('Two plus three?',proposals,'5',[],memory,['style'])
     if result is None:
         return False
     assert result.status == 'finished' and result.verified
@@ -383,12 +382,12 @@ print('Explicit memory records:',memory.records())
     assert 'memory:style' in result.context_ids
     assert 'ScriptedFixture' in result.backend
     wrong = [{'action':'finish','answer':'6','citations':[]}]
-    rejected = run_checked_case('دو به علاوه سه؟',wrong,'5',[],memory,[])
+    rejected = run_checked_case('Two plus three?',wrong,'5',[],memory,[])
     assert rejected.status == 'verification_failed' and rejected.answer == '6'
     assert 'memory:style' not in rejected.context_ids
     invalid = [{'action':'tool','name':'shell','arguments':{'a':2,'b':3}}]
-    assert run_checked_case('اجرا',invalid,'5',[],memory,[]).status == 'invalid_action'
-    again = run_checked_case('دو به علاوه سه؟',proposals,'5',[],memory,[])
+    assert run_checked_case('Run it',invalid,'5',[],memory,[]).status == 'invalid_action'
+    again = run_checked_case('Two plus three?',proposals,'5',[],memory,[])
     assert again.status == 'finished'  # Fresh fixture cursor on every call.
     assert len(memory.records()) == 1
     return True
@@ -402,7 +401,7 @@ print('PASS' if exercise_complete else 'INCOMPLETE: run_checked_case')
     return run_assistant(question,backend,chunks=chunks,memory=memory,memory_keys=memory_keys,verify_answer=verify)
 """,
         "vary": "دو Store مستقل از رکوردهای اولیه بسازید و فقط در یکی رکورد را حذف کنید؛ حافظهٔ اصلی تمرین دست‌نخورده بماند. در دو اجرای Fixture با پاسخ ثابت، شناسه‌های Context را مقایسه کنید؛ ثابت‌ماندن پاسخ ازپیش‌نوشته‌شده شاهد بی‌اثر بودن حافظه بر یک مدل آموخته نیست.",
-        "vary_code": """fixed = [{'action':'finish','answer':'نمونه','citations':[]}]
+        "vary_code": """fixed = [{'action':'finish','answer':'Example','citations':[]}]
 kept_store = MemoryStore(memory.records())
 removed_store = MemoryStore(memory.records())
 with_memory = run_assistant('Checkpoint',ScriptedFixture(fixed),chunks=chunks,memory=kept_store,memory_keys=['style'])

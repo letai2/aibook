@@ -89,7 +89,7 @@ class SystemTrainingTests(unittest.TestCase):
     def test_eval_is_token_weighted_restores_mode_and_does_not_update(self):
         model = deepcopy(self.experiment.tuned).train()
         tokenizer = self.experiment.tokenizer
-        examples = (TRAIN_EXAMPLES[0], InstructionExample(TRAIN_EXAMPLES[1].instruction, "نب"))
+        examples = (TRAIN_EXAMPLES[0], InstructionExample(TRAIN_EXAMPLES[1].instruction, "ny"))
         before = {key: value.clone() for key, value in model.state_dict().items()}
         report = evaluate_instructions(model, tokenizer, examples, answer_tokens=1)
         self.assertTrue(model.training)
@@ -136,6 +136,17 @@ class SystemTrainingTests(unittest.TestCase):
             torch.save(payload, wrong)
             with self.assertRaises(ValueError):
                 load_instruction_bundle(wrong)
+
+    def test_training_sequence_metadata_counts_only_visited_examples(self):
+        # SFT cycles from the first example; unvisited longer examples do not count.
+        for steps in (0, 1, 2, len(TRAIN_EXAMPLES), len(TRAIN_EXAMPLES) + 1):
+            experiment = run_tiny_experiment(pretrain_steps=1, sft_steps=steps)
+            visited = TRAIN_EXAMPLES[:min(steps, len(TRAIN_EXAMPLES))]
+            lengths = [len(format_prompt(e.instruction) + e.answer) - 1 for e in visited]
+            self.assertEqual(experiment.metadata['largest_training_sequence'], max([32] + lengths))
+        first_length = len(format_prompt(TRAIN_EXAMPLES[0].instruction) + TRAIN_EXAMPLES[0].answer) - 1
+        last_length = len(format_prompt(TRAIN_EXAMPLES[-1].instruction) + TRAIN_EXAMPLES[-1].answer) - 1
+        self.assertGreater(last_length, max(32, first_length))
 
     def test_opt_in_controller_path_calls_real_trained_model_without_fallback(self):
         from mini_gpt.assistant import MiniGPTBackend, ScriptedFixture, run_assistant

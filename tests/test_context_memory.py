@@ -58,15 +58,23 @@ class ContextTests(unittest.TestCase):
 
 
 class RetrievalTests(unittest.TestCase):
-    def test_chunk_boundaries_overlap_and_exact_unicode_offsets(self):
-        document = Document("guide", "  الف\tب پ ت ث ج چ  ")
+    def test_chunk_boundaries_overlap_and_exact_offsets(self):
+        document = Document("guide", "  alpha\tb c d e f g  ")
         chunks = chunk_document(document,chunk_words=4,overlap_words=1)
         self.assertEqual([chunk.text.split() for chunk in chunks],
-                         [["الف","ب","پ","ت"],["ت","ث","ج","چ"]])
+                         [["alpha","b","c","d"],["d","e","f","g"]])
         self.assertTrue(all(document.text[c.start:c.end] == c.text for c in chunks))
         self.assertEqual(chunks[0].start,2)
         self.assertEqual(len({c.id for c in chunks}),len(chunks))
         self.assertEqual(chunk_document(Document("empty"," \t"),chunk_words=4,overlap_words=1),[])
+
+    def test_chunk_unicode_offsets_count_codepoints_not_utf8_bytes(self):
+        document = Document("unicode", "  الف\tب  ")
+        chunks = chunk_document(document, chunk_words=1, overlap_words=0)
+        self.assertEqual([(c.start, c.end, c.text) for c in chunks],
+                         [(2, 5, "الف"), (6, 7, "ب")])
+        self.assertTrue(all(document.text[c.start:c.end] == c.text for c in chunks))
+        self.assertNotEqual(len(document.text[:chunks[0].end].encode('utf-8')), chunks[0].end)
 
     def test_chunk_last_short_piece_and_invalid_stride(self):
         chunks = chunk_document(Document("x","a b c d e"),chunk_words=3,overlap_words=0)
@@ -103,15 +111,15 @@ class RetrievalTests(unittest.TestCase):
 
     def test_count_vector_index_has_shared_axes_and_no_synonym_claim(self):
         chunks = [chunk_document(Document(i,text),chunk_words=4,overlap_words=0)[0]
-                  for i,text in [("a","ذخیره ذخیره"),("b","ثبت ذخیره")]]
+                  for i,text in [("a","save save"),("b","record save")]]
         index = VectorIndex(chunks)
-        self.assertEqual(index.vocabulary,tuple(sorted(["ثبت","ذخیره"])))
-        self.assertEqual([h.chunk.document_id for h in index.search("ذخیره")],["a","b"])
-        self.assertEqual([h.chunk.document_id for h in index.search("ذخیره",min_score=0.9)],["a"])
-        self.assertEqual(index.search("نگهداری"),[])
+        self.assertEqual(index.vocabulary,tuple(sorted(["record","save"])))
+        self.assertEqual([h.chunk.document_id for h in index.search("save")],["a","b"])
+        self.assertEqual([h.chunk.document_id for h in index.search("save",min_score=0.9)],["a"])
+        self.assertEqual(index.search("keep"),[])
         self.assertEqual(VectorIndex([]).search("any"),[])
         with self.assertRaises(ValueError):
-            index.search("ذخیره",min_score=float("nan"))
+            index.search("save",min_score=float("nan"))
         with self.assertRaises(ValueError):
             VectorIndex(chunks+chunks)
 

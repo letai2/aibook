@@ -10,14 +10,14 @@ from mini_gpt.tokenizer import CharacterTokenizer
 
 
 def run() -> None:
-    text = "سلام دنیا! این یک متن کوچک برای آزمایش مدل است. " * 4
+    text = "Hello world! This is a tiny model test. " * 4
     tokenizer = CharacterTokenizer.from_text(text)
-    assert tokenizer.decode(tokenizer.encode("سلام")) == "سلام"
+    assert tokenizer.decode(tokenizer.encode("Hello")) == "Hello"
 
     with tempfile.TemporaryDirectory() as directory:
         path = Path(directory) / "tokenizer.json"
         tokenizer.save(path)
-        assert CharacterTokenizer.load(path).decode(tokenizer.encode("دنیا")) == "دنیا"
+        assert CharacterTokenizer.load(path).decode(tokenizer.encode("world")) == "world"
 
     config = ModelConfig(
         vocab_size=tokenizer.vocab_size,

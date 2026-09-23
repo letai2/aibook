@@ -19,7 +19,7 @@ def main(args):
     if not prompt_ids:
         raise ValueError("prompt must contain at least one character")
     if 0 in prompt_ids:
-        print("هشدار: بعضی نویسه‌های ورودی در واژگان آموزش وجود ندارند.")
+        print("هشدار: بعضی کاراکترهای ورودی در واژگان آموزش وجود ندارند.")
     inputs = torch.tensor([prompt_ids], dtype=torch.long, device=device)
     result = model.generate(inputs, args.tokens, args.temperature, args.top_k, args.top_p, args.greedy)
     print(tokenizer.decode(result[0].tolist()))

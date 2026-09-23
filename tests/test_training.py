@@ -13,7 +13,7 @@ class TrainingTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             corpus = root/"text.txt"
-            corpus.write_text("سلام دنیا و یک متن کوچک. " * 8, encoding="utf-8")
+            corpus.write_text("A tiny model learns from text. " * 8, encoding="utf-8")
             common = ["--text", str(corpus), "--context-length","4", "--embedding-dim","8",
                       "--num-heads","2", "--num-layers","1", "--dropout","0.1",
                       "--batch-size","2", "--eval-every","2", "--threads","1"]
@@ -29,7 +29,7 @@ class TrainingTests(unittest.TestCase):
             self.assertEqual(tokenizer_a.id_to_token, tokenizer_b.id_to_token)
             for key in a.state_dict():
                 self.assertTrue(torch.equal(a.state_dict()[key],b.state_dict()[key]), key)
-            ids = torch.tensor([tokenizer_a.encode("سلام")])
+            ids = torch.tensor([tokenizer_a.encode("tiny")])
             a.eval()
             b.eval()
             self.assertTrue(torch.equal(a(ids)[0], b(ids)[0]))

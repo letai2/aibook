@@ -511,14 +511,14 @@ torch.set_num_threads(1)
 with tempfile.TemporaryDirectory(prefix='aibook-run-') as directory:
     root = Path(directory)
     corpus = root/'corpus.txt'
-    corpus.write_text('مدل با داده آموزش می‌بیند. '*12,encoding='utf-8')
+    corpus.write_text('model learns from data. '*12,encoding='utf-8')
     path = train(build_parser().parse_args(['--text',str(corpus),'--output',str(root/'run'),
         '--steps','6','--eval-every','2','--context-length','8','--embedding-dim','8',
         '--num-heads','2','--num-layers','1','--batch-size','2','--threads','1','--device','cpu']))
     with (root/'run'/'metrics.csv').open(encoding='utf-8',newline='') as stream:
         rows = list(csv.DictReader(stream))
     model,tokenizer,payload = load_checkpoint(path)
-report = inspect_model(model,tokenizer,'مدل ',layer=0,head=0,max_tokens=8,generate_tokens=0,greedy=True)
+report = inspect_model(model,tokenizer,'model ',layer=0,head=0,max_tokens=8,generate_tokens=0,greedy=True)
 print('actual trace shapes:',report['shapes'])
 print('logged steps:',[row['step'] for row in rows])
 """,
@@ -549,7 +549,7 @@ print('PASS' if exercise_complete else 'INCOMPLETE: summarize_metrics')
 """,
         "vary": "فقط شمارهٔ Head در همان Checkpoint را عوض کنید؛ ورودی و Layer ثابت‌اند.",
         "vary_code": """for head in (0,1):
-    item = inspect_model(model,tokenizer,'مدل ',layer=0,head=head,max_tokens=8,generate_tokens=0,greedy=True)
+    item = inspect_model(model,tokenizer,'model ',layer=0,head=head,max_tokens=8,generate_tokens=0,greedy=True)
     print('head',head,'last attention row:',item['attention']['weights'][-1])
 """,
         "debug": "چسباندن گزارش دو اجرا ممکن است گام‌های تکراری یا عقب‌رفته بسازد. `valid_metrics(rows)` باید برای گام‌های مثبت و اکیداً صعودی و `validation_loss` متناهی `True` بدهد؛ گزارش خالی نامعتبر است.",
@@ -911,9 +911,9 @@ from mini_gpt.config import ModelConfig
 from mini_gpt.model import MiniGPT
 torch.set_num_threads(1)
 torch.manual_seed(7)
-tokenizer = CharacterTokenizer.from_text('مدل زبان ')
+tokenizer = CharacterTokenizer.from_text('model language ')
 model = MiniGPT(ModelConfig(tokenizer.vocab_size,5,8,2,1,0.0)).eval()
-text = 'مدل X زبان مدل'
+text = 'model X language model'
 ids = torch.tensor([tokenizer.encode(text)])
 print('all IDs:',ids.tolist(),'effective IDs:',ids[:,-5:].tolist())
 """,
@@ -930,8 +930,8 @@ print('all IDs:',ids.tolist(),'effective IDs:',ids[:,-5:].tolist())
     full,context = result
     assert full==tokenizer.encode(text) and context==full[-5:]
     assert 0 in full
-    assert effective_ids(tokenizer,'مدل',20)==(tokenizer.encode('مدل'),tokenizer.encode('مدل'))
-    assert effective_ids(tokenizer,'مدل',1)[1]==tokenizer.encode('ل')
+    assert effective_ids(tokenizer,'model',20)==(tokenizer.encode('model'),tokenizer.encode('model'))
+    assert effective_ids(tokenizer,'model',1)[1]==tokenizer.encode('l')
     assert tokenizer.id_to_token==before
     return True
 exercise_complete = test_exercise()
@@ -942,8 +942,8 @@ print('PASS' if exercise_complete else 'INCOMPLETE: effective_ids')
     return full,full[-limit:]
 """,
         "vary": "فقط پیشوندی را عوض کنید که بیرون Context است؛ پنج شناسهٔ آخر در هر دو Prompt ثابت بمانند.",
-        "vary_code": """a = torch.tensor([tokenizer.encode('مدل زبان مدل')])
-b = torch.tensor([tokenizer.encode('زبان زبان مدل')])
+        "vary_code": """a = torch.tensor([tokenizer.encode('model language model')])
+b = torch.tensor([tokenizer.encode('language language model')])
 assert torch.equal(a[:,-5:],b[:,-5:])
 print('next IDs:',model.generate(a,1,greedy=True)[0,-1].item(),model.generate(b,1,greedy=True)[0,-1].item())
 """,
@@ -960,11 +960,11 @@ else:
     return None
 """,
         "fix_check": """def test_repair():
-    result = encode_with_unknowns(tokenizer,'مدل X')
+    result = encode_with_unknowns(tokenizer,'model X')
     if result is None:
         return False
-    assert result==(tokenizer.encode('مدل X'),1)
-    assert encode_with_unknowns(tokenizer,'مدل')[1]==0
+    assert result==(tokenizer.encode('model X'),1)
+    assert encode_with_unknowns(tokenizer,'model')[1]==0
     assert encode_with_unknowns(tokenizer,'XY')[1]==2
     try:
         encode_with_unknowns(tokenizer,'')
@@ -1823,7 +1823,7 @@ print('PASS' if repair_complete else 'INCOMPLETE: initialize_adapter')
 import torch
 from torch.nn import functional as F
 torch.set_num_threads(1)
-responses = ['پاسخ درست و کوتاه','پاسخ روان اما غلط']
+responses = ['correct and concise answer','fluent but incorrect answer']
 reference_logits = torch.tensor([0.0,0.0])
 policy_logits = torch.tensor([0.0,0.0],requires_grad=True)
 print(list(zip(responses,policy_logits.softmax(-1).detach().tolist())))
@@ -1907,11 +1907,11 @@ print('PASS' if repair_complete else 'INCOMPLETE: preference_margin')
         "prerequisite": "رشته، مجموعهٔ واژه‌ها و جدایی Retrieval از Generation.",
         "predict": "اگر هیچ واژه‌ای مشترک نباشد، آیا نخستین سندِ فهرست می‌تواند شاهد مناسبی برای پاسخ باشد؟",
         "setup": """documents = [
-    {'id':'d1','text':'کتابخانه شنبه باز است'},
-    {'id':'d2','text':'آزمایشگاه یکشنبه تعطیل است'},
-    {'id':'d3','text':'زمان کلاس دوشنبه است'},
+    {'id':'d1','text':'library is open Saturday'},
+    {'id':'d2','text':'laboratory is closed Sunday'},
+    {'id':'d3','text':'class is on Monday'},
 ]
-question = 'کتابخانه شنبه'
+question = 'library Saturday'
 words = set(question.split())
 print([(doc['id'],len(words & set(doc['text'].split()))) for doc in documents])
 print('This is lexical retrieval only; no language model answers are generated.')
@@ -1926,11 +1926,11 @@ print('This is lexical retrieval only; no language model answers are generated.'
     if result is None:
         return False
     assert result['id']=='d1'
-    assert retrieve(documents,'آزمایشگاه تعطیل')['id']=='d2'
-    assert retrieve(documents,'زلزله') is None
-    assert retrieve([],'کتابخانه') is None
-    assert retrieve(documents,'است')['id']=='d1'
-    assert retrieve(documents,'کتابخانه کتابخانه شنبه')['id']=='d1'
+    assert retrieve(documents,'laboratory closed')['id']=='d2'
+    assert retrieve(documents,'earthquake') is None
+    assert retrieve([],'library') is None
+    assert retrieve(documents,'is')['id']=='d1'
+    assert retrieve(documents,'library library Saturday')['id']=='d1'
     return True
 exercise_complete = test_exercise()
 print('PASS' if exercise_complete else 'INCOMPLETE: retrieve')
@@ -1942,13 +1942,13 @@ print('PASS' if exercise_complete else 'INCOMPLETE: retrieve')
     best = max(documents,key=lambda doc:len(words & set(doc['text'].split())))
     return best if words & set(best['text'].split()) else None
 """,
-        "vary": "فقط عبارت پرسش را عوض کنید. جست‌وجوی واژه‌ای نمی‌فهمد «کتابخانه» و «مرکز امانت کتاب» ممکن است به یک جا اشاره کنند.",
-        "vary_code": """for query in ('کتابخانه شنبه','مرکز امانت کتاب'):
+        "vary": "فقط عبارت پرسش را عوض کنید. جست‌وجوی واژه‌ای نمی‌فهمد `library` و `book lending center` ممکن است به یک جا اشاره کنند.",
+        "vary_code": """for query in ('library Saturday','book lending center'):
     scores = [(doc['id'],len(set(query.split()) & set(doc['text'].split()))) for doc in documents]
     print(query,scores)
 """,
         "debug": "بیشترین امتیازِ صفر هم یک برندهٔ ظاهری دارد؛ نباید برای آن ارجاع معتبر بسازیم. `evidence_record(document)` اگر ورودی `None` است `{'status':'insufficient','source':None}` وگرنه `{'status':'retrieved','source':id,'text':text}` بدهد. `retrieved` به معنی پاسخ تأییدشده نیست.",
-        "bug_code": """unknown_question = 'زلزله'
+        "bug_code": """unknown_question = 'earthquake'
 wrong = max(documents,key=lambda doc:len(set(unknown_question.split()) & set(doc['text'].split())))
 print('false evidence for unrelated query:',wrong)
 """,

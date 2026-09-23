@@ -26,28 +26,29 @@ class InstructionExample:
 
 
 TRAIN_EXAMPLES = (
-    InstructionExample("در آموزش وزن عوض می شود؟", "ب"),
-    InstructionExample("در تولید وزن عوض می شود؟", "ن"),
-    InstructionExample("در آموزش هدف داریم؟", "ب"),
-    InstructionExample("در تولید پاسخ درست تضمین است؟", "ن"),
+    InstructionExample("Does training update weights?", "y"),
+    InstructionExample("Does generation update weights?", "n"),
+    InstructionExample("Does training use targets?", "y"),
+    InstructionExample("Are generated answers always correct?", "n"),
 )
 HELDOUT_EXAMPLES = (
-    InstructionExample("آیا در آموزش وزن عوض می شود؟", "ب"),
-    InstructionExample("آیا در تولید وزن عوض می شود؟", "ن"),
+    InstructionExample("Do weights change during training?", "y"),
+    InstructionExample("Do weights change during generation?", "n"),
 )
 # Deliberately no formatted instruction/answer records in this pretraining text.
 PRETRAIN_TEXT = (
-    "مدل با داده آموزش می بیند. در آموزش وزن تغییر می کند. "
-    "تولید متن وزن را عوض نمی کند. هدف آموزش با پاسخ درست یکی نیست. "
-    "آیا داده کافی است؟ باید آزمایش کنیم. ب و ن دو حرف هستند. "
+    "Models learn from data. Training changes weights. "
+    "Generating text does not update weights. The next token is a training target. "
+    "Correct answers are not guaranteed. Do we have enough data? We need tests. "
+    "y means yes and n means no. "
 ) * 8
 
 
 def format_prompt(instruction):
-    """A fixed visible format; the toy answer is ب (yes) or ن (no)."""
+    """A fixed visible format; the toy answer is y (yes) or n (no)."""
     if not isinstance(instruction, str) or not instruction.strip():
         raise ValueError("instruction must be nonempty text")
-    return "پرسش: " + instruction + "\nپاسخ: "
+    return "Question: " + instruction + "\nAnswer: "
 
 
 def encode_example(tokenizer, example, context_length):
@@ -192,7 +193,8 @@ def run_tiny_experiment(*, pretrain_steps=40, sft_steps=160, seed=41,
                        tuned_heldout=evaluate_instructions(tuned, tokenizer, HELDOUT_EXAMPLES))
         metadata = {"pretrain_steps": pretrain_steps, "sft_steps": sft_steps,
                     "context_length": context_length,
-                    "largest_training_sequence": max(32, max(x.shape[1] for x, _, _ in encoded) if sft_steps else 0),
+                    "largest_training_sequence": max(
+                        [32] + [x.shape[1] for x, _, _ in encoded[:min(sft_steps, len(encoded))]]),
                     "extra_pretraining_characters": len(extra_pretraining_text),
                     "vocabulary_source": "pretraining corpus + TRAIN instruction records only",
                     "training_objective": "next-token pretraining, then one-character response-only SFT"}
@@ -212,7 +214,7 @@ def run_system_experiment(*, pretrain_steps=2, sft_steps=4, context_length=2048,
     from .retrieval import COURSE_DOCUMENTS
     training_context = (string.printable + "\n" + PROTOCOL + "\n"
                         + "\n".join(document.text for document in COURSE_DOCUMENTS)
-                        + "\nتوضیح کوتاه\n")
+                        + "\nbrief explanation\n")
     experiment = run_tiny_experiment(pretrain_steps=pretrain_steps, sft_steps=sft_steps,
                                     seed=seed, context_length=context_length,
                                     extra_pretraining_text=training_context)

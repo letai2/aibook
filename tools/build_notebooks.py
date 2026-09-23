@@ -22,7 +22,6 @@ REQUIRED = {'title', 'goal', 'prerequisite', 'predict', 'setup', 'task', 'starte
             'fix_check', 'fix_solution', 'connection', 'takeaway'}
 
 SETUP = '''from pathlib import Path
-import os
 import sys
 
 project_root = next((p for p in (Path.cwd(), *Path.cwd().parents)

@@ -13,7 +13,7 @@ BRIEFS = {
  '12b-neuron': ('network','diagram','flow','x|w·x+b|ReLU|prediction|loss','ابتدا مقدارها را رو به جلو می‌سازیم؛ سپس حساسیت‌ها را رو به عقب حساب می‌کنیم.'),
  '01-model': ('foundations','statement','equation','prediction = x × w','ورودی ثابت است؛ این بار فقط وزن را تغییر می‌دهیم.'),
  '01-learning': ('foundations','diagram','flow','نمونه‌ها|مدل|پیش‌بینی|زیان','ویژگی وارد مدل می‌شود؛ هدف برای سنجش خروجی است.'),
- '02-token': ('language','question','tokens','م|د|ل| |c|a|t','در این پروژه، هر Code point از Unicode یک Token است؛ نه هر واژه.'),
+ '02-token': ('language','question','tokens','c|a|t| |d|o|g','در این پروژه، هر Code point از Unicode یک Token است؛ نه هر واژه.'),
  '03-counts': ('foundations','workbench','matrix','a→a|a→b|b→a|b→b','چهار حالت ممکن برای انتقال میان دو Token؛ تعداد هر حالت را از متن می‌شماریم.'),
  '04-splits': ('debug','case','compare','دادهٔ آموزش|دادهٔ ارزیابی','مدل فقط از قسمت آموزش می‌آموزد؛ ارزیابی کنار می‌ماند.'),
  '05-shape': ('math','diagram','coordinates','1|2|3|4|5|6','دو سطر و سه ستون: شکل این جدول (2,3) است.'),

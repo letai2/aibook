@@ -17,7 +17,7 @@ python -B -m tools.prepare_release
 
 This builds into a new temporary directory, validates every page/link, checks
 JavaScript syntax, checks generated notebook/curriculum inventories, runs 29 JavaScript
-and 70 site/launcher/release/editorial tests, refreshes `dist`, and creates:
+and 75 site/launcher/release/editorial tests, refreshes `dist`, and creates:
 
 - `release/book-site.zip`: only the public site, with `index.html` at its root.
 - `release/manifest.json`: exact public file list, sizes and SHA-256 hashes.

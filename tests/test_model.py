@@ -34,9 +34,9 @@ class ModelTests(unittest.TestCase):
                 ModelConfig(12, **changes)
 
     def test_tokenizer_roundtrip_and_persistence(self):
-        tokenizer = CharacterTokenizer.from_text("سلام دنیا")
-        self.assertEqual(tokenizer.decode(tokenizer.encode("سلام")), "سلام")
-        self.assertEqual(tokenizer.encode("ژ"), [0])
+        tokenizer = CharacterTokenizer.from_text("hello world")
+        self.assertEqual(tokenizer.decode(tokenizer.encode("hello")), "hello")
+        self.assertEqual(tokenizer.encode("?"), [0])
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory)/"tokens.json"
             tokenizer.save(path)

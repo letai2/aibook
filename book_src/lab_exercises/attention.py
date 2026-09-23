@@ -17,7 +17,7 @@ def _check(body, repair=False):
 def _lab(*, torch_setup=True, **fields):
     fields = {name: dedent(value).strip() for name, value in fields.items()}
     imports = ("import math\nimport torch\ntorch.set_num_threads(1)\n"
-               "torch.manual_seed(17)\n") if torch_setup else "import math\n"
+               "torch.manual_seed(17)\n") if torch_setup else ""
     fields["setup"] = imports + fields["setup"]
     fields["check"] = _check(fields.pop("checks"))
     fields["fix_check"] = _check(fields.pop("fix_checks"), repair=True)
@@ -65,6 +65,7 @@ EXERCISES = {
         takeaway="چه اطلاعاتی از گذشته باید در ساختن خروجیِ آخر نقش داشته باشد؟ چرا نمی‌توان محدودیت v1 را به همهٔ MLPها نسبت داد؟",
     ),
     "26b-sequence-memory": _lab(
+        torch_setup=False,
         title="اثر یک ورودی پس از چند بازنویسی حافظه",
         goal="حالت بازگشتی را بسازید و ماندگاری یک تغییر کوچک را اندازه بگیرید.",
         prerequisite="حلقهٔ Python و ضرب یک ضریب در حالت قبلی کافی است؛ این مدل خطی، LSTM نیست.",
@@ -408,7 +409,7 @@ EXERCISES = {
         prerequisite="`Q/K/V`، Mask و شکل ضرب Attention را بشناسید؛ منبع و هدف دو دنبالهٔ متفاوت‌اند.",
         predict="منبع ۵ موقعیت و خروجی فعلی ۳ موقعیت دارد. چرا بستن ستون‌های بعد از قطر در Cross-Attention، بخشی از منبعِ ازپیش‌موجود را بی‌دلیل پنهان می‌کند؟",
         setup="source = torch.tensor([[1.,0.],[0.,1.],[1.,1.],[-1.,0.],[0.,-1.]])\ntarget = torch.tensor([[1.,0.],[0.,1.],[1.,1.]])\nprint('source/target lengths:',len(source),len(target))",
-        task="تابع `family_attention(q,k,v,kind)` زوج `(weights,output)` برگرداند. `kind` برابر `encoder` یا `decoder` یا `cross` است. فقط در `decoder` جدول مربعی را علّی کنید؛ در دو حالت دیگر همهٔ Keyها مجازند. `q` و `k` دو ویژگی مشترک دارند، ولی تعداد سطرهایشان می‌تواند متفاوت باشد.",
+        task="تابع `family_attention(q,k,v,kind)` زوج `(weights,output)` برگرداند. `kind` برابر `encoder` یا `decoder` یا `cross` است. فقط در `decoder` جدول مربعی را علّی کنید؛ در دو حالت دیگر همهٔ Keyها مجازند. تعداد ویژگی‌های `q` و `k` برابر است، ولی تعداد سطرهایشان می‌تواند متفاوت باشد.",
         starter="def family_attention(q, k, v, kind):\n    # TODO\n    return None",
         checks="result = family_attention(target,source,source,'cross')\nif result is None: return False\nw,out = result\nassert w.shape == (3,5) and out.shape == (3,2)\ntorch.testing.assert_close(w,(target@source.T/math.sqrt(2)).softmax(-1))\ntorch.testing.assert_close(out,w@source)\nwe,_ = family_attention(source,source,source,'encoder')\nassert we.shape == (5,5) and (we > 0).all()\nwd,_ = family_attention(target,target,target,'decoder')\nassert torch.count_nonzero(wd.triu(1)) == 0\ntorch.testing.assert_close(wd.sum(-1),torch.ones(3))\nzq,zk,zv = torch.zeros(2,4),torch.zeros(3,4),torch.tensor([[1.],[2.],[6.]])\ntorch.testing.assert_close(family_attention(zq,zk,zv,'cross')[1],torch.full((2,1),3.))\nreturn True",
         solution="def family_attention(q, k, v, kind):\n    scores = q@k.T/math.sqrt(q.shape[-1])\n    if kind == 'decoder':\n        allowed = torch.ones(scores.shape,dtype=torch.bool,device=scores.device).tril()\n        scores = scores.masked_fill(~allowed,float('-inf'))\n    weights = scores.softmax(-1)\n    return weights, weights@v",

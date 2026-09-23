@@ -269,6 +269,10 @@ class EditorialTests(unittest.TestCase):
                 self.assertIn('text-align:right',source,(lab['id'],cell['id']))
         self.assertEqual(count,10*len(book.LESSONS)+187)
 
+    def test_gpt_expansion_is_one_ltr_phrase_even_with_a_glossary_link(self):
+        page = (self.root / book.PATHS['42-families']).read_text(encoding='utf-8')
+        self.assertRegex(page, r'<bdi dir="ltr">Generative Pre-trained <a\b[^>]*>.*?Transformer</bdi></a></bdi></dfn>')
+
     def test_inline_comparisons_entities_and_protected_subtrees(self):
         from book_src.terminology import inline_code_html, typography_html
         from tools.build_notebooks import render_markdown
